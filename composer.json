@@ -1,0 +1,20 @@
+{
+	"name": "xiaxiao002/cartflows",
+	"description": "",
+	"keywords": [
+		"wordpress",
+		"plugin"
+	],
+	"homepage":"https://github.com/xiaxiao002/cartflows",
+	"authors": [
+		{
+		"name": "cartflows",
+		"homepage":"https://eileenlue.com"
+		}
+	],
+	"type": "wordpress-plugin",
+	"require": {
+		"php": ">5.6"
+	}
+
+}
