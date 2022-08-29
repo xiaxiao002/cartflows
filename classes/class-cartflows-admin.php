@@ -66,80 +66,6 @@ class Cartflows_Admin {
 		add_action( 'admin_init', array( $this, 'flush_rules_after_save_permalinks' ) );
 
 		add_filter( 'post_row_actions', array( $this, 'remove_flow_actions' ), 99, 2 );
-
-		add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget' ) );
-	}
-
-	/**
-	 * Init dashboard widgets.
-	 */
-	public function dashboard_widget() {
-
-		if ( current_user_can( 'manage_options' ) && '1' === get_option( 'wcf_setup_skipped', false ) && '1' !== get_option( 'wcf_setup_complete', false ) ) {
-			wp_add_dashboard_widget(
-				'cartFlows_setup_dashboard_widget',
-				__( 'CartFlows Setup', 'cartflows' ),
-				array( $this, 'status_widget' )
-			);
-		}
-	}
-
-	/**
-	 * Show status widget.
-	 */
-	public function status_widget() {
-
-		$admin_url = admin_url( 'index.php' ) . '?page=cartflow-setup&';
-
-		$steps = array(
-			'welcome'         => $admin_url . 'step=welcome',
-			'page-builder'    => $admin_url . 'step=page-builder',
-			'plugin-install'  => $admin_url . 'step=plugin-install',
-			'global-checkout' => $admin_url . 'step=global-checkout',
-			'optin'           => $admin_url . 'step=optin',
-			'ready'           => $admin_url . 'step=ready',
-		);
-
-		$exit_step = get_option( 'wcf_exit_setup_step', 'welcome' );
-
-		$incompleted_steps = array_search( $exit_step, array_keys( $steps ), true );
-		$remianing_steps   = array_slice( $steps, 0, $incompleted_steps );
-
-		$completed_tasks_count = count( $remianing_steps ) + 1;
-		$tasks_count           = count( $steps );
-		$button_link           = $steps[ $exit_step ];
-
-		$progress_percentage = ( $completed_tasks_count / $tasks_count ) * 100;
-		$circle_r            = 6.5;
-		$circle_dashoffset   = ( ( 100 - $progress_percentage ) / 100 ) * ( pi() * ( $circle_r * 2 ) );
-
-		wp_enqueue_style( 'cartflows-dashboard-widget', CARTFLOWS_URL . 'admin/assets/css/admin-widget.css', array(), CARTFLOWS_VER );
-
-		?>
-
-		<div class="cartflows-dashboard-widget-finish-setup">
-			<span class='progress-wrapper'>
-				<svg class="circle-progress" width="17" height="17" version="1.1" xmlns="http://www.w3.org/2000/svg">
-				<circle r="6.5" cx="10" cy="10" fill="transparent" stroke-dasharray="40.859" stroke-dashoffset="0"></circle>
-				<circle class="bar" r="6.5" cx="190" cy="10" fill="transparent" stroke-dasharray="40.859" stroke-dashoffset="<?php echo esc_attr( $circle_dashoffset ); ?>" transform='rotate(-90 100 100)'></circle>
-				</svg>
-				<span><?php echo esc_html_e( 'Step', 'cartflows' ); ?> <?php echo esc_html( $completed_tasks_count ); ?> <?php echo esc_html_e( 'of', 'cartflows' ); ?> <?php echo esc_html( $tasks_count ); ?></span>
-			</span>
-
-			<div class="description">
-				<div class="wcf-left-column">
-					<p>
-						<?php echo esc_html_e( 'You\'re almost there! Once you complete CartFlows setup you can start receiving orders from flows.', 'cartflows' ); ?>
-					</p>
-					<a href='<?php echo esc_attr( $button_link ); ?>' class='button button-primary'><?php echo esc_html_e( 'Complete Setup', 'cartflows' ); ?></a>
-				</div>
-				<div class="wcf-right-column">
-					<img src="<?php echo CARTFLOWS_URL; ?>admin/assets/images/cartflows-home-widget.svg" />
-				</div>
-			</div>
-		</div>
-		<?php
-
 	}
 
 	/**
@@ -176,7 +102,6 @@ class Cartflows_Admin {
 			flush_rewrite_rules();
 			delete_option( 'cartflows_permalink_refresh' );
 		}
-
 	}
 
 	/**
@@ -201,7 +126,7 @@ class Cartflows_Admin {
 		);
 
 		if ( ! _is_cartflows_pro() ) {
-			array_push( $mylinks, '<a style="color: #39b54a; font-weight: 700;" target="_blank" href="' . esc_url( 'https://cartflows.com/pricing/' ) . '"> Go Pro </a>' );
+			array_push( $mylinks, '<a style="color: #39b54a; font-weight: bold;" target="_blank" href="' . esc_url( 'https://cartflows.com/pricing/' ) . '"> Go Pro </a>' );
 		}
 
 		return array_merge( $links, $mylinks );

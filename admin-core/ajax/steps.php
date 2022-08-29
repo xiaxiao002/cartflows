@@ -71,7 +71,7 @@ class Steps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -121,7 +121,7 @@ class Steps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -245,8 +245,6 @@ class Steps extends AjaxBase {
 				'type'  => $step_type,
 			);
 
-			$flow_steps = apply_filters( 'cartflows_admin_updated_flow_steps', $flow_steps, $flow_id );
-
 			update_post_meta( $flow_id, 'wcf-steps', $flow_steps );
 
 			/* Clear Page Builder Cache */
@@ -285,7 +283,7 @@ class Steps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -370,7 +368,7 @@ class Steps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -420,7 +418,7 @@ class Steps extends AjaxBase {
 		// We are storing the step dynamic css in the post meta and deleting when any setting changes. Once deleted it will be regenerated with first page load.
 		delete_post_meta( $step_id, 'wcf-dynamic-css' );
 
-		do_action( 'cartflows_admin_save_step_meta', $step_id );
+		do_action( 'cartflows_save_step_meta', $step_id );
 
 		$meta_options = AdminHelper::get_step_meta_options( $step_id );
 

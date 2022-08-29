@@ -56,9 +56,7 @@ class StepMeta {
 				break;
 		}
 
-		// Added WP Fusion filter compatibility.
-		$settings = wcf_apply_filters_deprecated( 'cartflows_' . $step_type . '_step_meta_settings', array( $settings, $step_id ), '1.8.0', 'cartflows_admin_' . $step_type . '_step_meta_settings' );
-		$settings = apply_filters( 'cartflows_admin_' . $step_type . '_step_meta_settings', $settings, $step_id );
+		$settings = apply_filters( 'cartflows_' . $step_type . '_step_meta_settings', $settings, $step_id );
 		return $settings;
 	}
 

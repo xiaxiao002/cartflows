@@ -752,10 +752,6 @@ if ( ! class_exists( 'WCFB_Order_Detail_Form' ) ) {
 							'type'    => 'string',
 							'default' => '',
 						),
-						'deviceType'       => array(
-							'type'    => 'string',
-							'default' => 'Desktop',
-						),
 					),
 					'render_callback' => array( $this, 'render_html' ),
 				)

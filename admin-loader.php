@@ -10,9 +10,6 @@ namespace CartflowsAdmin;
 use CartflowsAdmin\AdminCore\Api\ApiInit;
 use CartflowsAdmin\AdminCore\Ajax\AjaxInit;
 use CartflowsAdmin\AdminCore\Inc\AdminMenu;
-use CartflowsAdmin\Wizard\Inc\WizardCore;
-use CartflowsAdmin\Wizard\Ajax\WizardAjaxInit;
-use CartflowsAdmin\AdminCore\Inc\StoreCheckout;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -106,16 +103,11 @@ class Admin_Loader {
 		ApiInit::get_instance();
 
 		if ( is_admin() ) {
-			StoreCheckout::get_instance();
 			/* Setup Menu */
 			AdminMenu::get_instance();
 
 			/* Ajax init */
 			AjaxInit::get_instance();
-
-			WizardAjaxInit::get_instance();
-
-			WizardCore::get_instance();
 		}
 	}
 }

@@ -64,7 +64,6 @@ class Flows extends AjaxBase {
 			'save_flow_meta_settings',
 			'export_flows_in_bulk',
 			'update_status',
-			'update_store_checkout_status',
 		);
 
 		$this->init_ajax_events( $ajax_events );
@@ -80,7 +79,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -124,7 +123,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -184,7 +183,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -240,7 +239,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -312,7 +311,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -373,7 +372,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -421,7 +420,7 @@ class Flows extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -555,8 +554,6 @@ class Flows extends AjaxBase {
 
 				$step_object = get_post( $step_id );
 
-				$exclude_step_meta_keys = \Cartflows_Helper::get_instance()->get_meta_keys_to_exclude_from_import( $step_id );
-
 				/**
 				 * New step post data array
 				 */
@@ -598,13 +595,11 @@ class Flows extends AjaxBase {
 
 						$meta_key = $meta_info->meta_key;
 
-						if ( in_array( $meta_key, $exclude_step_meta_keys, true ) ) {
+						if ( '_wp_old_slug' === $meta_key || 'wcf-ab-test' === $meta_key ) {
 							continue;
 						}
 
-						$meta_value = $meta_info->meta_value;
-
-						$sql_query_sel[] = $wpdb->prepare( '( %d, %s, %s )', $new_step_id, $meta_key, $meta_value );
+						$sql_query_sel[] = $wpdb->prepare( '( %d, %s, %s )', $new_step_id, $meta_key, $meta_info->meta_value );
 					}
 
 					$sql_query .= implode( ',', $sql_query_sel );
@@ -659,7 +654,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -719,7 +714,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -779,7 +774,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -820,8 +815,6 @@ class Flows extends AjaxBase {
 		/* Finally delete flow post and it's data */
 		wp_delete_post( $flow_id, true );
 
-		do_action( 'cartflows_admin_after_delete_flow', $flow_id );
-
 		/**
 		 * Redirect to the new flow edit screen
 		 */
@@ -841,7 +834,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -901,66 +894,6 @@ class Flows extends AjaxBase {
 		wp_send_json_success( $response_data );
 	}
 
-	/**
-	 * Enables / Disables Store Checkout on toggle click
-	 *
-	 * @return void
-	 * @since X.X.X
-	 */
-	public function update_store_checkout_status() {
-		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-
-		/**
-		 * Check permission
-		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
-			wp_send_json_error( $response_data );
-		}
-
-		/**
-		 * Nonce verification
-		 */
-		if ( ! check_ajax_referer( 'cartflows_update_store_checkout_status', 'security', false ) ) {
-			$response_data = array( 'message' => $this->get_error_msg( 'nonce' ) );
-			wp_send_json_error( $response_data );
-		}
-
-		if ( ! isset( $_POST['enable_store_checkout'] ) ) {
-			$response_data = array( 'message' => __( 'No Flow IDs has been supplied to delete!', 'cartflows' ) );
-			wp_send_json_error( $response_data );
-		}
-
-		$enable_store_checkout = isset( $_POST['enable_store_checkout'] ) ? sanitize_text_field( wp_unslash( $_POST['enable_store_checkout'] ) ) : '';
-		$checkout_id           = isset( $_POST['checkout_id'] ) ? absint( wp_unslash( $_POST['checkout_id'] ) ) : '';
-
-		$old_global_checkout = get_option( '_cartflows_old_global_checkout	', false );
-		$checkout_id         = $old_global_checkout ? absint( $old_global_checkout ) : $checkout_id;
-
-		$common_settings = \Cartflows_Helper::get_common_settings();
-
-		$override_status = 'enable';
-		if ( 'false' === $enable_store_checkout ) {
-			$checkout_id     = '';
-			$override_status = 'disable';
-		}
-
-		$common_settings['global_checkout']          = $checkout_id;
-		$common_settings['override_global_checkout'] = $override_status;
-
-		update_option( '_cartflows_common', $common_settings );
-
-		do_action( 'cartflows_after_save_store_checkout' );
-
-		/**
-		 * Redirect to the new flow edit screen
-		 */
-		$response_data = array(
-			'message'     => __( 'Successfully updated the Flow status!', 'cartflows' ),
-			'checkout_id' => $checkout_id,
-		);
-		wp_send_json_success( $response_data );
-	}
-
 
 	/**
 	 * Prepare where items for query.
@@ -972,7 +905,7 @@ class Flows extends AjaxBase {
 		/**
 		 * Check permission
 		 */
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 

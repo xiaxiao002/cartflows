@@ -91,36 +91,26 @@ if ( ! class_exists( 'Cartflows_Batch_Processing_Sync_Library' ) ) :
 		 * @since 1.6.15 Added page no.
 		 *
 		 * @param  integer $page Page number.
-		 * @param string  $templates templates category to fetch.
 		 * @return array
 		 */
-		public function import_sites( $page = 1, $templates = '' ) {
+		public function import_sites( $page = 1 ) {
 
-			$api_args = array(
+			$api_args        = array(
 				'timeout' => 30,
 			);
-
 			$sites_and_pages = array();
 
 			wcf()->logger->sync_log( 'Requesting ' . $page );
 
 			update_site_option( 'cartflows-batch-status-string', 'Requesting ' . $page, 'no' );
 
-			$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
-
 			$query_args = apply_filters(
 				'cartflows_import_query_args',
 				array(
-					'per_page' => 100,
+					'per_page' => 15,
 					'page'     => $page,
 				)
 			);
-
-			if ( 'store-checkout' === $templates ) {
-				$query_args['flow_category'] = array(
-					'include_terms' => array( 'store-checkout' ),
-				);
-			}
 
 			$api_url = add_query_arg( $query_args, $this->site_url . 'wp-json/cartflows-server/v1/flows-and-steps/' );
 
@@ -136,7 +126,7 @@ if ( ! class_exists( 'Cartflows_Batch_Processing_Sync_Library' ) ) :
 						wcf()->logger->sync_log( 'HTTP Request Error!' );
 					}
 				} else {
-					$option_name = 'cartflows-' . $suffix . $this->site_slug . '-flows-and-steps-' . $page;
+					$option_name = 'cartflows-' . $this->site_slug . '-flows-and-steps-' . $page;
 
 					update_site_option( 'cartflows-batch-status-string', 'Storing data for page ' . $page . ' in option ' . $option_name );
 

@@ -21,7 +21,7 @@ $note             = get_post_meta( $inner_step_id, 'wcf-step-note', true );
 			?>
 			<span class="dashicons dashicons-editor-help" id="wcf-tooltip">
 				<span class="wcf-ab-test-note-badge"><?php echo $note; ?></span>
-			</span>
+			</span>	
 			<?php
 		}
 
@@ -49,11 +49,11 @@ $note             = get_post_meta( $inner_step_id, 'wcf-step-note', true );
 			<?php
 		} elseif ( ( $has_product_assigned ) && ( $control_id === $is_global_checkout ) ) {
 			?>
-			<span class="wcf-global-checkout-badge wcf-error-badge"><?php esc_html_e( 'Store Checkout - Remove selected checkout product', 'cartflows' ); ?></span>
+			<span class="wcf-global-checkout-badge wcf-error-badge"><?php esc_html_e( 'Global Checkout - Remove selected checkout product', 'cartflows' ); ?></span>
 			<?php
 		} elseif ( ( ! $has_product_assigned ) && $control_id === $is_global_checkout ) {
 			?>
-			<span class="wcf-global-checkout-badge"><?php esc_html_e( 'Store Checkout', 'cartflows' ); ?></span>
+			<span class="wcf-global-checkout-badge"><?php esc_html_e( 'Global Checkout', 'cartflows' ); ?></span>
 			<?php
 		}
 
@@ -129,5 +129,5 @@ $note             = get_post_meta( $inner_step_id, 'wcf-step-note', true );
 		?>
 		</div>
 		<div class="wcf-edit-settings"></div>
-	</div>
+	</div>	
 </div>

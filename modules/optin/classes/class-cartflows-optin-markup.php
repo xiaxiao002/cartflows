@@ -125,7 +125,6 @@ class Cartflows_Optin_Markup {
 
 				if ( email_exists( sanitize_email( wp_unslash( $_POST['billing_email'] ) ) ) ) { // phpcs:ignore
 					add_filter( 'woocommerce_checkout_registration_required', '__return_false' );
-					add_filter( 'woocommerce_checkout_registration_enabled', '__return_false' );
 				}
 			}
 
@@ -488,7 +487,7 @@ class Cartflows_Optin_Markup {
 
 			if ( empty( $style ) || CARTFLOWS_ASSETS_VERSION !== $css_version ) {
 				$style = $this->generate_style();
-				update_post_meta( $optin_id, 'wcf-dynamic-css', wp_slash( $style ) );
+				update_post_meta( $optin_id, 'wcf-dynamic-css', $style );
 				update_post_meta( $optin_id, 'wcf-dynamic-css-version', CARTFLOWS_ASSETS_VERSION );
 			}
 

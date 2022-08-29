@@ -44,7 +44,6 @@ class Cartflows_Optin {
 
 		require_once CARTFLOWS_OPTIN_DIR . 'classes/class-cartflows-optin-meta-data.php';
 		require_once CARTFLOWS_OPTIN_DIR . 'classes/class-cartflows-optin-markup.php';
-		require_once CARTFLOWS_OPTIN_DIR . 'classes/class-cartflows-optin-fields.php';
 	}
 }
 /**

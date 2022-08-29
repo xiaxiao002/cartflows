@@ -53,38 +53,6 @@ class Cartflows_Thankyou_Markup {
 		add_action( 'template_redirect', array( $this, 'redirect_tq_page_to_custom_url' ) );
 
 		add_action( 'cartflows_thank_you_scripts', array( $this, 'add_divi_compatibility_css' ) );
-
-		add_action( 'wp', array( $this, 'secure_thank_you_page' ), 10 );
-	}
-
-	/**
-	 * Restrict users to access the thank you page directly.
-	 */
-	public function secure_thank_you_page() {
-
-		$thank_you_id = _get_wcf_thankyou_id();
-
-		// Returns false if no thank you page ID is found.
-		if ( ! $thank_you_id ) {
-			return;
-		}
-
-		if ( ! apply_filters( 'cartflows_thankyou_direct_access', false, $thank_you_id ) && _is_wcf_thankyou_type() && ( ! is_user_logged_in() || ! current_user_can( 'cartflows_manage_flows_steps' ) ) ) {
-
-			if ( isset( $_GET['wcf-key'] ) && isset( $_GET['wcf-order'] ) ) { //phpcs:ignore
-
-				$order_id  =  intval( $_GET['wcf-order'] ); //phpcs:ignore
-				$order_key = wc_clean( wp_unslash( $_GET['wcf-key'] ) ); //phpcs:ignore
-
-				$order = wc_get_order( $order_id );
-
-				if ( ! $order || $order->get_order_key() !== $order_key ) {
-					wp_die( esc_html__( 'We can\'t seem to find an order for you.', 'cartflows' ) );
-				}
-			} else {
-				wp_die( esc_html__( 'We can\'t seem to find an order for you.', 'cartflows' ) );
-			}
-		}
 	}
 
 	/**
@@ -239,7 +207,7 @@ class Cartflows_Thankyou_Markup {
 
 				if ( empty( $style ) || CARTFLOWS_ASSETS_VERSION !== $css_version ) {
 					$style = $this->generate_thank_you_style();
-					update_post_meta( $thanku_page_id, 'wcf-dynamic-css', wp_slash( $style ) );
+					update_post_meta( $thanku_page_id, 'wcf-dynamic-css', $style );
 					update_post_meta( $thanku_page_id, 'wcf-dynamic-css-version', CARTFLOWS_ASSETS_VERSION );
 				}
 
@@ -299,13 +267,6 @@ class Cartflows_Thankyou_Markup {
 
 		$enable_design_settings = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-enable-design-settings' );
 
-		$hide_show_settings = array(
-			'show_order_review'     => wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-overview-section' ),
-			'show_order_details'    => wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-details-section' ),
-			'show_billing_details'  => wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-billing-section' ),
-			'show_shipping_details' => wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-shipping-section' ),
-		);
-
 		if ( 'yes' === $enable_design_settings ) {
 
 			$text_color          = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-tq-text-color' );
@@ -316,6 +277,14 @@ class Cartflows_Thankyou_Markup {
 			$heading_font_weight = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-tq-heading-font-wt' );
 			$container_width     = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-tq-container-width' );
 			$section_bg_color    = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-tq-section-bg-color' );
+
+			$show_order_review = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-overview-section' );
+
+			$show_order_details = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-details-section' );
+
+			$show_billing_details = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-billing-section' );
+
+			$show_shipping_details = wcf()->options->get_thankyou_meta_value( $thank_you_id, 'wcf-show-shipping-section' );
 
 			if (
 				Cartflows_Compatibility::get_instance()->is_divi_enabled() ||
@@ -328,66 +297,7 @@ class Cartflows_Thankyou_Markup {
 			}
 		}
 
-		$output .= $this->get_section_hide_show_css( $output, $hide_show_settings );
-
 		return $output;
-	}
-
-	/**
-	 * Generate CSS for hide/show the order sections on the thank you page.
-	 *
-	 * @param string $output Already generated CSS.
-	 * @param array  $hide_show_settings Enable/disable sections setting of thank page.
-	 *
-	 * @return string $output Modified CSS
-	 */
-	public function get_section_hide_show_css( $output, $hide_show_settings ) {
-
-		if ( 'no' == $hide_show_settings['show_order_review'] ) {
-			$output .= '
-				.woocommerce-order ul.order_details{
-					display: none;
-				}
-				';
-		}
-
-		if ( 'no' == $hide_show_settings['show_order_details'] ) {
-			$output .= '
-				.woocommerce-order .woocommerce-order-details{
-					display: none;
-				}
-				';
-		}
-
-		if ( 'no' == $hide_show_settings['show_billing_details'] ) {
-			$output .= '
-				.woocommerce-order .woocommerce-customer-details .woocommerce-column--billing-address{
-					display: none;
-				}
-				.woocommerce-order .woocommerce-customer-details .woocommerce-column--shipping-address{
-					float:left;
-				}
-				';
-		}
-
-		if ( 'no' == $hide_show_settings['show_shipping_details'] ) {
-			$output .= '
-				.woocommerce-order .woocommerce-customer-details .woocommerce-column--shipping-address{
-					display: none;
-				}
-				';
-		}
-
-		if ( 'no' == $hide_show_settings['show_billing_details'] && 'no' == $hide_show_settings['show_shipping_details'] ) {
-			$output .= '
-				.woocommerce-order .woocommerce-customer-details{
-					display: none;
-				}
-				';
-		}
-
-		return $output;
-
 	}
 
 	/**

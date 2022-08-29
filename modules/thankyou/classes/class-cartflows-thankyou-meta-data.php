@@ -199,7 +199,7 @@ class Cartflows_Thankyou_Meta_Data extends Cartflows_Step_Meta_Base {
 				'shortcode'       => array(
 					'title'    => __( 'Shortcode', 'cartflows' ),
 					'slug'     => 'shortcode',
-					'priority' => 40,
+					'priority' => 10,
 					'fields'   => array(
 						'thankyou-shortcode' => array(
 							'type'     => 'text',
@@ -214,8 +214,14 @@ class Cartflows_Thankyou_Meta_Data extends Cartflows_Step_Meta_Base {
 				'general'         => array(
 					'title'    => __( 'General', 'cartflows' ),
 					'slug'     => 'general',
-					'priority' => 10,
+					'priority' => 20,
 					'fields'   => array(
+						'title'     => array(
+							'type'  => 'text',
+							'name'  => 'post_title',
+							'label' => __( 'Step Title', 'cartflows' ),
+							'value' => get_the_title( $step_id ),
+						),
 						'slug'      => array(
 							'type'  => 'text',
 							'name'  => 'post_name',
@@ -267,7 +273,7 @@ class Cartflows_Thankyou_Meta_Data extends Cartflows_Step_Meta_Base {
 				'settings'        => array(
 					'title'    => __( 'Advanced Settings', 'cartflows' ),
 					'slug'     => 'advanced_setting',
-					'priority' => 30,
+					'priority' => 40,
 					'fields'   => array(
 						'wcf-tq-text'                  => array(
 							'type'        => 'text',

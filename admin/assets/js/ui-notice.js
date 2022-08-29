@@ -1,49 +1,38 @@
 ( function ( $ ) {
-	const ignore_gb_notice = function () {
-		$( '.wcf_notice_gutenberg_plugin button.notice-dismiss' ).on(
-			'click',
-			function ( e ) {
-				e.preventDefault();
-
-				const data = {
-					action: 'cartflows_ignore_gutenberg_notice',
-					security: cartflows_notices.ignore_gb_notice,
-				};
-
-				$.ajax( {
-					type: 'POST',
-					url: ajaxurl,
-					data,
-
-					success( response ) {
-						if ( response.success ) {
-							console.log( 'Gutenberg Notice Ignored.' );
-						}
-					},
-				} );
-			}
-		);
-	};
-
-	const dismiss_weekly_report_email_notice = function () {
+	var switch_to_new_ui = function () {
 		$(
-			'.weekly-report-email-notice.wcf-dismissible-notice button.notice-dismiss'
+			'a.switch-to-new-ui, .cartflows-use-new-ui-save-btn, a.skip-switch-new-ui'
 		).on( 'click', function ( e ) {
 			e.preventDefault();
 
-			const data = {
-				action: 'cartflows_disable_weekly_report_email_notice',
-				security: cartflows_notices.dismiss_weekly_report_email_notice,
+			let $this = $( this ),
+				href = $this.attr( 'href' ),
+				params = new URLSearchParams( href ),
+				nonce = params.get( 'wcf_switch_ui' ),
+				button_action = $this.hasClass( 'skip-switch-new-ui' )
+					? 'skip'
+					: 'update';
+
+			var data = {
+				action: 'wcf_switch_to_new_ui',
+				button_action: button_action,
+				security: nonce,
 			};
+
+			if ( button_action === 'skip' ) {
+				$this.text( 'Saving...' );
+			} else {
+				$this.text( 'Switching UI...' );
+			}
 
 			$.ajax( {
 				type: 'POST',
 				url: ajaxurl,
-				data,
+				data: data,
 
-				success( response ) {
+				success: function ( response ) {
 					if ( response.success ) {
-						console.log( 'Weekly Report Email Notice Ignored.' );
+						window.location.href = response.data[ 'redirect_to' ];
 					}
 				},
 			} );
@@ -51,7 +40,6 @@
 	};
 
 	$( function () {
-		ignore_gb_notice();
-		dismiss_weekly_report_email_notice();
+		switch_to_new_ui();
 	} );
 } )( jQuery );

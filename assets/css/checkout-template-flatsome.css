@@ -7,128 +7,121 @@
 
 /* Basic */
 
-.absolute-footer,
-html {
-	background-color: unset;
-	font-family: inherit;
+.absolute-footer, html{
+    background-color: unset;
+    font-family: inherit;
 }
 
-body {
-	color: #404040;
-	font-family: inherit;
-	line-height: 1.5;
+body{
+    color: #404040;
+    font-family: inherit;
+    line-height: 1.5;
 }
 
-b,
-strong {
-	font-weight: 700;
+b, strong{
+    font-weight: bold;
 }
 
-.woocommerce-billing-fields {
-	padding-top: 0;
-	border-top: unset;
+.woocommerce-billing-fields{
+    padding-top: 0;
+    border-top: unset;
 }
 
-.button,
-button,
-input,
-textarea,
-select,
-fieldset {
-	margin-bottom: inherit;
+.button, button, input, textarea, select, fieldset{
+    margin-bottom:inherit;
 }
 
-.wcf-embed-checkout-form .woocommerce form .form-row input.input-text,
-.wcf-embed-checkout-form .woocommerce form .form-row textarea,
-.wcf-embed-checkout-form .woocommerce form .form-row select,
-.wcf-embed-checkout-form .woocommerce #order_review .input-text {
-	height: auto;
+.wcf-embed-checkout-form .woocommerce form .form-row input.input-text, 
+.wcf-embed-checkout-form .woocommerce form .form-row textarea, 
+.wcf-embed-checkout-form .woocommerce form .form-row select, 
+.wcf-embed-checkout-form .woocommerce #order_review .input-text{
+    height: auto;
 }
 
-#ship-to-different-address label {
-	font-weight: inherit;
+#ship-to-different-address label{
+    font-weight: inherit;
 }
 
 .shop_table tfoot th,
-th,
-td {
-	color: inherit;
-	font-size: inherit;
-	letter-spacing: inherit;
-	text-transform: inherit;
-	text-align: inherit;
+th, td{
+    color: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    text-align: inherit;
 }
-span.amount {
-	white-space: inherit;
-	color: inherit;
-	font-weight: inherit;
-}
-
-td.product-total,
-.shop_table tfoot tr td,
-.cart_totals tbody tr td,
-.shop_table thead tr th:last-of-type,
-.shop_table tr td:last-of-type {
-	text-align: inherit;
+span.amount{
+     white-space: inherit; 
+     color: inherit; 
+    font-weight: inherit;
 }
 
-.shipping__table--multiple th,
-.shipping__table--multiple td {
-	display: table-cell;
-	width: 50%;
+td.product-total, 
+.shop_table tfoot tr td, 
+.cart_totals tbody tr td, 
+.shop_table thead tr th:last-of-type, 
+.shop_table tr td:last-of-type{
+    text-align: inherit;
+}
+ 
+.shipping__table--multiple th, 
+.shipping__table--multiple td{
+    display: table-cell;
+    width: 50%;
 }
 
-.shipping__table--multiple {
-	display: block;
-	text-align: inherit;
+.shipping__table--multiple{
+    display: block;
+    text-align: inherit;
 }
 
-tr.shipping input:checked + label {
-	font-weight: 400;
+tr.shipping input:checked+label{
+    font-weight: normal;
 }
 
-.widget_shopping_cart_content .blockUI.blockOverlay::before,
-.woocommerce-checkout-review-order .blockUI.blockOverlay::before {
-	border-top: inherit !important;
-	border-right: inherit !important;
-	border-bottom: inherit !important;
-	border-left: inherit !important;
+.widget_shopping_cart_content .blockUI.blockOverlay::before, 
+.woocommerce-checkout-review-order .blockUI.blockOverlay::before{
+    border-top: inherit !important;
+    border-right: inherit !important;
+    border-bottom: inherit !important;
+    border-left: inherit !important;
 }
 
-label,
-legend {
-	color: inherit;
-	font-weight: inherit;
-	font-size: inherit;
+label, legend{
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
 }
 
-.payment_methods p {
-	font-size: inherit;
+.payment_methods p{
+    font-size: inherit;
 }
 
-.payment_methods li + li {
-	padding-top: 0;
-	border-top: unset;
+.payment_methods li+li {
+    padding-top: 0;
+    border-top: unset;
 }
 
-.wcf-embed-checkout-form .woocommerce-privacy-policy-text {
-	font-size: inherit;
+.wcf-embed-checkout-form  .woocommerce-privacy-policy-text{
+    font-size: inherit;
 }
 
-.wcf-embed-checkout-form .woocommerce-privacy-policy-text p {
-	color: #444;
-	font-family: inherit;
-	font-weight: inherit;
-	margin-top: 1rem;
+.wcf-embed-checkout-form .woocommerce-privacy-policy-text p{
+    color: #444;
+    font-family: inherit;
+    font-weight: inherit;
+    margin-top: 1rem;
+
 }
 
-.form-row .select2-container {
-	margin-bottom: inherit;
+.form-row .select2-container{
+    margin-bottom: inherit;
 }
 
-@media only screen and ( max-width: 768px ) {
-	#billing_address_2_field > label {
-		opacity: 1;
-		overflow: visible;
-	}
+@media only screen and (max-width: 768px) {
+
+    #billing_address_2_field>label{
+        opacity: 1;
+        overflow: visible;
+    }
 }

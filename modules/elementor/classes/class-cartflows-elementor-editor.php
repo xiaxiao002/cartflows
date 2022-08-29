@@ -96,9 +96,6 @@ class Cartflows_Elementor_Editor {
 	 */
 	public function before_checkout_shortcode_actions( $checkout_id ) {
 
-		// Added to modify the fields labels and placeholders to display it in the preview mode.
-		Cartflows_Checkout_Fields::get_instance()->checkout_field_actions();
-
 		do_action( 'cartflows_checkout_before_shortcode', $checkout_id );
 	}
 

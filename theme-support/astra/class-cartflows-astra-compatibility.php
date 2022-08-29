@@ -46,38 +46,7 @@ if ( ! class_exists( 'Cartflows_Astra_Compatibility' ) ) :
 			add_action( 'cartflows_optin_before_shortcode', array( $this, 'cartflows_theme_compatibility_astra' ) );
 
 			add_action( 'wp', array( $this, 'cartflows_load_wp_actions_for_astra' ), 56 );
-			add_action( 'wp', array( $this, 'cartflows_page_template_specific_action' ), 10 );
-
-			add_filter( 'astra_woo_shop_product_structure_override', array( $this, 'override_product_structure_on_checkout' ) );
-
-			add_action( 'cartflows_after_save_store_checkout', array( $this, 'clear_astra_woo_css_cache' ) );
-		}
-
-		/**
-		 * Clear theme cached CSS if required.
-		 */
-		public function clear_astra_woo_css_cache() {
-
-			// Clear Astra CSS cache for modern checkout.
-			if ( defined( 'ASTRA_THEME_VERSION' ) && function_exists( 'astra_clear_all_assets_cache' ) && is_callable( 'astra_clear_all_assets_cache' ) ) {
-				astra_clear_all_assets_cache();
-			}
-
-		}
-
-
-		/**
-		 * Override the Astra's actions only for the CF Checkout page to display.
-		 * Stripe/smart Payment buttons.
-		 *
-		 * @since 1.10.0
-		 *
-		 * @param bool $bool true/false to override actions or not.
-		 *
-		 * @return bool
-		 */
-		public function override_product_structure_on_checkout( $bool ) {
-			return _is_wcf_checkout_type() ? true : $bool;
+			add_action( 'wp', array( $this, 'remove_page_template_specific_action' ), 10 );
 		}
 
 
@@ -109,7 +78,7 @@ if ( ! class_exists( 'Cartflows_Astra_Compatibility' ) ) :
 		 *
 		 * @return void
 		 */
-		public function cartflows_page_template_specific_action() {
+		public function remove_page_template_specific_action() {
 
 			// Return if not the CartFlows page.
 			if ( ! wcf()->utils->is_step_post_type() ) {
@@ -120,23 +89,16 @@ if ( ! class_exists( 'Cartflows_Astra_Compatibility' ) ) :
 
 			if ( _wcf_supported_template( $page_template ) ) {
 
-				add_action( 'wp_enqueue_scripts', array( $this, 'gutenberg_block_color_support' ), 21 );
-
-				if ( class_exists( 'Astra_Builder_Header' ) ) {
-
-					$astra_builder_header = Astra_Builder_Header::get_instance();
-
-					remove_action( 'wp_footer', array( $astra_builder_header, 'mobile_popup' ) );
-					remove_action( 'wp_footer', array( $astra_builder_header, 'mobile_cart_flyout' ) );
+				if ( ! class_exists( 'Astra_Builder_Header' ) ) {
+					return;
 				}
 
-				// Removed the scroll to top button if template type is not default.
-				if ( class_exists( 'Astra_Ext_Scroll_To_Top_Markup' ) ) {
+				$astra_builder_header = Astra_Builder_Header::get_instance();
 
-					$astra_ext_scroll_to_top = Astra_Ext_Scroll_To_Top_Markup::get_instance();
-					remove_action( 'wp_footer', array( $astra_ext_scroll_to_top, 'html_markup_loader' ) );
-				}
+				remove_action( 'wp_footer', array( $astra_builder_header, 'mobile_popup' ) );
+				remove_action( 'wp_footer', array( $astra_builder_header, 'mobile_cart_flyout' ) );
 			}
+
 		}
 
 		/**
@@ -164,23 +126,6 @@ if ( ! class_exists( 'Cartflows_Astra_Compatibility' ) ) :
 			// Re-add the WooCommerce's styles & script swhich are form Astra.
 			$astra_woo = Astra_Woocommerce::get_instance();
 			add_filter( 'woocommerce_enqueue_styles', array( $astra_woo, 'woo_filter_style' ), 9999 );
-		}
-
-		/**
-		 * Function to add theme color on frontend.
-		 *
-		 * @since 1.10.0
-		 *
-		 * @return void
-		 */
-		public function gutenberg_block_color_support() {
-
-			if ( class_exists( 'Astra_Global_Palette' ) && function_exists( 'astra_parse_css' ) ) {
-
-				$palette_style[':root'] = Astra_Global_Palette::generate_global_palette_style();
-				$css                    = astra_parse_css( $palette_style );
-				wp_add_inline_style( 'wcf-normalize-frontend-global', $css );
-			}
 		}
 
 		/**

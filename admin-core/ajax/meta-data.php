@@ -63,7 +63,7 @@ class MetaData extends AjaxBase {
 	 */
 	public function json_search_products() {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -143,8 +143,6 @@ class MetaData extends AjaxBase {
 					'value'          => $product_object->get_id(),
 					'label'          => $formatted_name,
 					'original_price' => \Cartflows_Helper::get_product_original_price( $product_object ),
-					'product_name'   => $product_object->get_name(),
-					'product_desc'   => $product_object->get_short_description(),
 				)
 			);
 		}
@@ -158,7 +156,7 @@ class MetaData extends AjaxBase {
 	 */
 	public function json_search_coupons() {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

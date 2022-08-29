@@ -107,7 +107,7 @@ class Cartflows_Tracking {
 			$facebook_id = esc_attr( self::$fb_pixel_settings['facebook_pixel_id'] );
 			$fb_script   = "
 			<!-- Facebook Pixel Script By CartFlows -->
-
+			
 			<script type='text/javascript'>
 				!function(f,b,e,v,n,t,s)
 				{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -116,26 +116,24 @@ class Cartflows_Tracking {
 				n.queue=[];t=b.createElement(e);t.async=!0;
 				t.src=v;s=b.getElementsByTagName(e)[0];
 				s.parentNode.insertBefore(t,s)}(window, document,'script',
-				'https://connect.facebook.net/en_US/fbevents.js');
+				'https://connect.facebook.net/en_US/fbevents.js');	
 			</script>
-
+			
 			<noscript>
 				<img height='1' width='1' style='display:none' src='https://www.facebook.com/tr?id=" . esc_js( $facebook_id ) . "&ev=PageView&noscript=1'/>
 			</noscript>
-
+				
 			<script type='text/javascript'>
 				fbq('init', " . esc_js( $facebook_id ) . ");
 				fbq('track', 'PageView', {'plugin': 'CartFlows'});
 			</script>
-
+			
 			<!-- End Facebook Pixel Script By CartFlows -->";
 
 			if ( 'enable' === self::$fb_pixel_settings['facebook_pixel_tracking_for_site'] ) {
 				echo $fb_script;
-				$this->trigger_viewcontent_events();
 			} elseif ( wcf()->utils->is_step_post_type() ) {
 				echo $fb_script;
-				$this->trigger_viewcontent_events();
 			}
 
 			// Trigger other events on CartFlows pages only.
@@ -143,25 +141,6 @@ class Cartflows_Tracking {
 				$this->trigger_other_fb_events();
 			}
 		}
-	}
-
-	/**
-	 * Trigger the View Content events for facebook pixel.
-	 */
-	public function trigger_viewcontent_events() {
-
-		$event_script = '';
-
-		// Check if ViewContent is enable or disable.
-		if ( 'enable' === self::$fb_pixel_settings['facebook_pixel_view_content'] ) {
-			$view_content  = wp_json_encode( $this->prepare_viewcontent_data_fb_response() );
-			$event_script .= "
-			<script type='text/javascript'>
-				fbq( 'track', 'ViewContent', $view_content );
-			</script>";
-		}
-
-		echo $event_script;
 	}
 
 	/**
@@ -220,13 +199,6 @@ class Cartflows_Tracking {
 			return $purchase_data;
 		}
 
-		// Do not trigger purchase event if it is optin.
-		$is_optin = $order->get_meta( '_wcf_optin_id' );
-
-		if ( $is_optin ) {
-			return $purchase_data;
-		}
-
 		$purchase_data['transaction_id'] = $order_id;
 		$purchase_data['content_type']   = 'product';
 		$purchase_data['currency']       = wcf()->options->get_checkout_meta_value( $order_id, '_order_currency' );
@@ -262,7 +234,7 @@ class Cartflows_Tracking {
 			return $params;
 		}
 
-		$cart_total       = self::format_number( WC()->cart->cart_contents_total + WC()->cart->tax_total );
+		$cart_total       = self::format_number( WC()->cart->subtotal );
 		$cart_items_count = WC()->cart->get_cart_contents_count();
 		$items            = WC()->cart->get_cart();
 
@@ -283,42 +255,6 @@ class Cartflows_Tracking {
 			$params['domain']    = get_site_url();
 			$params['language']  = get_bloginfo( 'language' );
 			$params['userAgent']          = wp_unslash( $_SERVER['HTTP_USER_AGENT'] ); //phpcs:ignore
-		}
-
-		return $params;
-	}
-
-	/**
-	 * Prepare view content data for fb response.
-	 *
-	 * @return array
-	 */
-	public function prepare_viewcontent_data_fb_response() {
-		global $post, $wcf_step;
-
-		$params = array();
-
-		// Page Title.
-		$step_id                = ( $wcf_step ) ? ( $wcf_step->get_current_step() ) : ( get_the_ID() );
-		$params['content_name'] = get_post_field( 'post_title', $step_id );
-
-		// Checkout Page View Content Data.
-		if ( wcf()->is_woo_active ) {
-
-			if ( _is_wcf_checkout_type() ) {
-				$cart_total   = self::format_number( WC()->cart->cart_contents_total + WC()->cart->tax_total );
-				$items        = WC()->cart->get_cart();
-				$product_data = $this->get_required_product_data_for_fb( $items );
-
-				$params['content_ids']  = $product_data['content_ids'];
-				$params['currency']     = get_woocommerce_currency();
-				$params['value']        = $cart_total;
-				$params['content_type'] = 'product';
-				$params['contents']     = wp_json_encode( $product_data['cart_contents'] );
-			}
-
-			// Added filter for offer pages  view content event compatibility.
-			$params = apply_filters( 'cartflows_view_content_offer', $params, $step_id );
 		}
 
 		return $params;
@@ -384,14 +320,14 @@ class Cartflows_Tracking {
 			$ga_script =
 			'<!-- Google Analytics Script By CartFlows start-->
 				<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_js( $ga_tracking_id ) . '"></script>
-
+				
 				<script>
 					window.dataLayer = window.dataLayer || [];
 					function gtag(){dataLayer.push(arguments);}
 					gtag( "js", new Date() );
 					gtag("config","' . esc_js( $ga_tracking_id ) . '");
 				</script>
-
+				
 			<!-- Google Analytics Script By CartFlows -->
 			';
 
@@ -460,74 +396,6 @@ class Cartflows_Tracking {
 	}
 
 	/**
-	 * Set cookies to send ga data.
-	 *
-	 * @todo Need to remove this function in CartFlows 1.6.18 update.
-	 * @param int   $order_id order id.
-	 * @param array $offer_data offer product data.
-	 */
-	public static function send_ga_data_if_enabled( $order_id, $offer_data = array() ) {
-
-		_deprecated_function( __METHOD__, '1.6.15' );
-
-		// For backword compatibility we are sending the offer purchase detailsarray, so no error occur at frontend & purchase event called one time only.
-		// Need to delete this function in update 1.6.18.
-
-		if ( 'enable' === self::$ga_settings['enable_google_analytics'] && 'enable' === self::$ga_settings['enable_purchase_event'] ) {
-
-			setcookie( 'wcf_ga_trans_data', wp_json_encode( self::get_ga_offer_purchase_transactions_data( $order_id, $offer_data ) ), strtotime( '+1 year' ), '/' );
-		}
-	}
-
-	/**
-	 * Prepare the offer purchase event data for the facebook pixel.
-	 *
-	 * @todo Remove this function after 3 update. Added for backword compatibility.
-	 * @since 1.6.15
-	 * @param integer $order_id order id.
-	 * @param array   $offer_data offer data.
-	 */
-	public static function get_ga_offer_purchase_transactions_data( $order_id, $offer_data ) {
-
-		$purchase_data = array();
-
-		if ( empty( $offer_data ) ) {
-			return $purchase_data;
-		}
-
-		$order = wc_get_order( $order_id );
-
-		if ( ! $order ) {
-			return $purchase_data;
-		}
-
-		$ga_tracking_id = esc_attr( self::$ga_settings['google_analytics_id'] );
-
-		$purchase_data = array(
-			'send_to'         => $ga_tracking_id,
-			'event_category'  => 'Enhanced-Ecommerce',
-			'transaction_id'  => $order_id,
-			'affiliation'     => get_bloginfo( 'name' ),
-			'value'           => self::format_number( $offer_data['total'] ),
-			'currency'        => wcf()->options->get_checkout_meta_value( $order_id, '_order_currency' ),
-			'shipping'        => $offer_data['shipping_fee_tax'],
-			'tax'             => self::format_number( ( $offer_data['shipping_fee_tax'] - $offer_data['shipping_fee'] ) + ( $offer_data['qty'] * ( $offer_data['unit_price_tax'] - intval( $offer_data['unit_price'] ) ) ) ),
-			'items'           => array(
-				array(
-					'id'       => $offer_data['id'],
-					'name'     => $offer_data['name'],
-					'quantity' => $offer_data['qty'],
-					'price'    => self::format_number( $offer_data['unit_price_tax'] ),
-				),
-			),
-			'non_interaction' => true,
-		);
-
-		return $purchase_data;
-	}
-
-
-	/**
 	 * Prepare cart data for GA response.
 	 *
 	 * @param int $order_id order id.
@@ -587,7 +455,7 @@ class Cartflows_Tracking {
 			return $cart_data;
 		}
 
-		$items = WC()->cart->get_cart();
+		$items = WC()->cart->get_cart_contents();
 
 		$items_data = $this->get_required_product_data_for_ga( $items );
 
@@ -596,7 +464,7 @@ class Cartflows_Tracking {
 			'event_category'  => 'Enhanced-Ecommerce',
 			'currency'        => get_woocommerce_currency(),
 			'coupon'          => WC()->cart->get_applied_coupons(),
-			'value'           => self::format_number( WC()->cart->cart_contents_total + WC()->cart->tax_total ),
+			'value'           => self::format_number( WC()->cart->subtotal ),
 			'items'           => $items_data,
 			'non_interaction' => true,
 		);
@@ -632,7 +500,7 @@ class Cartflows_Tracking {
 						'name'     => $product_obj->get_name(),
 						'sku'      => $product_obj->get_sku(),
 						'category' => wp_strip_all_tags( wc_get_product_category_list( $product_obj->get_id() ) ),
-						'price'    => self::format_number( $value['line_subtotal'] + $value['line_subtotal_tax'] ),
+						'price'    => ! is_null( $value['data'] ) ? (float) wc_get_price_to_display( $value['data'], array( 'qty' => 1 ) ) : 0,
 						'quantity' => $value['quantity'],
 					);
 

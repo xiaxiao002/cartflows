@@ -286,14 +286,6 @@ if ( ! class_exists( 'WCFB_Optin_Form' ) ) {
 					'type'    => 'string',
 					'default' => 'outset',
 				),
-				'input_skins' => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'deviceType'       => array(
-					'type'    => 'string',
-					'default' => 'Desktop',
-				),
 			);
 
 			$attributes = apply_filters( 'cartflows_gutenberg_optin_attributes_filters', $attr );
@@ -364,35 +356,6 @@ if ( ! class_exists( 'WCFB_Optin_Form' ) ) {
 			$classes = array(
 				'wpcf__optin-form',
 			);
-
-			$optin_fields = array(
-
-				// Input Fields.
-				array(
-					'filter_slug'  => 'wcf-input-fields-skins',
-					'setting_name' => 'input_skins',
-				),
-			);
-
-			if ( isset( $optin_fields ) && is_array( $optin_fields ) ) {
-
-				foreach ( $optin_fields as $key => $field ) {
-
-					$setting_name = $field['setting_name'];
-
-					add_filter(
-						'cartflows_optin_meta_' . $field['filter_slug'],
-						function ( $value ) use ( $setting_name, $attributes ) {
-
-							$value = $attributes[ $setting_name ];
-
-							return $value;
-						},
-						10,
-						1
-					);
-				}
-			}
 
 			do_action( 'cartflows_gutenberg_optin_options_filters', $attributes );
 

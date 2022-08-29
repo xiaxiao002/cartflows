@@ -150,31 +150,6 @@ class Cartflows_Helper {
 	}
 
 	/**
-	 * This function retrieves global option from database
-	 *
-	 * @param string $key option meta_key.
-	 * @return mixed
-	 * @since X.X.X
-	 */
-	public static function get_global_setting( $key ) {
-		$default_global = apply_filters(
-			'cartflows_global_settings_default',
-			array(
-				'_cartflows_store_checkout' => false,
-			)
-		);
-
-		$value = get_option( $key, false );
-
-		if ( empty( $value ) && isset( $default_global[ $key ] ) ) {
-			$value = $default_global[ $key ];
-		}
-
-		return $value;
-
-	}
-
-	/**
 	 * Get single debug options
 	 *
 	 * @since 1.1.4
@@ -405,8 +380,8 @@ class Cartflows_Helper {
 			$permalink_default = apply_filters(
 				'cartflows_permalink_settings_default',
 				array(
-					'permalink'           => CARTFLOWS_STEP_PERMALINK_SLUG,
-					'permalink_flow_base' => CARTFLOWS_FLOW_PERMALINK_SLUG,
+					'permalink'           => CARTFLOWS_STEP_POST_TYPE,
+					'permalink_flow_base' => CARTFLOWS_FLOW_POST_TYPE,
 					'permalink_structure' => '',
 
 				)
@@ -442,11 +417,10 @@ class Cartflows_Helper {
 					'enable_google_analytics'          => 'disable',
 					'enable_google_analytics_for_site' => 'disable',
 					'google_analytics_id'              => '',
-					'enable_begin_checkout'            => 'enable',
-					'enable_add_to_cart'               => 'enable',
-					'enable_optin_lead'                => 'enable',
-					'enable_add_payment_info'          => 'enable',
-					'enable_purchase_event'            => 'enable',
+					'enable_begin_checkout'            => 'disable',
+					'enable_add_to_cart'               => 'disable',
+					'enable_add_payment_info'          => 'disable',
+					'enable_purchase_event'            => 'disable',
 				)
 			);
 
@@ -522,79 +496,6 @@ class Cartflows_Helper {
 		}
 
 		return self::$checkout_fields;
-	}
-
-	/**
-	 * Get Optin fields.
-	 *
-	 * @return array.
-	 */
-	public static function get_optin_default_fields() {
-
-		$optin_fields = array(
-			'billing_first_name' => array(
-				'label'        => __( 'First name', 'cartflows' ),
-				'required'     => true,
-				'class'        => array(
-					'form-row-first',
-				),
-				'autocomplete' => 'given-name',
-				'priority'     => 10,
-			),
-			'billing_last_name'  => array(
-				'label'        => __( 'Last name', 'cartflows' ),
-				'required'     => true,
-				'class'        => array(
-					'form-row-last',
-				),
-				'autocomplete' => 'family-name',
-				'priority'     => 20,
-			),
-			'billing_email'      => array(
-				'label'        => __( 'Email address', 'cartflows' ),
-				'required'     => true,
-				'type'         => 'email',
-				'class'        => array(
-					'form-row-wide',
-				),
-				'validate'     => array(
-					'email',
-				),
-				'autocomplete' => 'email username',
-				'priority'     => 30,
-			),
-		);
-
-		return $optin_fields;
-	}
-
-	/**
-	 * Get Optin field.
-	 *
-	 * @param string $key Field key.
-	 * @param int    $post_id Post id.
-	 * @return array.
-	 */
-	public static function get_optin_fields( $key, $post_id ) {
-
-		$saved_fields = get_post_meta( $post_id, 'wcf_fields_' . $key, true );
-
-		if ( ! $saved_fields ) {
-			$saved_fields = array();
-		}
-
-		$fields = array_filter( $saved_fields );
-
-		if ( empty( $fields ) ) {
-			if ( 'billing' === $key ) {
-
-				$fields = self::get_optin_default_fields();
-
-				update_post_meta( $post_id, 'wcf_fields_' . $key, $fields );
-			}
-		}
-
-		return $fields;
 	}
 
 	/**
@@ -724,12 +625,10 @@ class Cartflows_Helper {
 
 			$facebook_default = array(
 				'facebook_pixel_id'                => '',
-				'facebook_pixel_view_content'      => 'enable',
 				'facebook_pixel_add_to_cart'       => 'enable',
 				'facebook_pixel_initiate_checkout' => 'enable',
 				'facebook_pixel_add_payment_info'  => 'enable',
 				'facebook_pixel_purchase_complete' => 'enable',
-				'facebook_pixel_optin_lead'        => 'enable',
 				'facebook_pixel_tracking'          => 'disable',
 				'facebook_pixel_tracking_for_site' => 'disable',
 			);
@@ -1009,37 +908,48 @@ class Cartflows_Helper {
 	 * Get flow and steps
 	 *
 	 * @since 1.6.15
-	 *
 	 * @param  string $page_builder_slug Page builder slug.
-	 * @param string $templates templates category to fetch.
-	 *
 	 * @return array
 	 */
-	public function get_flows_and_steps( $page_builder_slug = '', $templates = '' ) {
+	public function get_flows_and_steps( $page_builder_slug = '' ) {
 		$page_builder_slug = ( ! empty( $page_builder_slug ) ) ? $page_builder_slug : wcf()->get_site_slug();
 
-		$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
-
-		$pages_count = get_site_option( 'cartflows-' . $suffix . $page_builder_slug . '-requests', 0 );
+		$pages_count = get_site_option( 'cartflows-' . $page_builder_slug . '-requests', 0 );
 
 		$flows = array();
 		if ( $pages_count ) {
 			for ( $page_no = 1; $page_no <= $pages_count; $page_no++ ) {
 
-				$data = (array) get_site_option( 'cartflows-' . $suffix . $page_builder_slug . '-flows-and-steps-' . $page_no, array() );
+				$data = (array) get_site_option( 'cartflows-' . $page_builder_slug . '-flows-and-steps-' . $page_no, array() );
 
 				if ( ! empty( $data ) ) {
 					foreach ( $data as $key => $flow ) {
 						$flows[] = $flow;
 					}
-				} else {
-					// Return store templates from JSON files if no data found.
-					$flows = $this->get_stored_page_builder_templates( $page_builder_slug );
 				}
 			}
 		} else {
 			// All flows.
-			$flows = $this->get_stored_page_builder_templates( $page_builder_slug );
+			$dir        = CARTFLOWS_DIR . 'admin-core/assets/importer-data';
+			$list_files = \list_files( $dir );
+			if ( ! empty( $list_files ) ) {
+				$list_files = array_map( 'basename', $list_files );
+				foreach ( $list_files as $file_key => $file_name ) {
+					if ( false !== strpos( $file_name, 'cartflows-' . $page_builder_slug . '-flows-and-steps' ) ) {
+						$data = json_decode( file_get_contents( $dir . '/' . $file_name ), true ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+						if ( ! empty( $data ) ) {
+							/*
+							Commented.
+								// $option_name = str_replace( '.json', '', $file_name );
+								// update_site_option( $option_name, json_decode( $data, true ) );
+							*/
+							foreach ( $data as $key => $flow ) {
+								$flows[] = $flow;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return $flows;
@@ -1127,12 +1037,8 @@ class Cartflows_Helper {
 
 					foreach ( $product_childrens  as $c_in => $c_id ) {
 
-						$_child_product = wc_get_product( $c_id );
-
-						if ( $_child_product->is_in_stock() && 'publish' === $_child_product->get_status() ) {
-							$product_id = $c_id;
-							break;
-						}
+						$product_id = $c_id;
+						break;
 					}
 				} else {
 
@@ -1150,74 +1056,5 @@ class Cartflows_Helper {
 
 		return $custom_price;
 	}
-
-	/**
-	 * Get flows from json files.
-	 *
-	 * @param string $page_builder_slug Selected page builder slug.
-	 */
-	public function get_stored_page_builder_templates( $page_builder_slug ) {
-		$flows = array();
-
-		$dir        = CARTFLOWS_DIR . 'admin-core/assets/importer-data';
-		$list_files = \list_files( $dir );
-		if ( ! empty( $list_files ) ) {
-			$list_files = array_map( 'basename', $list_files );
-			foreach ( $list_files as $file_key => $file_name ) {
-				if ( false !== strpos( $file_name, 'cartflows-' . $page_builder_slug . '-flows-and-steps' ) ) {
-					$data = json_decode( file_get_contents( $dir . '/' . $file_name ), true ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-					if ( ! empty( $data ) ) {
-						/*
-						Commented.
-							// $option_name = str_replace( '.json', '', $file_name );
-							// update_site_option( $option_name, json_decode( $data, true ) );
-						*/
-						foreach ( $data as $key => $flow ) {
-							$flows[] = $flow;
-						}
-					}
-				}
-			}
-		}
-
-		return $flows;
-
-	}
-
-	/**
-	 * Get meta keys to exclude.
-	 *
-	 * @param int $step_id post id.
-	 */
-	public function get_meta_keys_to_exclude_from_import( $step_id = 0 ) {
-
-		$meta_keys = array(
-			'_wp_old_slug',
-			'wcf-checkout-products',
-			'wcf-optin-product',
-			'wcf-testing',
-		);
-
-		if ( $step_id && 'yes' === get_post_meta( $step_id, 'cartflows_imported_step', true ) ) {
-
-			$meta_keys = array_merge(
-				$meta_keys,
-				array(
-					'wcf_fields_billing',
-					'wcf_fields_shipping',
-				)
-			);
-		}
-
-		return apply_filters(
-			'cartflows_admin_exclude_import_meta_keys',
-			$meta_keys
-		);
-
-	}
-
-
-
-
 }
 

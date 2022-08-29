@@ -38,8 +38,6 @@ class CartFlows_Importer_Elementor extends Source_Local {
 	 */
 	public function import_single_template( $post_id ) {
 
-		do_action( 'cartflows_before_elementor_import_single_template' );
-
 		$rest_content = get_post_meta( $post_id, '_elementor_data', true );
 
 		if ( empty( $rest_content ) ) {
@@ -68,11 +66,6 @@ class CartFlows_Importer_Elementor extends Source_Local {
 
 			// Import the data.
 			$content = $this->process_export_import_content( $content, 'on_import' );
-
-			// Serialize the array if found.
-			if ( is_array( $content ) ) {
-				$content = wp_slash( wp_json_encode( $content ) );
-			}
 
 			// Update content.
 			update_metadata( 'post', $post_id, '_elementor_data', $content );

@@ -127,7 +127,7 @@ if ( ! class_exists( 'CartFlows_API' ) ) :
 			);
 
 			$url = add_query_arg( $request_params, self::get_flow_endpoint_url() . $site_id );
-			wcf()->logger->import_log( PHP_EOL . 'Template Import URL: ' . $url . PHP_EOL );
+			wcf()->logger->import_log( $url );
 
 			$api_args = array(
 				'timeout' => 15,

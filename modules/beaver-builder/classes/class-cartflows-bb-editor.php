@@ -63,8 +63,6 @@ class Cartflows_BB_Editor {
 			/* Thank you filters. */
 			add_filter( 'cartflows_show_demo_order_details', '__return_true' );
 
-			add_action( 'cartflows_bb_before_checkout_shortcode', array( $this, 'before_checkout_shortcode_actions' ), 10, 2 );
-
 			add_action(
 				'wp_head',
 				function() {
@@ -83,19 +81,6 @@ class Cartflows_BB_Editor {
 			);
 
 		}
-	}
-
-		/**
-		 * Before checkout shortcode actions.
-		 *
-		 * @param int $checkout_id checkout id.
-		 */
-	public function before_checkout_shortcode_actions( $checkout_id ) {
-
-		// Added to modify the fields labels and placeholders to display it in the preview mode.
-		Cartflows_Checkout_Fields::get_instance()->checkout_field_actions();
-
-		do_action( 'cartflows_checkout_before_shortcode', $checkout_id );
 	}
 
 }

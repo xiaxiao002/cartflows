@@ -116,7 +116,7 @@ class ProductData extends ApiBase {
 	 */
 	public function get_item_permissions_check( $request ) {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return new \WP_Error( 'cartflows_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'cartflows' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 

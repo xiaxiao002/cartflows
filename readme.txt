@@ -1,236 +1,89 @@
-=== WooCommerce Checkout & Funnel Builder by CartFlows – Create High Converting Stores For WooCommerce ===
+=== Funnel Builder by CartFlows - Create High Converting Sales Funnels For WordPress ===
 Contributors: sujaypawar, wpcrafter
 Tags: woocommerce, funnel builder, sales funnels, elementor, beaver builder
 Requires at least: 5.4
-Tested up to: 6.0
-Stable tag: 1.10.4
+Tested up to: 5.9
+Stable tag: 1.8.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WooCommerce checkout & funnel builder to boost conversion and revenue with beautiful and optimized checkout pages & funnels.
+Create beautiful checkout pages & sales flows for WooCommerce.
 
 == Description ==
 
-**#1 WooCommerce Checkout & Funnel Builder For WooCommerce**
+**#1 Funnel Builder For WordPress**
 ★★★★★<br>
 
-More WooCommerce store owners choose CartFlows than all other checkout options combined. Why? Because CartFlows helps WooCommerce stores sell more! Being free probably helps too!
-
-We created CartFlows to make it simple for busy store owners to increase WooCommerce checkout conversions with just a few minutes of effort. You also can create unlimited sales funnels to increase your stores AOV (Average Order Value).
+**Funnels are the most effective way to sell products & services.** We created CartFlows, a <a href="https://cartflows.com" target="_blank">**WordPress Funnel Builder**</a>, to help every website owner get more leads, increase conversions, & maximize profits.
 
 [youtube https://www.youtube.com/watch?v=5iFv9Pxwgx0]
 
-## Why Upgrade Your WooCommerce Checkout? ##
+Turn your WooCommerce website into a selling machine using one-click sales funnels with frictionless checkout, custom thank you pages, global checkout replacement, and more…
 
-The easier it is to do something, the more likely people are to do it. That’s the philosophy behind CartFlows. To make it easy for you to streamline store checkout which, in turn, makes it easy for customers to make a purchase.
+CartFlows is the best and easiest way to sell products and services on your website. With our library of done for you, one-click sales funnels, that literally sell your products and services for you.
 
-Lets face it, the default WooCommerce checkout doesn’t cut it anymore (if it ever did). You can end up losing sales because there are too many distractions, too much manual effort for the buyer and it just doesn’t flow well.
+## CARTFLOWS IS PERFECT FOR ##
 
-Over the years, we’ve noted repeating trends of what works and what doesn’t for WooCommerce checkouts and the broader eCommerce industry.
+* **Selling Online Courses**
+* **Selling Event Tickets**
+* **Selling Services**
+* **Selling Info Product**
+* **Selling Physical Products**
+* **Selling Via Dropshipping**
+* **Selling Anything Really**
 
-Everything we learned has been combined into a single, easy-to-use WooCommerce checkout replacement that can improve store conversions with just a few minutes of effort. We call it Modern Checkout.
+CartFlows is the perfect <a href="https://cartflows.com/clickfunnels-alternative" target="_blank">ClickFunnels Alternative</a> because its built on the worlds most open platform, WordPress.
 
-## Modern Checkout For Conversions ##
+###  CARTFLOWS GAME-CHANGING FEATURES ###
 
-Introducing a new checkout experience that outperforms the default WooCommerce checkout in every way.
+See the features that make CartFlows the **Best Funnel Builder for WordPress**.
 
-* Fresh new modern look and feel
-* Fast, frictionless checkout for your customers
-* Optimized to get you more conversions
-
-Lets go over each of these WooCommerce checkout improvements one by one:
-
-* **Express checkout** – Skip the forms. Let users pay using their preferred payment gateways that directly integrate with CartFlows.
-* **Single or two column layouts** – Gain greater control with our layout options. Have two columns like most stores or a single column if you want to add more content such as testimonials, guarantees and FAQs.
-* **Real-time email validation** – Check if the account exists as your customer begins typing their email address. If it does, the password field is automatically displayed. If not, customers can check a box and their checkout details can be used to create their user account!
-* **Google address autocomplete** – The address field displays address suggestions as your customers begin typing. Once they select an address, the rest of the fields are auto-filled.
-* **New field interactions** – Have a more compact field layout by placing the labels in the field with an elegant animation as the buyer starts inputting their data.
-* **Field manager** – Add, remove, and reorder fields on your checkout page easily with the Modern Checkout layout.
-* **Coupon box control** – We have moved the coupon box to a better location and provided the option to display it collapsed or hide it altogether.
-* **Order button control** – You can customize the text of the order button and optionally show a padlock and the order total inside the button.
-* **Order summary box** – As a customer fills out the order, the order summary will follow them. And even better, on mobile it will display collapsed.
-* **Modern skeleton loader** – With WooCommerce customers see a spinning wheel when they change anything related to the order. It has a really dated look. We fixed it with a modern skeleton loader that is absolutely gorgeous.
-
-We want your WooCommerce store to be more profitable than ever, so we are giving you all the above for free.
-
-But that’s not all, you can also create high converting sales funnels with our WooCommerce sales funnel builder.
-
-## Why Are Sales Funnels Important? ##
-
-You might not realize it, but if you have purchased anything online, you have gone through a sales funnel. They are used in almost every online store you have likely ever visited.
-
-Visit Apple’s website. Did you see a shop page and product pages that all look the same, then a checkout? No you didn’t because Apple uses dedicated sales funnels for each of their products.
-
-Funnels guide customers step-by-step through the buying or lead generation process. What you want the customer to do at the end may be different, but how you get them there is exactly the same.
-
-You may want them to download an eBook, purchase a product, schedule a call, or buy a service, whatever is most relevant to your business.
-
-A properly optimized funnel helps users make the journey from being a prospect to a lead or customer, without any distractions. All so you can generate higher ROI and increased profits.
-
-Major reasons to have an optimized funnel on your website or online store include:
-
-* **Increased average order value:** Increase the average order value (AOV) in your online store with upsells or order bumps.
-* **Optimized for conversions:** Get more conversions with CartFlows’ optimized checkout pages designed for a better user experience and higher conversions.
-* **Better return on investment:** Gain higher returns from your marketing or advertising spend with higher AOVs and conversions.
-
-## Why Use CartFlows? ##
-
-CartFlows is an all-in-one funnel builder and WooCommerce checkout replacement that is trusted and used by 250,000+ websites. It offers a library of readymade, one-click templates that sell your products and services for you!
-
-With a huge list of features and free addons, it is a complete package that enables your website to start making money on autopilot.
-
-## CartFlows Features ##
-
-These are just some of the features that make CartFlows the best funnel builder for WooCommerce.
-
-* **Ready to import checkout templates:**
-Choose from a wide variety of high conversion templates for every use case. You can add a professionally crafted, multi-step funnel with one click, or you can build your own funnel and choose individual elements.
+* **Ready to Import Templates:**
+Choose from a wide variety of high converting templates. You can add a professionally crafted, multistep funnel, with one mouse click or you can build your own funnel and choose individual templates.
 
 * **Use Your Page Builder:**
 CartFlows will work with all popular page builders. We offer templates for Beaver Builder, Elementor, Divi, Gutenberg & Thrive Architect. However, you can use CartFlows with your own templates and your own builder.
 
-* **Use your page builder:**
-CartFlows works with popular page builders. We provide templates for Elementor, Beaver Builder, Divi, Gutenberg and Thrive Architect. You can also use CartFlows with your own templates and your own builder too.
+* **Conversion Tested Checkout:**
+CartFlows replaces your complicated checkout process with our optimized checkout that instantly increases conversions, making you more money.
 
-* **Conversion tested WooCommerce checkout:**
-CartFlows replaces the complicated default checkout with an optimized version that can instantly increase conversions, helping you make more money.
+* **Custom Next Step Thank You Pages:**
+Your buyer's journey doesn't end after checkout. With CartFlows and our custom thank you page feature, you can guild your new customer on their next steps.
 
-* **Custom WooCommerce thank you pages:**
-The customer journey doesn't end after checkout. Create a custom thank you page that guides the customer with the next steps in engagement after the sale.
+* **WooCommerce Checkout Page Replacement**
+Say goodbye to using the same ridged checkout page that everyone else is using. Create the perfect WooCommerce checkout page and assign it to be the default WooCommerce checkout template.
 
-* **WooCommerce checkout page replacement:**
-Say goodbye to using the same checkout page that everyone else is using. Create the perfect WooCommerce checkout page and replace the default page with ease.
+### Why is CartFlows such a game-changer? ###
 
-* **Conversion insights:**
-Make informed decisions based on real-time data to prevent issues and optimize funnels. Insights will help you grow your revenue and ensure that your funnels continue to make money on autopilot.
+* **Sales Funnel Tools Are Expensive** — Most sales funnel tools carry a hefty monthly fee from $97 - $297 per month, and they are worth every penny because funnels work. With CartFlows you can unleash the power of funnels for free.
 
-* **WooCommerce Facebook Pixel integration:**
-Add Facebook Pixel to your sales funnels to track ROI from your Facebook ads. Get insights into how you can further optimize your funnels and ads to get maximum results.
+* **Sales Funnel Tools Are Complicated** — Most sales funnel tools are frustrating to use. You are stuck using their clunky page builder and have to go through an entirely new learning curve. Who has time for that? With CartFlows you will feel right at home.
 
-* **Modern Checkout:**
-Replace the default WooCommerce checkout with Modern Checkout by CartFlows. Deliver a better user experience and a faster and optimized checkout to help boost conversions and reduce cart abandonment
+* **Sales Funnel Tools Are Closed** — Perhaps the worst part of using other funnel builder tools is they are based on a closed platform that limits you in every way. CartFlows is open and sits on top of WordPress and WooCommerce.
 
-* **Cart abandonment recovery (Free addon):**
-A free plugin that helps you track cart abandonment and recover lost revenue on autopilot. The plugin works perfectly with CartFlows so you can easily recover abandoned carts and any revenue that would otherwise have been lost.
+* **Sales Funnel Tools Lock You In** — We believe in using a platform where everything is on your domain, and you control all your data. CartFlows puts you in control and in the driver's seat.
 
-* **Checkout plugins (Free addon):**
-A free checkout plugin for WooCommerce by CartFlows so you have a better payment gateway on your eCommerce website. With this plugin, you can deliver a faster and frictionless payment process experience with features like express checkout.
+### Who Can Benefit From CartFlows? ###
 
-## Why Is Cartflows Such a Game-Changer? ##
-
-* **Sales Funnel Tools Are Expensive** — Most sales funnel tools carry a hefty fee, from $97 – $297 per month. They are worth every penny because funnels work, but that’s a lot of money. With CartFlows you can unleash the power of funnels for free.
-
-* **Sales funnel tools are complicated** — Feel right at home with CartFlows. It integrates with the major page builders so there’s no learning curve. You can get started immediately using the CartFlows with your favorite page builder and design perfect landing pages with ease!
-
-* **Sales funnel tools are closed** — Perhaps the worst part of using other funnel builder tools is they are based on a closed platform that limits you in every way. CartFlows is open and sits on top of WordPress and WooCommerce.
-
-* **Sales funnel tools lock you in** — We believe in using a platform where everything is on your domain and you control all your data. With CartFlows, you own your data as it’s stored on your web host.
-
-## When To Use Cartflows ##
-
-* **Selling physical products**
-* **Selling online courses**
-* **Selling event tickets**
-* **Selling services**
-* **Selling digital products**
-* **Selling via dropshipping**
-* **Selling anything really**
-* **Lead generation**
-
-CartFlows is the perfect <a href="https://cartflows.com/clickfunnels-alternative" target="_blank">ClickFunnels Alternative</a> because it’s built on the world’s most open platform, WordPress.
-
-## Who Should Use CartFlows? ##
-
-Anyone who has a WooCommerce website or wants to generate leads should use CartFlows.
-
-The CartFlows funnel builder plugin is a *must-have for any WooCommerce store.*
-
-It is perfect for:
-✔ eCommerce store owners
-✔ Course creators
-✔ Event organizers
+#### CartFlows Funnel Builder Plugin is perfect for: ####
+✔ Bloggers
+✔ Course Creators
 ✔ Coaches / Trainers
 ✔ Dropshippers
-✔ Bloggers
-✔ Niche sites
+✔ eCommerce Store Owners
+✔ Niche Sites
 ✔ Businesses
-✔ Local businesses
+✔ Local Businesses
 ✔ Startups
-✔ Personal brands
-✔ Real estate agents
-✔ Artists and photographers
-
-## CartFlows Pro Features: Take Your Business to New Heights ##
-
-**WooCommerce one-click upsell**
-Easily add one-click upsell offers to your online store and encourage customers to buy more and increase average order value.
-
-**WooCommerce one-click order bumps**
-Show single or multiple one-click order bump offers on the checkout page to boost sales while customers are in the right frame of mind.
-
-**Dynamic "smart" offers**
-Show customers upsell and order bump offers based on what you know about them. Set conditions to show the right offer at the right time and increase conversion rates.
-
-**Canvas Mode**
-See your entire funnel in a visualized view to better understand the entire customer journey through the funnel.
-
-**A/B split testing**
-Create funnel variations to test and improve their performance. Use data to drive steady improvement for higher conversion rates.
-
-## CartFlows Integrations ##
-
-### Page Builders ###
-CartFlows works with all WordPress page builders, including:
-* Elementor
-* Beaver Builder
-* Brizy Builder
-* Divi Builder
-* Thrive Architect
-* Gutenberg
-* Spectra Website Builder
-* Oxygen Builder
-* Bricks Builder
-* And others
-
-### WooCommerce Themes ###
-CartFlows works with any theme that is compatible with WooCommerce, including:
-* Astra
-* Avada
-* Blocksy
-* Divi
-* Flatsome
-* GeneratePress
-* Hello Elementor
-* Hestia
-* Kadence
-* Neve
-* OceanWP
-* Phlox – by Averta
-* PopularFX – by Pagelayer
-* Storefront
-* Woostify
-* Zakra
-
-### WordPress Plugins ###
-CartFlows works with any plugin that is compatible with WooCommerce, including:
-* Ultimate Addons for Elementor
-* LearnDash
-* AliDropship
-* AffiliateWP
-* TutorLMS
-* LifterLMS
-* WooFunnels
-* LearnPress
-* WooCommerce Stripe Payment Gateway
-* WooCommerce PayPal Payments
-* WooCommerce Shipping & Tax
-* WooCommerce Payments
-* And others
+✔ Personal Brands
+✔ Real Estate Agents
+✔ Artists & Photographers
+✔ All WordPress Websites
 
 ## JOIN THE CARTFLOWS INNER CIRCLE ##
 
-**<a href="https://www.facebook.com/groups/cartflows/" target="_blank">JOIN OUR FACEBOOK GROUP COMMUNITY</a>**: Learn the tricks and techniques that other CartFlows users are using to grow their business. Also, get exciting insider information on upcoming feature releases.
+**<a href="https://www.facebook.com/groups/cartflows/" target="_blank">JOIN OUR FACEBOOK GROUP COMMUNITY</a>**: Learn the tactics and techniques that other CartFlows users are doing to grow their businesses. Also, get exciting insider information on upcoming feature releases.
 
 == Installation ==
 
@@ -240,35 +93,13 @@ CartFlows works with any plugin that is compatible with WooCommerce, including:
 
 == Frequently Asked Questions ==
 
-= What is a sales funnel? =
-
-A sales funnel is a series of steps a buyer takes to purchase a product or service or provide a lead.
-
-= Why do I need a sales funnel builder? =
-
-It’s a fact that sales funnels have helped businesses to increase conversions and make more sales. But planning and implementing a funnel that works can be difficult and complicated.
-
-The CartFlows funnel builder plugin for WooCommerce takes the complexity and difficulty out of funnel building. It provides a set of easy-to-use and effective tools to create funnels that work.
-
-= How do I use CartFlows in WordPress/WooCommerce? =
-
-CartFlows can be used just like any other plugin. Just download and install it on your WordPress website.
-
-= Can I use CartFlows without WooCommerce? =
-
-To use CartFlows on your website, you must have WooCommerce installed. Otherwise, you can also install WooCommerce while installing CartFlows.
-
-= Do I need any coding and designing skills to create funnels with CartFlows? =
-
-No, you don’t need coding or design skills to use CartFlows. It comes with a library of professionally designed and optimized funnel templates for every use case. Just import the template with a single click and start customizing it with your page builder’s drag and drop feature.
-
 = Does CartFlows work with my theme? =
 
-Great question. While we haven't tested every WordPress theme out there, we designed CartFlows to work with as many themes as possible. If you do run into any issues with your particular theme, our support team will be happy to help resolve it for you.
+Great question. While we haven't tested every WordPress theme, CartFlows was designed to work with all themes because we disable the header and footer on all funnel steps. If you do run into any issues with your particulate theme, our support will be happy to get it resolved for you.
 
 = Does CartFlows work with my page builder? =
 
-CartFlows should work with all page builders. We do provide templates for the most popular page builders, but you can just as easily use your own designs.
+CartFlows should work with all page builders. We do provide templates for the most popular page builders, but you can just as easily use your own designs with your favorite page builder.
 
 = Does CartFlows work with the Facebook pixel? =
 
@@ -278,39 +109,12 @@ Each step has an area to add any custom script. CartFlows also integrates with t
 
 A good rule of thumb is, if it works with WooCommerce, it will work with CartFlows.
 
-= Can I use shortcodes in CartFlows? =
-
-Yes, CartFlows gives you the option to add shortcodes in any funnel step.
-
 = Is there a Pro version of CartFlows? =
 
-Glad you asked! CartFlows Pro is a powerful addon that adds lots of additional options for your funnels. They include, checkout styles, checkout field control, order bumps, one-click upsells / downsells, quantity changer, variable product selector, Pro templates, training, and more.
+Glad you asked! CartFlows Pro is an optional add-on to CartFlows that adds additional checkout styles, checkout field control, order bumps, one-click upsells / downsells, quantity changer, variable product selector, pro templates, training, and more.
 
 = How Many Sales Funnels Can I Make With CartFlows? =
-
-Most users have fewer than 3 funnels on a single website, so we felt that it is the perfect number for CartFlows. Power users may need more than 3, so in CartFlows Pro, you can have unlimited funnels. As well as additional checkout styles, checkout field control, order bumps, one-click upsells / downsells, quantity changer, variable product selector, pro templates, training, and more.
-
-= What makes CartFlows unique from other funnel builders? =
-CartFlows is different from other SaaS funnel builders or plugins in a number of ways:
-* It is built for WordPress and WooCommerce
-* It is much easier to install and get started with
-* It is full of features aimed to help you boost revenue
-* It has a library of templates for various use cases
-* It comes with Canvas Mode, a visual representation of your funnel
-* The Pro version is much more affordable than other funnel builders
-
-= What type of funnels can I create with CartFlows? =
-With CartFlows, the possibilities are endless. You can create a funnel for just about any use where the selling of a product or service or lead generation is involved.
-
-This includes, but is not limited to:
-* Funnels to sell products
-* Funnels to sell tickets online
-* Funnels to sell online courses
-* Funnels to sell consultancy services
-* Funnels to generate leads for Webinar
-* Funnels to generate leads for any other purpose
-* Funnels for any WooCommerce use case
-
+Glad you asked! Most normal users have less than 3 funnels on a single website, so we felt that it is the perfect number for CartFlows. Power users may need more than 3, so in CartFlows Pro, you can have unlimited funnels. As well as additional checkout styles, checkout field control, order bumps, one-click upsells / downsells, quantity changer, variable product selector, pro templates, training, and more.
 
 == Screenshots ==
 
@@ -322,68 +126,7 @@ This includes, but is not limited to:
 
 == Changelog ==
 
-= Version 1.10.4 - Tuesday, 23rd August 2022 =
-* New: Added an option to change the checkout heading texts.
-* New: Added compatibility for a future release of CartFlows Pro.
-* Fix: Conflict/errors with LearnDash LMS - Course Grid plugin.
-* Fix: Store Checkout page was not displaying on multi-site setup in rare cases.
-
-= Version 1.10.3 - Tuesday, 26th July 2022 =
-* Fix: The product tab content was not showing for offer steps of store checkout.
-* Fix: CSS conflict with the Kadence theme for RTL view.
-* Fix: Onboarding dashboard widget was showing for non-admin users.
-
-= Version 1.10.2 - Thursday, 21st July 2022 =
-* Improvement: Added filter `cartflows_show_store_checkout_product_tab` to show the product tab for store checkout.
-
-= Version 1.10.1 - Thursday, 7th July 2022 =
-* Fix: CartFlows Setup dashboard widget was not getting hidden if hidden from the screen option.
-* Fix: Fixed console error on store checkout tab.
-
-= Version 1.10.0 - Wednesday, 6th July 2022 =
-* New: Added Store checkout aka Global Checkout tab with improved functionalities.
-* New: Added lead event to the Facebook pixel & google analytics for optin pages.
-* New: Added weekly report emails for revenue regenerated by Store.
-* New: Revamped the onboarding UI.
-* New: Added setup menu to complete the incomplete onboarding.
-* Improvement: Updated the permalink base slug for CartFlows Pages (New users).
-* Fix: Label field was getting overlapped if the "sell to a specific country" option was set in the WooCommerce setting while using modern labels.
-
-= Version 1.9.2 - Tuesday, 31st May 2022 =
-* New: Introduced user role management.
-* New: Introduced dynamic JS variables to use in a custom script on CartFlows pages.
-* Fix: Coupon field in order review was not getting hidden in mobile view for modern checkout layout
-* Fix: The email address was missing in order details when the order was placed through express checkout.
-
-= Version 1.9.1 - Thursday, 31st March 2022 =
-* Fix: Optin was not working if the same email exists.
-* Fix: Fixed deprecated function notices of Elementor.
-* Fix: Field setting to hide/show order sections on thank you page was not working while using shortcode.
-* Fix: Console error on the flow analytics page when CartFlows Pro was not installed.
-
-= Version 1.9.0 - Wednesday, 16th March 2022 =
-* New: Google address autocomplete feature.
-* New: Added new style for input labels.
-* New: Added a new modern checkout one-column & two-column style layouts.
-* New: The thank you page content will not be displayed if no valid order is found & non logged users.
-* New: Added a new viewContent event in FB pixel.
-* New: Added one-column checkout layout from the pro version to free version.
-* New: Added custom field editor setting of checkout fields from the pro version to free version.
-* Improvement: A notice will be displayed if Gutenberg plugin is activated.
-* Improvement: Added compatibility for CPSW express checkout buttons position.
-* Improvement: Added RTL support for the Canvas.
-* Improvement: Hard deprecated the "Floating Labels" style of fields and introduced new style "Modern Labels".
-* Fix: Fixed some issues in Gutenberg modules where some settings were not working.
-* Fix: Only fifteen flows were getting listed in the templates menu.
-* Fix: SVGs available on the ready-made templates were not getting downloaded while importing the templates.
-
-= Version 1.8.2 - Friday, 28th January 2022 =
-* Improvement: WooCommerce templates updated.
-* Improvement: Removed deprecated function of LearnDash.
-* Fix: The global checkout tag wasn't displaying for the checkout step.
-* Fix: The menu settings dropdown was not working.
-
-= Version 1.8.1 - Tuesday, 25th January 2022 =
+= Version 1.8.1 - Tuesday, 25th January 2022 = 
 * Security Fix: Hardened the security of the plugin. Props: Wordfence.
 * Fix: Showing incorrect product price in GA event in some cases.
 
@@ -396,8 +139,8 @@ This includes, but is not limited to:
 * Improvement: Fixed deprecated notices for Elementor.
 * Fix: Fatal error while editing the elementor saved template if the checkout shortcode is present.
 
-= Version 1.7.2 - Tuesday, 14th December 2021 =
-* Improvement: Starter templates compatibility added.
+= Version 1.7.2 - Tuesday, 14th December 2021 = 
+* Improvement: Starter templates compatibility added. 
 
 = Version 1.7.1 - Monday, 20th September 2021 =
 * Fix: Vertical navigation in step and flow setting was not working for RTL and translation.
@@ -505,7 +248,7 @@ This includes, but is not limited to:
 * Fix: No products selected error message was displayed for CartFlows-Beaver Builder module.
 
 = Version 1.5.22 - Friday, 6th November 2020 =
-* Fix: LearnDash and Tutor LMS permalink conflict.
+* Fix: LearnDash and Tutor LMS permalink conflict.             
 
 = Version 1.5.21 - Thursday, 5th November 2020 =
 * Fix: Pages was showing 404 error due to permalink issue.

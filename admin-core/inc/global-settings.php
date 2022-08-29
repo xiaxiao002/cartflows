@@ -22,46 +22,11 @@ class GlobalSettings {
 	 * Get flow meta options.
 	 */
 	public static function get_global_settings_fields() {
-		global $wp_roles;
 
 		$origin = get_site_url();
 
-		// Get all user roles.
-		$all_roles_tmp = $wp_roles->roles;
-		$all_roles     = array();
-
-		foreach ( $all_roles_tmp as $role_name => $dispaly_name ) {
-			if ( 'administrator' !== $role_name ) {
-				$all_roles[ $role_name ] = array(
-					'role_name' => $dispaly_name['name'],
-					'fields'    => array(
-						'roles-structure' => array(
-							'type'    => 'radio',
-							'name'    => '_cartflows_roles[' . $role_name . ']',
-							'options' => array(
-								array(
-									'value' => 'no_access',
-									'label' => __( 'No Access', 'cartflows' ),
-								),
-								array(
-									'value' => 'access_to_cartflows',
-									'label' => __( 'Full Access', 'cartflows' ),
-									'desc'  => __( 'A full access to all settings.', 'cartflows' ),
-								),
-								array(
-									'value' => 'access_to_flows_and_step',
-									'label' => __( 'Limited Access', 'cartflows' ),
-									'desc'  => __( 'Can create/edit/delete/import flows and steps only.', 'cartflows' ),
-								),
-							),
-						),
-					),
-				);
-			}
-		}
-
 		$settings = array(
-			'general'                => array(
+			'general'         => array(
 				'title'  => __( 'General ', 'cartflows' ),
 				'fields' => array(
 					'page_builder'  => array(
@@ -102,19 +67,25 @@ class GlobalSettings {
 					),
 				),
 			),
-			'global-checkout'        => array(
-				'title'  => __( 'Store Checkout', 'cartflows' ),
+			'global-checkout' => array(
+				'title'  => __( 'Global Checkout', 'cartflows' ),
 				'fields' => array(
+					'global_checkout'          => array(
+						'type'  => 'select',
+						'name'  => '_cartflows_common[global_checkout]',
+						'label' => __( 'Global Checkout', 'cartflows' ),
+						'desc'  => __( 'Be sure not to add any product in above selected Global Checkout step.', 'cartflows' ),
+					),
 					'override_global_checkout' => array(
 						'type'  => 'checkbox',
 						'name'  => '_cartflows_common[override_global_checkout]',
-						'label' => __( 'Override Store Checkout', 'cartflows' ),
+						'label' => __( 'Override Global Checkout', 'cartflows' ),
 						/* translators: %1$1s: link html start, %2$12: link html end*/
-						'desc'  => sprintf( __( 'For more information about the Store Checkout settings please %1$sClick here%2$s.', 'cartflows' ), '<a href="https://cartflows.com/docs/global-checkout/" target="_blank">', '</a>' ),
+						'desc'  => sprintf( __( 'For more information about the Global Checkout settings please %1$sClick here%2$s.', 'cartflows' ), '<a href="https://cartflows.com/docs/global-checkout/" target="_blank">', '</a>' ),
 					),
 				),
 			),
-			'permalink'              => array(
+			'permalink'       => array(
 				'title'  => __( 'Permalinks', 'cartflows' ),
 				'fields' => array(
 					'perma-structure' => array(
@@ -129,17 +100,17 @@ class GlobalSettings {
 							array(
 								'value' => '/cartflows_flow/%flowname%/cartflows_step',
 								'label' => __( 'Flow and Step Slug', 'cartflows' ),
-								'desc'  => $origin . '/' . CARTFLOWS_FLOW_PERMALINK_SLUG . '/%flowname%/' . CARTFLOWS_STEP_PERMALINK_SLUG . '/%stepname%/',
+								'desc'  => $origin . '/cartflows_flow/%flowname%/cartflows_step/%stepname%/',
 							),
 							array(
 								'value' => '/cartflows_flow/%flowname%',
 								'label' => __( 'Flow Slug', 'cartflows' ),
-								'desc'  => $origin . '/' . CARTFLOWS_FLOW_PERMALINK_SLUG . '/%flowname%/%stepname%/',
+								'desc'  => $origin . '/cartflows_flow/%flowname%/%stepname%/',
 							),
 							array(
 								'value' => '/%flowname%/cartflows_step',
 								'label' => __( 'Step Slug', 'cartflows' ),
-								'desc'  => $origin . '/%flowname%/' . CARTFLOWS_STEP_PERMALINK_SLUG . '/%stepname%/',
+								'desc'  => $origin . '/%flowname%/cartflows_step/%stepname%/',
 							),
 						),
 					),
@@ -166,7 +137,7 @@ class GlobalSettings {
 					),
 				),
 			),
-			'facebook-pixel'         => array(
+			'facebook-pixel'  => array(
 				'title'  => __( 'FaceBook Pixel', 'cartflows' ),
 				'fields' => array(
 					'enable-fb-pixel'               => array(
@@ -178,7 +149,7 @@ class GlobalSettings {
 						'type'       => 'checkbox',
 						'label'      => __( 'Enable Facebook Pixel Tracking For the whole site', 'cartflows' ),
 						'name'       => '_cartflows_facebook[facebook_pixel_tracking_for_site]',
-						'desc'       => __( 'If checked, page view and view content event will also be triggered for other pages/posts of site.', 'cartflows' ),
+						'desc'       => __( 'If checked, page view event will also be triggered for other pages/posts of site.', 'cartflows' ),
 						'conditions' => array(
 							'fields' => array(
 								array(
@@ -207,21 +178,6 @@ class GlobalSettings {
 					'pixel-event-heading'           => array(
 						'type'       => 'heading',
 						'label'      => __( 'Facebook Pixel Events', 'cartflows' ),
-						'conditions' => array(
-							'fields' => array(
-								array(
-									'name'     => '_cartflows_facebook[facebook_pixel_tracking]',
-									'operator' => '===',
-									'value'    => 'enable',
-								),
-							),
-						),
-					),
-
-					'pixel-event-view-content'      => array(
-						'type'       => 'checkbox',
-						'label'      => __( 'View Content', 'cartflows' ),
-						'name'       => '_cartflows_facebook[facebook_pixel_view_content]',
 						'conditions' => array(
 							'fields' => array(
 								array(
@@ -262,7 +218,6 @@ class GlobalSettings {
 							),
 						),
 					),
-
 					'pixel-event-purchase-complete' => array(
 						'type'       => 'checkbox',
 						'label'      => __( 'Purchase Complete', 'cartflows' ),
@@ -276,22 +231,6 @@ class GlobalSettings {
 								),
 							),
 						),
-					),
-
-					'pixel-event-lead-info'         => array(
-						'type'       => 'checkbox',
-						'label'      => __( 'Optin Lead', 'cartflows' ),
-						'name'       => '_cartflows_facebook[facebook_pixel_optin_lead]',
-						'conditions' => array(
-							'fields' => array(
-								array(
-									'name'     => '_cartflows_facebook[facebook_pixel_tracking]',
-									'operator' => '===',
-									'value'    => 'enable',
-								),
-							),
-						),
-						'tooltip'    => __( 'Optin Lead event will be trigger for optin page.', 'cartflows' ),
 					),
 
 					'pixel-not-work-doc'            => array(
@@ -312,7 +251,7 @@ class GlobalSettings {
 					),
 				),
 			),
-			'ga-analytics'           => array(
+			'ga-analytics'    => array(
 				'title'  => __( 'Google Analytics', 'cartflows' ),
 				'fields' => array(
 					'enable-ga-analytics'          => array(
@@ -423,22 +362,6 @@ class GlobalSettings {
 						),
 					),
 
-					'ga-event-lead-info'           => array(
-						'type'       => 'checkbox',
-						'label'      => __( 'Optin Lead', 'cartflows' ),
-						'name'       => '_cartflows_google_analytics[enable_optin_lead]',
-						'conditions' => array(
-							'fields' => array(
-								array(
-									'name'     => '_cartflows_google_analytics[enable_google_analytics]',
-									'operator' => '===',
-									'value'    => 'enable',
-								),
-							),
-						),
-						'tooltip'    => __( 'Optin Lead event will be trigger for optin page.', 'cartflows' ),
-					),
-
 					'ga-not-work-doc'              => array(
 						'type'       => 'doc',
 						'label'      => '',
@@ -457,57 +380,10 @@ class GlobalSettings {
 					),
 				),
 			),
-			'g-address-autocomplete' => array(
-				'title'  => __( 'Google Address Autocomplete', 'cartflows' ),
-				'fields' => array(
-					'g-api-key' => array(
-						'type'      => 'password',
-						'label'     => __( 'Enter Google Map API key', 'cartflows' ),
-						'name'      => '_cartflows_google_auto_address[google_map_api_key]',
-						'class'     => 'input-field',
-						'icon'      => 'dashicons dashicons-visibility',
-						'afterIcon' => 'dashicons dashicons-hidden',
-						'iconclick' => 'show_field_value',
-						/* translators: %1$1s: link html start, %2$12: link html end*/
-						'desc'      => sprintf( __( 'Check this %1$1s article %2$2s to setup and find an API key.', 'cartflows' ), '<a href="https://cartflows.com/docs/enabling-google-address-autocompletes/" target="_blank">', '</a>' ),
-					),
-				),
-			),
-			'other-settings'         => array(
+			'other-settings'  => array(
 				'title'  => __( 'Other', 'cartflows' ),
 				'fields' => array(
-					'weekly-report-heading'      => array(
-						'type'  => 'heading',
-						'label' => __( 'Store Revenue Report Emails', 'cartflows' ),
-					),
-					'enable_weekly_emails'       => array(
-						'type'  => 'checkbox',
-						'name'  => 'cartflows_stats_report_emails',
-						'label' => __( 'Enable sending CartFlows analytics report emails.', 'cartflows' ),
-						/* translators: %1$1s: link html start, %2$12: link html end*/
-						'desc'  => __( 'If enabled, you will receive the weekly report emails of your store for the revenue stats generated by CartFlows.', 'cartflows' ),
-					),
-					'email_id_for_weekly_emails' => array(
-						'type'       => 'textarea',
-						'rows'       => 2,
-						'cols'       => 38,
-						'name'       => 'cartflows_stats_report_email_ids',
-						'label'      => __( 'Email Adddress', 'cartflows' ),
-						'desc'       => __( 'Email address to receive the weekly sales report emails. For multiple emails, add each email address per line.', 'cartflows' ),
-						'conditions' => array(
-							'fields' => array(
-								array(
-									'name'     => 'cartflows_stats_report_emails',
-									'operator' => '===',
-									'value'    => 'enable',
-								),
-							),
-						),
-					),
-					'seperator'                  => array(
-						'type' => 'separator',
-					),
-					'delete_data'                => array(
+					'delete_data' => array(
 						'type'   => 'checkbox',
 						'name'   => 'cartflows_delete_plugin_data',
 						'label'  => __( 'Delete plugin data on plugin deletion', 'cartflows' ),
@@ -521,15 +397,10 @@ class GlobalSettings {
 					),
 				),
 			),
-			'user-role-management'   => array(
-				'title' => __( 'User Role Manager', 'cartflows' ),
-				'roles' => (
-					$all_roles
-				),
-			),
+
 		);
 
-		$settings = apply_filters( 'cartflows_admin_global_settings_data', $settings );
+		$settings = apply_filters( 'cartflows_global_settings_data', $settings );
 
 		return $settings;
 	}

@@ -1,17 +1,15 @@
 ( function ( $ ) {
-	const wcf_flows_search_init = function () {
-		const product_search = $( '.wcf-flows-search' );
+	var wcf_flows_search_init = function () {
+		var product_search = $( '.wcf-flows-search' );
 
 		if ( product_search.length > 0 ) {
 			$( 'select.wcf-flows-search' ).select2();
-			const nonce = $(
-				'input[name="wcf_json_search_flows_nonce"]'
-			).val();
+			var nonce = $( 'input[name="wcf_json_search_flows_nonce"]' ).val();
 
 			$( 'select.wcf-flows-search' )
 				.filter( ':not(.enhanced)' )
 				.each( function () {
-					let select2_args = {
+					var select2_args = {
 						allowClear: $( this ).data( 'allow_clear' )
 							? true
 							: false,
@@ -21,7 +19,7 @@
 						)
 							? $( this ).data( 'minimum_input_length' )
 							: '3',
-						escapeMarkup( m ) {
+						escapeMarkup: function ( m ) {
 							return m;
 						},
 
@@ -30,7 +28,7 @@
 							dataType: 'json',
 							quietMillis: 250,
 							method: 'post',
-							data( params ) {
+							data: function ( params, page ) {
 								return {
 									term: params.term,
 									action:
@@ -40,13 +38,13 @@
 									security: nonce,
 								};
 							},
-							processResults( data ) {
-								const terms = [];
+							processResults: function ( data, page ) {
+								var terms = [];
 								if ( data ) {
 									$.each( data, function ( id, text ) {
 										terms.push( {
-											id,
-											text,
+											id: id,
+											text: text,
 										} );
 									} );
 								}
@@ -67,18 +65,16 @@
 	};
 
 	if ( typeof getEnhancedSelectFormatString === 'undefined' ) {
-		// This is the optional function. Not used every time.
-		/* eslint-disable */
 		function getEnhancedSelectFormatString() {
-			const formatString = {
-				noResults() {
+			var formatString = {
+				noResults: function () {
 					return wc_enhanced_select_params.i18n_no_matches;
 				},
-				errorLoading() {
+				errorLoading: function () {
 					return wc_enhanced_select_params.i18n_searching;
 				},
-				inputTooShort( args ) {
-					const remainingChars = args.minimum - args.input.length;
+				inputTooShort: function ( args ) {
+					var remainingChars = args.minimum - args.input.length;
 
 					if ( 1 === remainingChars ) {
 						return wc_enhanced_select_params.i18n_input_too_short_1;
@@ -89,8 +85,8 @@
 						remainingChars
 					);
 				},
-				inputTooLong( args ) {
-					const overChars = args.input.length - args.maximum;
+				inputTooLong: function ( args ) {
+					var overChars = args.input.length - args.maximum;
 
 					if ( 1 === overChars ) {
 						return wc_enhanced_select_params.i18n_input_too_long_1;
@@ -101,7 +97,7 @@
 						overChars
 					);
 				},
-				maximumSelected( args ) {
+				maximumSelected: function ( args ) {
 					if ( args.maximum === 1 ) {
 						return wc_enhanced_select_params.i18n_selection_too_long_1;
 					}
@@ -111,19 +107,18 @@
 						args.maximum
 					);
 				},
-				loadingMore() {
+				loadingMore: function () {
 					return wc_enhanced_select_params.i18n_load_more;
 				},
-				searching() {
+				searching: function () {
 					return wc_enhanced_select_params.i18n_searching;
 				},
 			};
 
-			const language = { language: formatString };
+			var language = { language: formatString };
 
 			return language;
 		}
-		/* eslint-enable */
 	}
 
 	$( function () {

@@ -38,215 +38,15 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_filter( 'cartflows_admin_optin_step_meta_fields', array( $this, 'filter_values' ), 10, 2 );
-
-		// Step API data.
-		add_filter( 'cartflows_admin_optin_step_data', array( $this, 'add_optin_step_api_data' ), 10, 2 );
-	}
-
-	/**
-	 * Add required data to api.
-	 *
-	 * @param  array $api_data data.
-	 * @param  int   $step_id step id.
-	 * @since 1.10.0
-	 */
-	public function add_optin_step_api_data( $api_data, $step_id ) {
-
-		$field_data                 = $this->custom_fields_data( $step_id );
-		$api_data['custom_fields']  = $field_data;
-		$api_data['billing_fields'] = $field_data['billing_fields'];
-		return $api_data;
-	}
-
-		/**
-		 * Add custom meta fields
-		 *
-		 * @param array $post_id post id.
-		 */
-	public function custom_fields_data( $post_id ) {
-
-		$billing_fields = $this->get_field_settings( $post_id, 'billing', '' );
-
-		$custom_fields = array(
-			'extra_fields'   => array(
-				'fields' => array(
-					'enable-optin-field-editor' => array(
-						'type'  => 'checkbox',
-						'label' => __( 'Enable Custom Field Editor', 'cartflows' ),
-						'name'  => 'wcf-optin-enable-custom-fields',
-					),
-				),
-			),
-			'billing_fields' => array(
-				'fields' => $billing_fields,
-			),
-		);
-
-		return $custom_fields;
-	}
-
-	/**
-	 * Add custom meta fields
-	 *
-	 * @param string $post_id post id.
-	 * @param array  $fields fields.
-	 * @param array  $new_fields new fields.
-	 */
-	public function get_field_settings( $post_id, $fields, $new_fields ) {
-
-		$ordered_billing_fields = wcf()->options->get_optin_meta_value( $post_id, 'wcf-optin-fields-billing' );
-
-		if ( isset( $ordered_billing_fields ) && ! empty( $ordered_billing_fields ) ) {
-			$billing_fields = $ordered_billing_fields;
-
-		} else {
-			$billing_fields = Cartflows_Helper::get_optin_fields( 'billing', $post_id );
-		}
-
-		if ( isset( $billing_fields ) && ! empty( $billing_fields ) ) {
-			$data_array = $billing_fields;
-		}
-
-		if ( isset( $new_fields ) && ! empty( $new_fields ) && is_array( $new_fields ) ) {
-			$data_array = $new_fields;
-		}
-		$field_args = array();
-
-		foreach ( $data_array as $key => $value ) {
-			$field_args = $this->prepare_field_arguments( $key, $value, $post_id, $fields );
-
-			foreach ( $field_args as $arg_key => $arg_val ) {
-
-				if ( ! in_array( $arg_key, $value, true ) ) {
-
-					$data_array[ $key ][ $arg_key ] = $arg_val;
-				}
-			}
-
-			$name = 'wcf-optin-fields-billing[' . $key . ']';
-
-			$is_checkbox = false;
-			$is_require  = false;
-			$is_select   = false;
-			$display     = 'none';
-
-			if ( 'checkbox' == $field_args['type'] ) {
-				$is_checkbox = true;
-			}
-
-			if ( 'yes' == $field_args['required'] ) {
-				$is_require = true;
-			}
-
-			if ( 'yes' == $field_args['optimized'] ) {
-				$is_optimized = true;
-			}
-
-			if ( 'select' == $field_args['type'] ) {
-				$is_select = true;
-				$display   = 'block';
-			}
-
-			$data_array[ $key ]['field_options'] = array(
-				'enable-field'  => array(
-					'type'  => 'checkbox',
-					'label' => __( 'Enable Field', 'cartflows' ),
-					'name'  => $name . '[enabled]',
-					'value' => $field_args['enabled'],
-				),
-				'select-width'  => array(
-					'type'    => 'select',
-					'label'   => __( 'Field Width', 'cartflows' ),
-					'name'    => $name . '[width]',
-					'value'   => $field_args['width'],
-					'options' => array(
-						array(
-							'value' => '33',
-							'label' => esc_html__( '33%', 'cartflows' ),
-						),
-						array(
-							'value' => '50',
-							'label' => esc_html__( '50%', 'cartflows' ),
-						),
-						array(
-							'value' => '100',
-							'label' => esc_html__( '100%', 'cartflows' ),
-						),
-					),
-
-				),
-				'field-label'   => array(
-					'type'  => 'text',
-					'label' => __( 'Field Label', 'cartflows' ),
-					'name'  => $name . '[label]',
-					'value' => $field_args['label'],
-				),
-
-				'field-default' => $is_checkbox ?
-					array(
-						'type'    => 'checkbox',
-						'label'   => __( 'Default', 'cartflows' ),
-						'name'    => $name . '[default]',
-						'value'   => $field_args['default'],
-						'options' => array(
-							array(
-								'value' => '1',
-								'label' => esc_html__( 'Checked', 'cartflows' ),
-							),
-							array(
-								'value' => '0',
-								'label' => esc_html__( 'Un-Checked', 'cartflows' ),
-							),
-						),
-					) :
-
-					array(
-						'type'  => 'text',
-						'label' => __( 'Default', 'cartflows' ),
-						'name'  => $name . '[default]',
-						'value' => $field_args['default'],
-					),
-			);
-
-			if ( $is_select ) {
-
-				$data_array[ $key ]['field_options']['select-options'] = array(
-					'type'  => 'text',
-					'label' => __( 'Options', 'cartflows' ),
-					'name'  => $name . '[options]',
-					'value' => $field_args['options'],
-				);
-			}
-
-			if ( false == $is_checkbox || false == $is_select ) {
-				$data_array[ $key ]['field_options']['field-placeholder'] = array(
-					'type'  => 'text',
-					'label' => __( 'Placeholder', 'cartflows' ),
-					'name'  => $name . '[placeholder]',
-					'value' => $field_args['placeholder'],
-				);
-			}
-
-			$data_array[ $key ]['field_options']['required-field'] = array(
-				'type'  => 'checkbox',
-				'label' => __( 'Required', 'cartflows' ),
-				'name'  => $name . '[required]',
-				'value' => $field_args['required'],
-			);
-
-		}
-
-		return $data_array;
+		add_filter( 'cartflows_optin_step_meta_fields', array( $this, 'filter_values' ) );
 	}
 
 	/**
 	 * Filter checkout values
 	 *
 	 * @param  array $options options.
-	 * @param  int   $step_id post id.
 	 */
-	public function filter_values( $options, $step_id ) {
+	public function filter_values( $options ) {
 
 		if ( ! empty( $options['wcf-optin-product'][0] ) ) {
 
@@ -259,10 +59,6 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 					'label' => $product_obj->get_name() . ' (#' . $product_obj->get_id() . ')',
 				);
 			}
-		}
-
-		if ( isset( $options['wcf-optin-fields-billing'] ) ) {
-			$options['wcf-optin-fields-billing'] = $this->get_field_settings( $step_id, 'billing', '' );
 		}
 
 		return $options;
@@ -406,7 +202,7 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 								),
 								array(
 									'value' => 'floating-labels',
-									'label' => esc_html__( 'Floating Labels', 'cartflows' ),
+									'label' => _is_cartflows_pro() ? esc_html__( 'Floating Labels', 'cartflows' ) : esc_html__( 'Floating Labels ( Available in Pro )', 'cartflows' ),
 								),
 							),
 
@@ -639,7 +435,7 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 				'shortcodes'    => array(
 					'title'    => __( 'Shortcodes', 'cartflows' ),
 					'slug'     => 'shortcodes',
-					'priority' => 30,
+					'priority' => 10,
 					'fields'   => array(
 						'optin-shortcode' => array(
 							'type'     => 'text',
@@ -656,6 +452,12 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 					'slug'     => 'general',
 					'priority' => 20,
 					'fields'   => array(
+						'title'     => array(
+							'type'  => 'text',
+							'name'  => 'post_title',
+							'label' => __( 'Step Title', 'cartflows' ),
+							'value' => get_the_title( $step_id ),
+						),
 						'slug'      => array(
 							'type'  => 'text',
 							'name'  => 'post_name',
@@ -676,7 +478,7 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 				'settings'      => array(
 					'title'    => __( 'Optin Settings', 'cartflows' ),
 					'slug'     => 'fields_settings',
-					'priority' => 10,
+					'priority' => 30,
 					'fields'   => array(
 						'button-text'                => array(
 							'type'        => 'text',
@@ -731,83 +533,6 @@ class Cartflows_Optin_Meta_Data extends Cartflows_Step_Meta_Base {
 		);
 
 		return $settings;
-	}
-
-
-	/**
-	 * Fetch default width of checkout fields by key.
-	 *
-	 * @param string $field_key field key.
-	 * @return int
-	 */
-	public function get_default_optin_field_width( $field_key ) {
-
-		$default_width = 100;
-		switch ( $field_key ) {
-			case 'billing_first_name':
-			case 'billing_last_name':
-				$default_width = 50;
-				break;
-			default:
-				$default_width = 100;
-				break;
-		}
-
-		return $default_width;
-	}
-
-	/**
-	 * Prepare HTML data for billing and shipping fields.
-	 *
-	 * @param string  $field checkout field key.
-	 * @param string  $field_data checkout field object.
-	 * @param integer $post_id chcekout post id.
-	 * @param string  $type checkout field type.
-	 * @return array
-	 */
-	public function prepare_field_arguments( $field, $field_data, $post_id, $type ) {
-
-		$field_name = '';
-		if ( isset( $field_data['label'] ) ) {
-			$field_name = $field_data['label'];
-		}
-
-		if ( isset( $field_data['width'] ) ) {
-			$width = $field_data['width'];
-		} else {
-			$width = $this->get_default_optin_field_width( $field );
-		}
-
-		if ( isset( $field_data['enabled'] ) ) {
-			$is_enabled = true === $field_data['enabled'] ? 'yes' : 'no';
-		} else {
-			$is_enabled = 'yes';
-		}
-
-		$field_args = array(
-			'type'        => ( isset( $field_data['type'] ) && ! empty( $field_data['type'] ) ) ? $field_data['type'] : '',
-			'label'       => $field_name,
-			'name'        => 'wcf-' . $field,
-			'placeholder' => isset( $field_data['placeholder'] ) ? $field_data['placeholder'] : '',
-			'width'       => $width,
-			'enabled'     => $is_enabled,
-			'after'       => 'Enable',
-			'section'     => $type,
-			'default'     => isset( $field_data['default'] ) ? $field_data['default'] : '',
-			'required'    => ( isset( $field_data['required'] ) && true == $field_data['required'] ) ? 'yes' : 'no',
-			'optimized'   => ( isset( $field_data['optimized'] ) && true == $field_data['optimized'] ) ? 'yes' : 'no',
-			'options'     => ( isset( $field_data['options'] ) && ! empty( $field_data['options'] ) ) ? implode( ',', $field_data['options'] ) : '',
-		);
-
-		if ( 'billing' === $type ) {
-			if ( isset( $field_data['custom'] ) && $field_data['custom'] ) {
-				$field_args['after_html']  = '<span class="wcf-cpf-actions" data-type="billing" data-key="' . $field . '">';
-				$field_args['after_html'] .= '<a class="wcf-pro-custom-field-remove wp-ui-text-notification">' . __( 'Remove', 'cartflows' ) . '</a>';
-				$field_args['after_html'] .= '</span>';
-			}
-		}
-
-		return $field_args;
 	}
 
 	/**

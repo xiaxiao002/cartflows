@@ -159,7 +159,7 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 			add_action( 'cartflows_import_complete', array( $this, 'complete_batch_import' ) );
 			add_filter( 'upload_mimes', array( $this, 'custom_upload_mimes' ) );
 			add_filter( 'wp_prepare_attachment_for_js', array( $this, 'add_svg_image_support' ), 10, 3 );
-			add_action( 'cartflows_before_elementor_import_single_template', array( $this, 'enable_unfiltered_upload_elementor' ) );
+
 			add_action( 'admin_head', array( $this, 'start_importer' ) );
 		}
 
@@ -226,15 +226,13 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 		 *
 		 * Store latest checksum after batch complete.
 		 *
-		 * @param string $templates templates category to fetch.
 		 * @since 1.6.15
 		 * @return void
 		 */
-		public function update_latest_checksums( $templates = '' ) {
-			$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
+		public function update_latest_checksums() {
 			wcf()->logger->sync_log( 'Checkusms updated' );
-			$latest_checksums = get_site_option( 'cartflows-' . $suffix . 'last-export-checksums-latest', '' );
-			update_site_option( 'cartflows-' . $suffix . 'last-export-checksums', $latest_checksums, 'no' );
+			$latest_checksums = get_site_option( 'cartflows-last-export-checksums-latest', '' );
+			update_site_option( 'cartflows-last-export-checksums', $latest_checksums, 'no' );
 		}
 
 		/**
@@ -390,11 +388,10 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 		/**
 		 * Set Last Exported Checksum
 		 *
-		 * @param string $templates templates category to fetch.
 		 * @since 1.6.15
 		 * @return string Checksums Status.
 		 */
-		public function set_last_export_checksums( $templates = '' ) {
+		public function set_last_export_checksums() {
 
 			if ( ! empty( $this->last_export_checksums ) ) {
 				return $this->last_export_checksums;
@@ -412,8 +409,7 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 
 				// Set last export checksums.
 				if ( ! empty( $result['last_export_checksums'] ) ) {
-					$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
-					update_site_option( 'cartflows-' . $suffix . 'last-export-checksums-latest', $result['last_export_checksums'], 'no' );
+					update_site_option( 'cartflows-last-export-checksums-latest', $result['last_export_checksums'], 'no' );
 
 					$this->last_export_checksums = $result['last_export_checksums'];
 				}
@@ -425,16 +421,14 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 		/**
 		 * Get Last Exported Checksum Status
 		 *
-		 * @param string $templates templates category to fetch.
 		 * @since 1.6.15
 		 * @return string Checksums Status.
 		 */
-		public function get_last_export_checksums( $templates = '' ) {
-			$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
+		public function get_last_export_checksums() {
 
-			$old_last_export_checksums = get_site_option( 'cartflows-' . $suffix . 'last-export-checksums', '' );
+			$old_last_export_checksums = get_site_option( 'cartflows-last-export-checksums', '' );
 
-			$new_last_export_checksums = $this->set_last_export_checksums( $templates );
+			$new_last_export_checksums = $this->set_last_export_checksums();
 
 			$checksums_status = 'no';
 
@@ -519,10 +513,9 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 		 *
 		 * @since 1.6.15
 		 * @param  string $page_builder_slug  Page builder slug.
-		 * @param string $templates templates category to fetch.
 		 * @return integer
 		 */
-		public function get_total_requests( $page_builder_slug = '', $templates = '' ) {
+		public function get_total_requests( $page_builder_slug = '' ) {
 			$page_builder_slug = ( ! empty( $page_builder_slug ) ) ? $page_builder_slug : wcf()->get_site_slug();
 
 			update_site_option( 'cartflows-batch-status-string', 'Getting Total Blocks', 'no' );
@@ -544,12 +537,10 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 			if ( ! is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) === 200 ) {
 				$total_requests = json_decode( wp_remote_retrieve_body( $response ), true );
 
-				$suffix = 'store-checkout' === $templates ? 'store-checkout-' : '';
-
 				if ( isset( $total_requests['pages'] ) ) {
 					update_site_option( 'cartflows-batch-status-string', 'Updated requests ' . $total_requests['pages'], 'no' );
 
-					update_site_option( 'cartflows-' . $suffix . $page_builder_slug . '-requests', $total_requests['pages'], 'no' );
+					update_site_option( 'cartflows-' . $page_builder_slug . '-requests', $total_requests['pages'], 'no' );
 
 					return $total_requests['pages'];
 				}
@@ -576,10 +567,9 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 		 * Process Batch
 		 *
 		 * @since 1.6.15
-		 * @param string $templates templates category to fetch.
 		 * @return mixed
 		 */
-		public function process_batch( $templates = '' ) {
+		public function process_batch() {
 
 			if ( 'other' === wcf()->get_site_slug() ) {
 				if ( defined( 'WP_CLI' ) ) {
@@ -589,7 +579,7 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 				}
 			}
 
-			if ( 'no' === $this->get_last_export_checksums( $templates ) ) {
+			if ( 'no' === $this->get_last_export_checksums() ) {
 				if ( defined( 'WP_CLI' ) ) {
 					WP_CLI::line( 'Library is up to date!' );
 				}
@@ -625,12 +615,11 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 					}
 
 					if ( defined( 'WP_CLI' ) ) {
-						Cartflows_Batch_Processing_Sync_Library::get_instance()->import_sites( $page, $templates );
+						Cartflows_Batch_Processing_Sync_Library::get_instance()->import_sites( $page );
 					} else {
 						self::$process_site_importer->push_to_queue(
 							array(
 								'page'     => $page,
-								'template' => $templates,
 								'instance' => Cartflows_Batch_Processing_Sync_Library::get_instance(),
 								'method'   => 'import_sites',
 							)
@@ -648,15 +637,6 @@ if ( ! class_exists( 'CartFlows_Batch_Process' ) ) :
 
 		}
 
-		/**
-		 * Enable the unfiltered upload of the elementor to upload the SVG files.
-		 *
-		 * @since 1.10.0
-		 */
-		public function enable_unfiltered_upload_elementor() {
-
-			add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
-		}
 	}
 
 	/**

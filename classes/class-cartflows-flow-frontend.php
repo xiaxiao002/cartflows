@@ -54,7 +54,7 @@ class Cartflows_Flow_Frontend {
 			<?php if ( $this->is_flow_testmode( $flow_id ) ) { ?>
 			<div class="wcf-preview-mode">
 				<span><?php esc_html_e( 'Test mode is active. It can be deactivated from the flow settings in the admin dashboard.', 'cartflows' ); ?></span>
-				<?php if ( current_user_can( 'cartflows_manage_flows_steps' ) ) { ?>
+				<?php if ( current_user_can( 'manage_options' ) ) { ?>
 					<?php
 						$flow_edit_link = admin_url( 'admin.php?page=cartflows&action=wcf-edit-flow&flow_id=' . $flow_id . '&tab=settings#sandbox' );
 					?>

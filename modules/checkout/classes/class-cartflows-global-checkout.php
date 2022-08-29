@@ -49,7 +49,7 @@ class Cartflows_Global_Checkout {
 	/**
 	 * Update the checkout page link for global checkout.
 	 *
-	 * @since 1.10.0
+	 * @since x.x.x
 	 */
 	public function update_checkout_link_for_global_checkout() {
 
@@ -77,7 +77,7 @@ class Cartflows_Global_Checkout {
 	/**
 	 * Override global checkout page
 	 *
-	 * @since 1.10.0
+	 * @since x.x.x
 	 */
 	public function override_global_checkout() {
 
@@ -110,10 +110,6 @@ class Cartflows_Global_Checkout {
 					$GLOBALS['posts'][0] = $checkout_post; //phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				}
 
-				if ( isset( $GLOBALS['wp_the_query']->post ) ) {
-					$GLOBALS['wp_the_query']->post = $checkout_post; //phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				}
-
 				$GLOBALS['post'] = $checkout_post; //phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 			}
 		}
@@ -122,7 +118,7 @@ class Cartflows_Global_Checkout {
 	/**
 	 * Redirect from default to the global checkout page
 	 *
-	 * @since 1.10.0
+	 * @since x.x.x
 	 */
 	public function global_checkout_template_redirect() {
 

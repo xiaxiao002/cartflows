@@ -123,7 +123,7 @@ class Cartflows_Default_Meta {
 					'sanitize' => 'FILTER_CARTFLOWS_CHECKOUT_PRODUCTS',
 				),
 				'wcf-checkout-layout'                  => array(
-					'default'  => 'modern-checkout',
+					'default'  => 'two-column',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
 				'wcf-input-font-family'                => array(
@@ -154,20 +154,8 @@ class Cartflows_Default_Meta {
 					'default'  => '',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
-				'wcf-order-review-show-product-images' => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
 				'wcf-checkout-place-order-button-text' => array(
-					'default'  => __( 'Place Order', 'cartflows' ),
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-place-order-button-lock' => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-place-order-button-price-display' => array(
-					'default'  => 'yes',
+					'default'  => '',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
 				'wcf-base-font-weight'                 => array(
@@ -207,7 +195,7 @@ class Cartflows_Default_Meta {
 					'sanitize' => 'FILTER_SANITIZE_NUMBER_INT',
 				),
 				'wcf-fields-skins'                     => array(
-					'default'  => 'modern-label',
+					'default'  => '',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
 				'wcf-input-field-size'                 => array(
@@ -286,66 +274,6 @@ class Cartflows_Default_Meta {
 					'default'  => '',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
-
-				'wcf-custom-checkout-fields'           => array(
-					'default'  => 'no',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-show-coupon-field'                => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-optimize-coupon-field'            => array(
-					'default'  => 'no',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf_field_order_billing'              => array(
-					'default'  => array(),
-					'sanitize' => 'FILTER_CARTFLOWS_CHECKOUT_FIELDS',
-				),
-				'wcf_field_order_shipping'             => array(
-					'default'  => array(),
-					'sanitize' => 'FILTER_CARTFLOWS_CHECKOUT_FIELDS',
-				),
-				'wcf-google-autoaddress'               => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-
-				'wcf-checkout-additional-fields'       => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-optimize-order-note-field'        => array(
-					'default'  => 'no',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-
-				'wcf-shipto-diff-addr-fields'          => array(
-					'default'  => 'yes',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-customer-info-text'      => array(
-					'default'  => '',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-billing-details-text'    => array(
-					'default'  => '',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-shipping-details-text'   => array(
-					'default'  => '',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-your-order-text'         => array(
-					'default'  => '',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-				'wcf-checkout-payment-text'            => array(
-					'default'  => '',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-
 			);
 
 			self::$checkout_fields = apply_filters( 'cartflows_checkout_meta_options', self::$checkout_fields, $post_id );
@@ -353,6 +281,7 @@ class Cartflows_Default_Meta {
 
 		return self::$checkout_fields;
 	}
+
 
 	/**
 	 *  Flow Default fields.
@@ -389,6 +318,7 @@ class Cartflows_Default_Meta {
 
 		return apply_filters( 'cartflows_flow_meta_options', self::$flow_fields );
 	}
+
 
 	/**
 	 *  Get checkout meta.
@@ -579,14 +509,14 @@ class Cartflows_Default_Meta {
 		return apply_filters( "cartflows_thankyou_meta_{$key}", $value );
 	}
 
-	/**
-	 *  Get Landing section meta.
-	 *
-	 * @param int    $post_id post id.
-	 * @param string $key options key.
-	 * @param mix    $default options default value.
-	 * @return string
-	 */
+		/**
+		 *  Get Landing section meta.
+		 *
+		 * @param int    $post_id post id.
+		 * @param string $key options key.
+		 * @param mix    $default options default value.
+		 * @return string
+		 */
 	public function get_landing_meta_value( $post_id, $key, $default = false ) {
 
 		$value = $this->get_save_meta( $post_id, $key );
@@ -778,21 +708,12 @@ class Cartflows_Default_Meta {
 					'default'  => '',
 					'sanitize' => 'FILTER_SANITIZE_STRING',
 				),
-
-				/* Custom Fields Options*/
-				'wcf-optin-enable-custom-fields' => array(
-					'default'  => 'no',
-					'sanitize' => 'FILTER_SANITIZE_STRING',
-				),
-
-				'wcf-optin-fields-billing'       => array(
-					'default'  => \Cartflows_Helper::get_optin_default_fields(),
-					'sanitize' => 'FILTER_CARTFLOWS_OPTIN_FIELDS',
-				),
 			);
 		}
 		return apply_filters( 'cartflows_optin_meta_options', self::$optin_fields, $post_id );
 	}
+
+
 
 	/**
 	 *  Get optin meta.

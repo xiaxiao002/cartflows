@@ -63,7 +63,13 @@ class Cartflows_Learndash_Compatibility {
 			return false;
 		}
 
-		$template = learndash_get_course_meta_setting( get_the_id(), 'wcf_course_template' );
+		if ( defined( LEARNDASH_VERSION ) && version_compare( LEARNDASH_VERSION, '2.6.4', '>' ) ) {
+
+			$template = learndash_get_course_meta_setting( get_the_id(), 'wcf_course_template' );
+		} else {
+
+			$template = get_course_meta_setting( get_the_id(), 'wcf_course_template' );
+		}
 
 		if ( 'none' !== $template && $template ) {
 			$link = get_permalink( $template );

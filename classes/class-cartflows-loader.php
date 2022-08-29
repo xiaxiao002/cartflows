@@ -140,12 +140,12 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 			define( 'CARTFLOWS_DIR', plugin_dir_path( CARTFLOWS_FILE ) );
 			define( 'CARTFLOWS_URL', plugins_url( '/', CARTFLOWS_FILE ) );
 
-			define( 'CARTFLOWS_VER', '1.10.4' );
+			define( 'CARTFLOWS_VER', '1.8.1' );
 			define( 'CARTFLOWS_SLUG', 'cartflows' );
 			define( 'CARTFLOWS_SETTINGS', 'cartflows_settings' );
 			define( 'CARTFLOWS_NAME', 'CartFlows' );
 
-			define( 'CARTFLOWS_REQ_CF_PRO_VER', '1.10.0' );
+			define( 'CARTFLOWS_REQ_CF_PRO_VER', '1.8.0' );
 
 			// For backward comptibility we are setting CARTFLOWS_LEGACY_ADMIN to false, so pro-loader for new UI will be load.
 			define( 'CARTFLOWS_LEGACY_ADMIN', false );
@@ -154,9 +154,6 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 
 			define( 'CARTFLOWS_FLOW_POST_TYPE', 'cartflows_flow' );
 			define( 'CARTFLOWS_STEP_POST_TYPE', 'cartflows_step' );
-
-			define( 'CARTFLOWS_FLOW_PERMALINK_SLUG', 'flow' );
-			define( 'CARTFLOWS_STEP_PERMALINK_SLUG', 'step' );
 
 			if ( ! defined( 'CARTFLOWS_SERVER_URL' ) ) {
 				define( 'CARTFLOWS_SERVER_URL', 'https://my.cartflows.com/' );
@@ -316,27 +313,6 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 
 			require_once CARTFLOWS_DIR . 'classes/class-cartflows-tracking.php';
 
-			if ( is_admin() ) {
-				require_once CARTFLOWS_DIR . 'libraries/astra-notices/class-astra-notices.php';
-			}
-
-			if ( ! class_exists( 'BSF_Analytics_Loader' ) ) {
-				require_once CARTFLOWS_DIR . '/admin/bsf-analytics/class-bsf-analytics-loader.php';
-			}
-
-			$bsf_analytics = BSF_Analytics_Loader::get_instance();
-
-			$bsf_analytics->set_entity(
-				array(
-					'cf' => array(
-						'product_name'   => 'CartFlows',
-						'usage_doc_link' => 'https://my.cartflows.com/usage-tracking/',
-						'path'           => CARTFLOWS_DIR . 'admin/bsf-analytics',
-						'author'         => 'CartFlows Inc',
-					),
-				)
-			);
-
 			$this->utils   = Cartflows_Utils::get_instance();
 			$this->options = Cartflows_Default_Meta::get_instance();
 		}
@@ -419,7 +395,6 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 				include_once CARTFLOWS_DIR . 'modules/thankyou/class-cartflows-thankyou.php';
 				include_once CARTFLOWS_DIR . 'modules/optin/class-cartflows-optin.php';
 				include_once CARTFLOWS_DIR . 'modules/woo-dynamic-flow/class-cartflows-woo-dynamic-flow.php';
-				include_once CARTFLOWS_DIR . 'modules/email-report/class-cartflows-admin-report-emails.php';
 			}
 
 			if ( class_exists( '\Elementor\Plugin' ) ) {
@@ -432,7 +407,7 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 				include_once CARTFLOWS_DIR . 'modules/beaver-builder/class-cartflows-bb-modules-loader.php';
 			}
 
-			include_once CARTFLOWS_DIR . 'classes/class-cartflows-admin-notices.php';
+			include_once CARTFLOWS_DIR . 'classes/class-cartflows-wizard.php';
 
 			include_once CARTFLOWS_DIR . 'classes/deprecated/deprecated-hooks.php';
 
@@ -473,7 +448,7 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 
 			foreach ( $files as $file ) {
 				if ( wp_mkdir_p( $file['base'] ) && ! file_exists( trailingslashit( $file['base'] ) . $file['file'] ) ) {
-					$file_handle = @fopen(trailingslashit($file['base']) . $file['file'], 'w'); // phpcs:ignore
+					$file_handle = @fopen(trailingslashit($file['base']) . $file['file'], 'w'); // phpcs:ignore 
 					if ( $file_handle ) {
 						fwrite( $file_handle, $file['content'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fwrite
 						fclose( $file_handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fclose
@@ -614,9 +589,7 @@ if ( ! class_exists( 'Cartflows_Loader' ) ) {
 		/**
 		 * Deactivation Reset
 		 */
-		public function deactivation_reset() {
-
-		}
+		public function deactivation_reset() {      }
 
 		/**
 		 * Logger Class Instance

@@ -68,10 +68,10 @@ abstract class AjaxBase {
 	 */
 	public function localize_ajax_action_nonce( $action ) {
 
-		if ( current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( current_user_can( 'manage_options' ) ) {
 
 			add_filter(
-				'cartflows_admin_localized_vars',
+				'cartflows_react_admin_localize',
 				function( $localize ) use ( $action ) {
 
 					$localize[ $action . '_nonce' ] = wp_create_nonce( $this->prefix . '_' . $action );

@@ -53,7 +53,7 @@ class Cartflows_BB_Optin_Form extends FLBuilderModule {
 
 		if ( '' !== $icon && file_exists( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-optin-form/icon/' . $icon ) ) {
 
-			return file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-optin-form/icon/' . $icon ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			return fl_builder_filesystem()->file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-optin-form/icon/' . $icon );
 		}
 
 		return '';
@@ -65,20 +65,6 @@ class Cartflows_BB_Optin_Form extends FLBuilderModule {
 	 * @since 1.6.15
 	 */
 	public function dynamic_option_filters() {
-
-		$settings = $this->settings;
-
-		add_filter(
-			'cartflows_optin_meta_wcf-input-fields-skins',
-			function ( $value ) use ( $settings ) {
-
-				$value = $settings->input_skins;
-
-				return $value;
-			},
-			10,
-			1
-		);
 
 		do_action( 'cartflows_bb_optin_options_filters', $this->settings );
 
@@ -92,11 +78,19 @@ class Cartflows_BB_Optin_Form extends FLBuilderModule {
 	 */
 	public static function get_skin_types() {
 
-		$skin_options = array(
-			'default'         => __( 'Default', 'cartflows' ),
-			'floating-labels' => __( 'Floating Labels', 'cartflows' ),
-		);
+		$skin_options = array();
 
+		if ( ! _is_cartflows_pro() ) {
+			$skin_options = array(
+				'default'         => __( 'Default', 'cartflows' ),
+				'floating-labels' => __( 'Floating Labels ( PRO )', 'cartflows' ),
+			);
+		} else {
+			$skin_options = array(
+				'default'         => __( 'Default', 'cartflows' ),
+				'floating-labels' => __( 'Floating Labels', 'cartflows' ),
+			);
+		}
 		return $skin_options;
 	}
 

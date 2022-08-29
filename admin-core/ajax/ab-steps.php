@@ -69,7 +69,7 @@ class AbSteps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -115,7 +115,7 @@ class AbSteps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -191,7 +191,7 @@ class AbSteps extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 

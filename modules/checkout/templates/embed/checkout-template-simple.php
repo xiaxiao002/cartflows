@@ -11,27 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $checkout_layout = wcf()->options->get_checkout_meta_value( $checkout_id, 'wcf-checkout-layout' );
 $fields_skins    = wcf()->options->get_checkout_meta_value( $checkout_id, 'wcf-fields-skins' );
-$checkout_skin   = '';
-
-/**
- * Added this condition to add backward compatibility of the floating labes styles
- *
- * @since 1.9.0
- *
- * @to-do: Remove this condition after 2-3 update.
- * */
-if ( 'style-one' === $fields_skins ) {
-	$fields_skins = 'modern-label';
-}
-
-if ( 'modern-one-column' === $checkout_layout || 'modern-checkout' === $checkout_layout ) {
-	// Adding a layout specific classes depending on the checkout style modern-checout OR modern-one-Column.
-	$checkout_skin   = 'modern-checkout' === $checkout_layout ? 'wcf-modern-skin-two-column' : 'wcf-modern-skin-one-column';
-	$checkout_layout = 'modern-checkout'; // Keeping the style and a common to modern checkout class for one and two column layouts.
-}
 
 ?>
-<div id="wcf-embed-checkout-form" class="wcf-embed-checkout-form wcf-embed-checkout-form-<?php echo esc_attr( $checkout_layout ); ?> <?php echo esc_attr( $checkout_skin ); ?> wcf-field-<?php echo esc_attr( $fields_skins ); ?>">
+<div id="wcf-embed-checkout-form" class="wcf-embed-checkout-form wcf-embed-checkout-form-<?php echo esc_attr( $checkout_layout ); ?> wcf-field-<?php echo esc_attr( $fields_skins ); ?>">
 <!-- CHECKOUT SHORTCODE -->
 <?php do_action( 'cartflows_add_before_main_section', $checkout_layout ); ?>
 

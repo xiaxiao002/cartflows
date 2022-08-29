@@ -1,13 +1,14 @@
 ( function ( $ ) {
-	const wcf_update_checkout_on_return = function () {
-		const vis = ( function () {
-			let stateKey, eventKey;
-			const keys = {
-				hidden: 'visibilitychange',
-				webkitHidden: 'webkitvisibilitychange',
-				mozHidden: 'mozvisibilitychange',
-				msHidden: 'msvisibilitychange',
-			};
+	var wcf_update_checkout_on_return = function () {
+		var vis = ( function () {
+			var stateKey,
+				eventKey,
+				keys = {
+					hidden: 'visibilitychange',
+					webkitHidden: 'webkitvisibilitychange',
+					mozHidden: 'mozvisibilitychange',
+					msHidden: 'msvisibilitychange',
+				};
 			for ( stateKey in keys ) {
 				if ( stateKey in document ) {
 					eventKey = keys[ stateKey ];
@@ -16,19 +17,17 @@
 			}
 
 			return function ( c ) {
-				if ( c ) {
-					document.addEventListener( eventKey, c );
-				}
+				if ( c ) document.addEventListener( eventKey, c );
 				return ! document[ stateKey ];
 			};
 		} )();
 
 		function getCookie( name ) {
-			const cookieArr = document.cookie.split( ';' );
-			for ( let i = 0; i < cookieArr.length; i++ ) {
-				const cookiePair = cookieArr[ i ].split( '=' );
+			var cookieArr = document.cookie.split( ';' );
+			for ( var i = 0; i < cookieArr.length; i++ ) {
+				var cookiePair = cookieArr[ i ].split( '=' );
 
-				if ( name === cookiePair[ 0 ].trim() ) {
+				if ( name == cookiePair[ 0 ].trim() ) {
 					return decodeURIComponent( cookiePair[ 1 ] );
 				}
 			}
@@ -36,9 +35,8 @@
 		}
 
 		vis( function () {
-			const active_checkout_cookie = getCookie(
-				cartflows.active_checkout_cookie
-			);
+
+			var active_checkout_cookie = getCookie( cartflows.active_checkout_cookie );
 
 			if ( active_checkout_cookie && vis() ) {
 				if (
@@ -60,11 +58,15 @@
 
 					$( document.body ).trigger( 'update_checkout' );
 
-					$( document ).ajaxComplete( function ( event, xhr ) {
+					$( document ).ajaxComplete( function (
+						event,
+						xhr,
+						settings
+					) {
 						if ( ! xhr.hasOwnProperty( 'responseJSON' ) ) {
 							return;
 						}
-						const fragmants = xhr.responseJSON.hasOwnProperty(
+						var fragmants = xhr.responseJSON.hasOwnProperty(
 							'fragments'
 						)
 							? xhr.responseJSON.fragments
@@ -91,16 +93,16 @@
 	 * This will collect all the present fields in the woocommerce form and adds an class if the field
 	 * is blank
 	 */
-	const wcf_custom_field_validation = function () {
-		const custom_field_add_class = function (
+	var wcf_custom_field_validation = function () {
+		var custom_field_add_class = function (
 			field_value,
 			field_row,
 			field_wrap,
 			field_type
 		) {
 			if (
-				field_value === '' ||
-				( 'select' === field_type && field_value === ' ' )
+				field_value == '' ||
+				( 'select' == field_type && field_value == ' ' )
 			) {
 				if ( field_row.hasClass( 'validate-required' ) ) {
 					field_wrap.addClass( 'field-required' );
@@ -110,12 +112,12 @@
 			}
 		};
 
-		const fields_wrapper = $( 'form.woocommerce-checkout' ),
+		var fields_wrapper = $( 'form.woocommerce-checkout #customer_details' ),
 			$all_fields = fields_wrapper.find( 'input, textarea' ),
 			$selects = fields_wrapper.find( 'select' );
 
 		$all_fields.on( 'blur', function () {
-			const $this = $( this ),
+			var $this = $( this ),
 				field_type = $this.attr( 'type' ),
 				field_row = $this.closest( 'p.form-row' ),
 				field_value = $this.val();
@@ -124,7 +126,7 @@
 		} );
 
 		$selects.on( 'blur', function () {
-			const $this = $( this ),
+			var $this = $( this ),
 				field_row = $this.closest( 'p.form-row' ),
 				field_type = 'select',
 				field_wrap = field_row.find( '.select2-container--default' ),
@@ -139,8 +141,109 @@
 		} );
 	};
 
-	const wcf_check_is_local_storage = function () {
-		const test = 'test';
+	/**
+	 * Billing and shipping field add class form-row-first and form-row-last
+	 * To add those classes to change the layout of the field
+	 */
+	var add_custom_class_address_field = function () {
+		// For Billing address fields.
+		var $get_checkout_style_layout = $( '.cartflows-container' ).find(
+				'.wcf-embed-checkout-form-two-column'
+			),
+			$get_bill_addr_field_one = $(
+				'.wcf-embed-checkout-form .woocommerce-checkout'
+			).find( '#billing_address_1_field' ),
+			$get_bill_addr_field_two = $(
+				'.wcf-embed-checkout-form .woocommerce-checkout'
+			).find( '#billing_address_2_field' );
+
+		if ( $get_bill_addr_field_one.hasClass( 'form-row-wide' ) ) {
+			$get_bill_addr_field_one.removeClass( 'form-row-wide' );
+			$get_bill_addr_field_one.addClass( 'form-row-first' );
+		}
+
+		if ( $get_bill_addr_field_two.hasClass( 'form-row-wide' ) ) {
+			$get_bill_addr_field_two.removeClass( 'form-row-wide' );
+			$get_bill_addr_field_two.addClass( 'form-row-last' );
+
+			if (
+				$get_bill_addr_field_two
+					.find( 'label' )
+					.hasClass( 'screen-reader-text' )
+			) {
+				$get_bill_addr_field_two.addClass( 'mt20' );
+			} else {
+				$get_bill_addr_field_two.removeClass( 'mt20' );
+			}
+		}
+
+		// For Shipping address fields.
+		var $get_ship_addr_field_one = $(
+			'.wcf-embed-checkout-form .woocommerce-checkout'
+		).find( '#shipping_address_1_field' );
+		var $get_ship_addr_field_two = $(
+			'.wcf-embed-checkout-form .woocommerce-checkout'
+		).find( '#shipping_address_2_field' );
+		if ( $get_ship_addr_field_one.hasClass( 'form-row-wide' ) ) {
+			$get_ship_addr_field_one.removeClass( 'form-row-wide' );
+			$get_ship_addr_field_one.addClass( 'form-row-first' );
+		}
+
+		if ( $get_ship_addr_field_two.hasClass( 'form-row-wide' ) ) {
+			$get_ship_addr_field_two.removeClass( 'form-row-wide' );
+			$get_ship_addr_field_two.addClass( 'form-row-last' );
+
+			if (
+				$get_ship_addr_field_two
+					.find( 'label' )
+					.hasClass( 'screen-reader-text' )
+			) {
+				$get_ship_addr_field_two.addClass( 'mt20' );
+			} else {
+				$get_ship_addr_field_two.removeClass( 'mt20' );
+			}
+		}
+
+		function address_fields_management( type ) {
+			var wrapper = $( '.woocommerce-' + type + '-fields' );
+
+			setTimeout( function () {
+				var column_three = wrapper.find( '.wcf-column-33' );
+				column_three.css( 'clear', '' );
+				column_three.first().css( 'clear', 'left' );
+				// column_three.first().css( 'margin-right', '10px' );
+				// column_three.last().css( 'margin-left', '10px' );
+			}, 100 );
+
+			setTimeout( function () {
+				var column_fifty = wrapper.find( '.wcf-column-50' );
+				column_fifty.css( 'clear', '' );
+				column_fifty.last().css( 'clear', 'left' );
+			}, 100 );
+		}
+
+		// address_fields_management( 'billing' );
+		// address_fields_management( 'shipping' );
+
+		var billing_country = $(
+			'.wcf-embed-checkout-form .woocommerce-checkout'
+		).find( '#billing_country' );
+
+		billing_country.on( 'change', function ( e ) {
+			// address_fields_management( 'billing' );
+		} );
+
+		var shipping_country = $(
+			'.wcf-embed-checkout-form .woocommerce-checkout'
+		).find( '#shipping_country' );
+
+		shipping_country.on( 'change', function ( e ) {
+			// address_fields_management( 'shipping' );
+		} );
+	};
+
+	var wcf_check_is_local_storage = function () {
+		var test = 'test';
 		try {
 			localStorage.setItem( test, test );
 			localStorage.removeItem( test );
@@ -150,8 +253,8 @@
 		}
 	};
 
-	const wcf_persistent_data = function () {
-		if ( 'yes' !== cartflows.allow_persistence ) {
+	var wcf_persistent_data = function () {
+		if ( 'yes' != cartflows.allow_persistence ) {
 			return;
 		}
 
@@ -159,13 +262,12 @@
 			return;
 		}
 
-		const checkout_cust_form =
-			'form.woocommerce-checkout #customer_details';
+		var checkout_cust_form = 'form.woocommerce-checkout #customer_details';
 
-		const wcf_form_data = {
-			set() {
-				const checkout_data = [];
-				const checkout_form = $(
+		var wcf_form_data = {
+			set: function () {
+				var checkout_data = [];
+				var checkout_form = $(
 					'form.woocommerce-checkout #customer_details'
 				);
 
@@ -188,15 +290,15 @@
 					cartflows_checkout_form
 				);
 			},
-			get() {
+			get: function () {
 				if (
-					localStorage.getItem( 'cartflows_checkout_form' ) !== null
+					localStorage.getItem( 'cartflows_checkout_form' ) != null
 				) {
 					checkout_data = JSON.parse(
 						localStorage.getItem( 'cartflows_checkout_form' )
 					);
 
-					for ( let i = 0; i < checkout_data.length; i++ ) {
+					for ( var i = 0; i < checkout_data.length; i++ ) {
 						if (
 							$(
 								'form.woocommerce-checkout [name=' +
@@ -230,8 +332,8 @@
 		} );
 	};
 
-	const wcf_checkout_coupons = {
-		init() {
+	var wcf_checkout_coupons = {
+		init: function () {
 			$( document.body ).on(
 				'click',
 				'.wcf-submit-coupon',
@@ -244,20 +346,20 @@
 			);
 		},
 
-		submit_coupon( e ) {
+		submit_coupon: function ( e ) {
 			e.preventDefault();
-			const coupon_wrapper_class = $( '.wcf-custom-coupon-field' ),
-				coupon_wrapper = $( this ).closest( coupon_wrapper_class ),
+			var coupon_wrapper = $( '.wcf-custom-coupon-field' ),
 				coupon_field = coupon_wrapper.find( '.wcf-coupon-code-input' ),
 				coupon_value = coupon_field.val();
 
-			if ( '' === coupon_value ) {
+			if ( '' == coupon_value ) {
 				coupon_field.addClass( 'field-required' );
 				return false;
+			} else {
+				coupon_field.removeClass( 'field-required' );
 			}
-			coupon_field.removeClass( 'field-required' );
 
-			const data = {
+			var data = {
 				coupon_code: coupon_value,
 				action: 'wcf_woo_apply_coupon',
 				security: cartflows.wcf_validate_coupon_nonce,
@@ -266,40 +368,31 @@
 			$.ajax( {
 				type: 'POST',
 				url: cartflows.ajax_url,
-				data,
+				data: data,
 
-				success( code_data ) {
-					const coupon_message = $( '.wcf-custom-coupon-field' );
+				success: function ( code ) {
+					var coupon_message = $( '.wcf-custom-coupon-field' );
 					coupon_message
 						.find( '.woocommerce-error, .woocommerce-message' )
 						.remove();
 
-					if ( code_data && code_data.status === true ) {
+					var data = JSON.parse( code );
+
+					if ( data.status == true ) {
 						$( document.body ).trigger( 'update_checkout', {
 							update_shipping_method: false,
 						} );
-						coupon_message.prepend( code_data.msg );
-						coupon_wrapper_class.addClass( 'wcf-coupon-applied' );
-					} else if ( code_data && code_data.msg ) {
-						coupon_message.prepend( code_data.msg );
-						coupon_wrapper_class.removeClass(
-							'wcf-coupon-applied'
-						);
+						coupon_message.prepend( data.msg );
 					} else {
-						console.log(
-							'Error: Error while applying the coupon. Response: ' +
-								code_data.data && code_data.data.error
-								? code_data.data.error
-								: code_data
-						);
+						coupon_message.prepend( data.msg );
 					}
 				},
 			} );
 		},
 
-		remove_coupon( e ) {
+		remove_coupon: function ( e ) {
 			e.preventDefault();
-			const data = {
+			var data = {
 				coupon_code: $( this ).attr( 'data-coupon' ),
 				action: 'wcf_woo_remove_coupon',
 				security: cartflows.wcf_validate_remove_coupon_nonce,
@@ -308,17 +401,13 @@
 			$.ajax( {
 				type: 'POST',
 				url: cartflows.ajax_url,
-				data,
+				data: data,
 
-				success( code ) {
-					const coupon_message = $( '.wcf-custom-coupon-field' );
+				success: function ( code ) {
+					var coupon_message = $( '.wcf-custom-coupon-field' );
 					coupon_message
 						.find( '.woocommerce-error, .woocommerce-message' )
 						.hide();
-
-					$( '.wcf-custom-coupon-field' ).removeClass(
-						'wcf-coupon-applied'
-					);
 
 					if ( code ) {
 						$( document.body ).trigger( 'update_checkout', {
@@ -331,16 +420,16 @@
 		},
 	};
 
-	const wcf_remove_cart_products = function () {
+	var wcf_remove_cart_products = function () {
 		$( document.body ).on(
 			'click',
-			'#wcf-embed-checkout-form .wcf-remove-product',
+			'#wcf-embed-checkout-form .remove',
 			function ( e ) {
 				e.preventDefault();
-				const p_id = $( this ).attr( 'data-id' );
-				const data = {
+				var p_id = $( this ).attr( 'data-id' );
+				var data = {
 					p_key: $( this ).attr( 'data-item-key' ),
-					p_id,
+					p_id: p_id,
 					action: 'wcf_woo_remove_cart_product',
 					security: cartflows.wcf_validate_remove_cart_product_nonce,
 				};
@@ -348,12 +437,12 @@
 				$.ajax( {
 					type: 'POST',
 					url: cartflows.ajax_url,
-					data,
+					data: data,
 
-					success( response ) {
-						const res_data = JSON.parse( response );
+					success: function ( response ) {
+						var data = JSON.parse( response );
 
-						if ( res_data.need_shipping === false ) {
+						if ( data.need_shipping == false ) {
 							// $('#wcf-embed-checkout-form').find('#ship-to-different-address-checkbox').hide();
 							$( '#wcf-embed-checkout-form' )
 								.find( '#ship-to-different-address-checkbox' )
@@ -362,7 +451,7 @@
 						$( '#wcf-embed-checkout-form' )
 							.find( '.woocommerce-notices-wrapper' )
 							.first()
-							.html( res_data.msg );
+							.html( data.msg );
 						$( document ).trigger( 'cartflows_remove_product', [
 							p_id,
 						] );
@@ -375,308 +464,6 @@
 		);
 	};
 
-	const wcf_toggle_optimized_fields = function () {
-		jQuery.each(
-			cartflows_checkout_optimized_fields,
-			function ( field, cartflows_optimized_field ) {
-				if ( cartflows_optimized_field.is_optimized ) {
-					jQuery( '#' + field ).prepend(
-						'<a href="#" id="wcf_optimized_' +
-							field +
-							'">' +
-							cartflows_optimized_field.field_label +
-							'</a>'
-					);
-					jQuery( '#wcf_optimized_' + field ).on(
-						'click',
-						function ( e ) {
-							e.preventDefault();
-							jQuery( '#' + field ).removeClass(
-								'wcf-hide-field'
-							);
-							// jQuery("#" + field).removeClass('mt20')
-							const field_id = field.replace( /_field/g, '' );
-							$( '#' + field_id ).trigger( 'focus' );
-							jQuery( this ).remove();
-						}
-					);
-				}
-			}
-		);
-	};
-
-	const wcf_anim_field_style_two = function () {
-		const $inputs = $(
-			'.wcf-field-modern-label .woocommerce input, .wcf-field-modern-label .woocommerce select, .wcf-field-modern-label .woocommerce textarea'
-		);
-
-		/**
-		 * Add wcf-anim-label class when floating label option is enabled.
-		 * The class will be added only when the info is started to type in the checkout fields.
-		 *
-		 * @param {Object} $this the object of current checkout field
-		 */
-		const _add_anim_class = function ( $this ) {
-			const field_row = $this.closest( '.form-row' ),
-				is_select =
-					$this.is( 'select' ) ||
-					$this.hasClass( 'select2-hidden-accessible' ),
-				field_value = is_select
-					? $this.find( ':selected' ).text()
-					: $this.val(),
-				field_type = $this.attr( 'type' );
-
-			if ( '' === field_value ) {
-				field_row.removeClass( 'wcf-anim-label' );
-			} else if ( 'hidden' === field_type ) {
-				field_row.addClass( 'wcf-anim-hidden-label' );
-			} else {
-				field_row.addClass( 'wcf-anim-label' );
-			}
-		};
-
-		// Trigger the addition of anim class when focused or info is inputed on the field.
-		$inputs.on( 'focusout input', function () {
-			const $this = $( this );
-			_add_anim_class( $this );
-		} );
-
-		// Load the anim class on the page ready.
-		$( $inputs ).each( function () {
-			_add_anim_class( $( this ) );
-		} );
-	};
-
-	const validateEmail = function ( email ) {
-		const email_reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return email_reg.test( email );
-	};
-
-	let xhrCountEmail = 0;
-	let delayTimerEmail;
-
-	const inline_email_address_validation = function () {
-		const email = $( '.wcf-customer-info #billing_email' ).val();
-
-		if ( 'undefined' === typeof email || cartflows.is_logged_in ) {
-			return;
-		}
-
-		if ( '' !== email ) {
-			const email_field = $( '#billing_email' );
-			const validation_msg_wrap = $( '.wcf-email-validation-block' ),
-				customer_login_wrap = $( '.wcf-customer-login-section' );
-
-			validation_msg_wrap.remove();
-
-			if ( ! validateEmail( email ) ) {
-				email_field.after(
-					'<span class="wcf-email-validation-block error">' +
-						cartflows.email_validation_msgs.error_msg +
-						'</span>'
-				);
-				customer_login_wrap.removeClass( 'wcf-show' );
-				return false;
-			}
-
-			clearTimeout( delayTimerEmail );
-
-			const seqNumber = ++xhrCountEmail;
-
-			delayTimerEmail = setTimeout( function () {
-				$.ajax( {
-					url: cartflows.ajax_url,
-					type: 'POST',
-					data: {
-						action: 'wcf_check_email_exists',
-						email_address: email,
-						security: cartflows.check_email_exist_nonce,
-					},
-					success( resp ) {
-						if ( seqNumber !== xhrCountEmail ) {
-							return;
-						}
-
-						validation_msg_wrap.remove();
-
-						if (
-							resp.data &&
-							resp.data.success &&
-							customer_login_wrap.hasClass( 'wcf-show' )
-						) {
-							email_field.after(
-								'<span class="wcf-email-validation-block success">' +
-									cartflows.email_validation_msgs
-										.success_msg +
-									'</span>'
-							);
-							return;
-						}
-
-						if ( resp.data && resp.data.success ) {
-							if ( resp.data.is_login_allowed ) {
-								email_field.after(
-									'<span class="wcf-email-validation-block success">' +
-										cartflows.email_validation_msgs
-											.success_msg +
-										'</span>'
-								);
-
-								customer_login_wrap
-									.slideDown( 400 )
-									.addClass( 'wcf-show' );
-							}
-
-							$( '.wcf-create-account-section' ).hide();
-							$(
-								'.woocommerce-billing-fields__customer-login-label'
-							).show();
-						} else {
-							customer_login_wrap
-								.slideUp( 400 )
-								.removeClass( 'wcf-show' );
-
-							//Learndash Woo integration plugin hides the create aacount checkbox.So need to show it again.
-							$(
-								'.wcf-create-account-section .create-account label.checkbox'
-							).show();
-
-							$( '.wcf-create-account-section' ).show();
-
-							$(
-								'.woocommerce-billing-fields__customer-login-label'
-							).hide();
-						}
-					},
-				} );
-			}, 300 );
-		} else {
-			$( '.wcf-create-account-section' ).hide();
-			$( '.wcf-customer-login-section' ).hide();
-			$( '.wcf-email-validation-block' ).hide();
-			$( '.woocommerce-billing-fields__customer-login-label' ).show();
-		}
-
-		return false;
-	};
-
-	const woocommerce_user_login = function () {
-		$( '.wcf-customer-login-url' ).on( 'click', function login_form() {
-			const customer_login_wrap = $( '.wcf-customer-login-section' );
-
-			if ( customer_login_wrap.hasClass( 'wcf-show' ) ) {
-				customer_login_wrap.slideUp( 400 );
-				customer_login_wrap.removeClass( 'wcf-show' );
-			} else {
-				customer_login_wrap.slideDown( 400 );
-				customer_login_wrap.addClass( 'wcf-show' );
-			}
-		} );
-
-		$( '.wcf-customer-login-section__login-button' ).on(
-			'click',
-			function name() {
-				const email = $( '#billing_email' ).val();
-				const password = $( '#billing_password' ).val();
-
-				$.ajax( {
-					url: cartflows.ajax_url,
-					type: 'POST',
-					data: {
-						action: 'wcf_woocommerce_login',
-						email,
-						password,
-						security: cartflows.woocommerce_login_nonce,
-					},
-					success( resp ) {
-						if ( resp.data && resp.data.success ) {
-							location.reload();
-						} else {
-							$( '.wcf-customer-info__notice' )
-								.addClass( 'wcf-notice' )
-								.html( resp.data.error );
-						}
-					},
-				} );
-			}
-		);
-	};
-
-	const wcf_order_review_toggler = function () {
-		const mobile_order_review_section = $(
-				'.wcf-collapsed-order-review-section'
-			),
-			mobile_order_review_wrap = $(
-				'.wcf-cartflows-review-order-wrapper'
-			),
-			desktop_order_review_wrap = $( '.wcf-order-wrap' );
-
-		let timeout = false;
-		const resizeEvent =
-			'onorientationchange' in window ? 'orientationchange' : 'resize';
-
-		$( '.wcf-order-review-toggle' ).on(
-			'click',
-			function wcf_show_order_summary( e ) {
-				e.preventDefault();
-
-				if ( mobile_order_review_section.hasClass( 'wcf-show' ) ) {
-					mobile_order_review_wrap.slideUp( 400 );
-					mobile_order_review_section.removeClass( 'wcf-show' );
-					$( '.wcf-order-review-toggle-text' ).text(
-						cartflows.order_review_toggle_texts.toggle_show_text
-					);
-				} else {
-					mobile_order_review_wrap.slideDown( 400 );
-					mobile_order_review_section.addClass( 'wcf-show' );
-					$( '.wcf-order-review-toggle-text' ).text(
-						cartflows.order_review_toggle_texts.toggle_hide_text
-					);
-				}
-			}
-		);
-
-		$( window ).on( resizeEvent, function () {
-			clearTimeout( timeout );
-
-			timeout = setTimeout( function () {
-				const width = window.innerWidth || $( window ).width();
-
-				if ( width >= 769 ) {
-					mobile_order_review_wrap.css( { display: 'none' } );
-					mobile_order_review_wrap.removeClass( 'wcf-show' );
-					$( '.wcf-order-review-toggle' ).removeClass( 'wcf-show' );
-					$( '.wcf-order-review-toggle-text' ).text(
-						cartflows.order_review_toggle_texts.toggle_show_text
-					);
-				}
-			}, 200 );
-		} );
-
-		// Update checkout when shipping methods changes.
-		mobile_order_review_wrap.on(
-			'change',
-			'select.shipping_method, input[name^="shipping_method"]',
-			function () {
-				/**
-				 * Uncheck all shipping radio buttons of desktop. Those will be auto updated by update_checkout action.
-				 * While performing the update checkout, it searches for the selected shipping method in whole page.
-				 */
-				desktop_order_review_wrap
-					.find(
-						'input[name^="shipping_method"][type="radio"]:checked'
-					)
-					.each( function () {
-						$( this ).removeAttr( 'checked' );
-					} );
-
-				$( document.body ).trigger( 'update_checkout', {
-					update_shipping_method: true,
-				} );
-			}
-		);
-	};
-
 	$( function () {
 		wcf_persistent_data();
 
@@ -684,26 +471,10 @@
 
 		wcf_custom_field_validation();
 
+		add_custom_class_address_field();
+
 		wcf_remove_cart_products();
 
 		wcf_checkout_coupons.init();
-
-		wcf_toggle_optimized_fields();
-
-		wcf_anim_field_style_two();
-
-		// On email input field change.
-		$( '.wcf-customer-info #billing_email' ).on( 'input', function () {
-			inline_email_address_validation();
-		} );
-
-		// On page load as we saves the checkout fields values.
-		if ( $( '.wcf-customer-info #billing_email' ).length > 0 ) {
-			inline_email_address_validation();
-		}
-
-		woocommerce_user_login();
-
-		wcf_order_review_toggler();
 	} );
 } )( jQuery );

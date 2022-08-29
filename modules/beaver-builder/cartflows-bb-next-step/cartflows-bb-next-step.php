@@ -52,7 +52,7 @@ class Cartflows_BB_Next_Step extends FLBuilderModule {
 
 		if ( '' !== $icon && file_exists( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-next-step/icon/' . $icon ) ) {
 
-			return file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-next-step/icon/' . $icon ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			return fl_builder_filesystem()->file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-next-step/icon/' . $icon );
 		}
 
 		return '';

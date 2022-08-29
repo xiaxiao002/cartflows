@@ -173,7 +173,8 @@ function _is_wcf_doing_checkout_ajax() {
 
 	if ( wp_doing_ajax() || isset( $_GET['wc-ajax'] ) ) { //phpcs:ignore
 
-		if ( ( isset( $_GET['wc-ajax'] ) && isset( $_POST['_wcf_checkout_id'] ) ) || isset( $_GET['wcf_checkout_id'] ) //phpcs:ignore
+		if ( isset( $_GET['wc-ajax'] ) && //phpcs:ignore
+			isset( $_POST['_wcf_checkout_id'] ) //phpcs:ignore
 		) {
 			return true;
 		}
@@ -610,4 +611,3 @@ function wcf_get_step( $step_id ) {
 
 	return wcf()->wcf_step_objs[ $step_id ];
 }
-

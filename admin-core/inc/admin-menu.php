@@ -79,7 +79,6 @@ class AdminMenu {
 	public function initialize_hooks() {
 		add_action( 'admin_menu', array( $this, 'setup_menu' ) );
 		add_action( 'admin_init', array( $this, 'settings_admin_scripts' ) );
-		add_action( 'admin_init', array( $this, 'add_capabilities_to_admin' ) );
 
 		/* Flow content view */
 		add_action( 'cartflows_render_admin_page_content', array( $this, 'render_content' ), 10, 2 );
@@ -133,7 +132,7 @@ class AdminMenu {
 	 */
 	public function set_block_editor_status() {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
@@ -204,7 +203,6 @@ class AdminMenu {
 	 *  Initialize after Cartflows pro get loaded.
 	 */
 	public function settings_admin_scripts() {
-
 		// Enqueue admin scripts.
 		if (isset($_GET['page']) && ('cartflows' === $_GET['page'] || false !== strpos($_GET['page'], 'cartflows_'))) { //phpcs:ignore
 
@@ -226,125 +224,49 @@ class AdminMenu {
 	 * @since 1.0.0
 	 */
 	public function setup_menu() {
-		global $submenu, $wp_roles;
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		global $submenu;
 
 		$parent_slug = $this->menu_slug;
-		$capability  = 'cartflows_manage_flows_steps';
-		if ( current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		$capability  = 'manage_options';
 
-			add_menu_page(
-				'CartFlows',
-				'CartFlows',
-				$capability,
-				$parent_slug,
-				array( $this, 'render' ),
-				'data:image/svg+xml;base64,' . base64_encode(file_get_contents(CARTFLOWS_DIR . 'assets/images/cartflows-icon.svg')), //phpcs:ignore
-				40
-			);
-
-			// Add settings menu.
-			add_submenu_page(
-				$parent_slug,
-				__( 'Flows', 'cartflows' ),
-				__( 'Flows', 'cartflows' ),
-				$capability,
-				'admin.php?page=' . $this->menu_slug . '&path=flows'
-			);
-
-			$global_checkout_id    = absint( \Cartflows_Helper::get_global_setting( '_cartflows_store_checkout' ) );
-			$global_checkout_param = ( empty( $global_checkout_id ) ) ? 'path=store-checkout' : 'action=wcf-store-checkout&flow_id=' . $global_checkout_id;
-
-			add_submenu_page(
-				$parent_slug,
-				__( 'Store Checkout', 'cartflows' ),
-				__( 'Store Checkout', 'cartflows' ),
-				$capability,
-				'admin.php?page=' . $this->menu_slug . '&' . $global_checkout_param
-			);
-
-			add_submenu_page(
-				$parent_slug,
-				__( 'Templates', 'cartflows' ),
-				__( 'Templates', 'cartflows' ),
-				$capability,
-				'admin.php?page=' . $this->menu_slug . '&path=library'
-			);
-
-			if ( current_user_can( 'cartflows_manage_settings' ) ) {
-				add_submenu_page(
-					$parent_slug,
-					__( 'Settings', 'cartflows' ),
-					__( 'Settings', 'cartflows' ),
-					$capability,
-					'admin.php?page=' . $this->menu_slug . '&path=settings'
-				);
-
-				if ( ! get_option( 'wcf_setup_page_skipped', false ) && '1' === get_option( 'wcf_setup_skipped', false ) && $this->maybe_skip_setup_menu() ) {
-
-					add_submenu_page(
-						$parent_slug,
-						__( 'Setup', 'cartflows' ),
-						__( 'Setup', 'cartflows' ),
-						$capability,
-						'admin.php?page=' . $this->menu_slug . '&path=setup'
-					);
-				}
-			}
-
-			// Rename to Home menu.
-			$submenu[$parent_slug][0][0] = __('Home', 'cartflows'); //phpcs:ignore
-		}
-	}
-
-	/**
-	 * Add custom capabilities to Admin user.
-	 */
-	public function maybe_skip_setup_menu() {
-
-		$is_wcar_active = is_plugin_active( 'woo-cart-abandonment-recovery/woo-cart-abandonment-recovery.php' );
-
-		if ( ! $is_wcar_active ) {
-			return true;
-		}
-
-		$cpsw_connection_status = 'success' === get_option( 'cpsw_test_con_status', false ) || 'success' === get_option( 'cpsw_con_status', false );
-
-		if ( ! $cpsw_connection_status ) {
-			return true;
-		}
-
-		$is_set_report_email_ids = get_option( 'cartflows_stats_report_email_ids', false );
-
-		if ( ! $is_set_report_email_ids ) {
-			return true;
-		}
-
-		$is_store_checkout = \Cartflows_Helper::get_common_setting( 'global_checkout' );
-
-		if ( empty( $is_store_checkout ) ) {
-			return true;
-		}
-
-		update_option( 'wcf_setup_page_skipped', true );
-		return false;
-
-	}
-
-	/**
-	 * Add custom capabilities to Admin user.
-	 */
-	public function add_capabilities_to_admin() {
-
-		global $wp_roles;
-		// Add custom capabilities to admin by default.
-		$capabilities = array(
-			'cartflows_manage_settings',
-			'cartflows_manage_flows_steps',
+		add_menu_page(
+			'CartFlows',
+			'CartFlows',
+			$capability,
+			$parent_slug,
+			array( $this, 'render' ),
+			'data:image/svg+xml;base64,' . base64_encode(file_get_contents(CARTFLOWS_DIR . 'assets/images/cartflows-icon.svg')), //phpcs:ignore
+			40
 		);
 
-		foreach ( $capabilities as $cap ) {
-			$wp_roles->add_cap( 'administrator', $cap );
-		}
+		// Add settings menu.
+		add_submenu_page(
+			$parent_slug,
+			__( 'Flows', 'cartflows' ),
+			__( 'Flows', 'cartflows' ),
+			$capability,
+			'admin.php?page=' . $this->menu_slug . '&path=flows'
+		);
+		add_submenu_page(
+			$parent_slug,
+			__( 'Settings', 'cartflows' ),
+			__( 'Settings', 'cartflows' ),
+			$capability,
+			'admin.php?page=' . $this->menu_slug . '&path=settings'
+		);
+		add_submenu_page(
+			$parent_slug,
+			__( 'Templates', 'cartflows' ),
+			__( 'Templates', 'cartflows' ),
+			$capability,
+			'admin.php?page=' . $this->menu_slug . '&path=library'
+		);
+
+		// Rename to Home menu.
+		$submenu[$parent_slug][0][0] = __('Home', 'cartflows'); //phpcs:ignore
 	}
 
 	/**
@@ -379,12 +301,12 @@ class AdminMenu {
 		if ( 'cartflows' === $menu_page_slug ) {
 			if ( $this->is_current_page( 'cartflows' ) ) {
 				include_once CARTFLOWS_ADMIN_CORE_DIR . 'views/settings-app.php';
-			} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-edit-flow', 'wcf-edit-step', 'wcf-store-checkout', 'wcf-edit-store-step' ) ) ) {
+			} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-edit-flow', 'wcf-edit-step' ) ) ) {
 				include_once CARTFLOWS_ADMIN_CORE_DIR . 'views/editor-app.php';
 			} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-log' ) ) ) {
 				LogStatus::get_instance()->display_logs();
-			} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-license' ) ) && _is_cartflows_pro() ) {
-				do_action( 'cartflows_admin_log', 'wcf-license' );
+			} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-license' ) ) && 'active' === $this->get_plugin_status( 'cartflows-pro/cartflows-pro.php' ) ) {
+				include_once CARTFLOWS_ADMIN_CORE_DIR . 'inc/wcf-pro-license.php';
 			} else {
 				include_once CARTFLOWS_ADMIN_CORE_DIR . 'views/404-error.php';
 			}
@@ -406,6 +328,12 @@ class AdminMenu {
 
 		wp_enqueue_style( $admin_slug . '-header', CARTFLOWS_ADMIN_CORE_URL . 'assets/css/header.css', array(), CARTFLOWS_VER );
 		wp_style_add_data( $admin_slug . '-header', 'rtl', 'replace' );
+
+		/*
+		Enqueue.
+				// wp_enqueue_style( $admin_slug . '-fixed-header', CARTFLOWS_ADMIN_CORE_URL . 'assets/css/fixed-header.css', array(), CARTFLOWS_VER );
+				// wp_style_add_data( $admin_slug . '-fixed-header', 'rtl', 'replace' );
+		*/
 
 		wp_enqueue_script( $admin_slug . '-common-script', CARTFLOWS_ADMIN_CORE_URL . 'assets/js/common.js', array( 'jquery' ), CARTFLOWS_VER, false );
 
@@ -430,75 +358,40 @@ class AdminMenu {
 		$page_builder      = \Cartflows_Helper::get_common_setting( 'default_page_builder' );
 		$page_builder_name = \Cartflows_Helper::get_page_builder_name( $page_builder );
 
-		$global_checkout_id = \Cartflows_Helper::get_global_setting( '_cartflows_store_checkout' );
-
-		$flow_action = 'wcf-edit-flow';
-		$step_action = 'wcf-edit-step';
-
-		if ( intval( $flow_id ) === intval( $global_checkout_id ) ) {
-			$flow_action = 'wcf-store-checkout';
-			$step_action = 'wcf-edit-store-step';
-		}
-		$flows_and_steps = \Cartflows_Helper::get_instance()->get_flows_and_steps();
-
-		$cf_pro_status        = $this->get_cartflows_pro_plugin_status();
-		$cf_pro_type_inactive = '';
-		if ( 'inactive' === $cf_pro_status ) {
-
-			if ( ! function_exists( 'get_plugins' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/plugin.php';
-			}
-
-			$plugin               = get_plugins();
-			$cf_pro_type_inactive = $plugin['cartflows-pro/cartflows-pro.php']['Name'];
-		}
-
 		$localize = apply_filters(
-			'cartflows_admin_localized_vars',
+			'cartflows_react_admin_localize',
 			array(
-				'current_user'                     => ! empty( wp_get_current_user()->user_firstname ) ? wp_get_current_user()->user_firstname : wp_get_current_user()->display_name,
-				'cf_pro_status'                    => $this->get_cartflows_pro_plugin_status(),
-				'cf_pro_type'                      => 'free',
-				'cf_pro_type_inactive'             => $cf_pro_type_inactive,
-				'woocommerce_status'               => $this->get_plugin_status( 'woocommerce/woocommerce.php' ),
-				'default_page_builder'             => $page_builder,
-				'required_plugins'                 => \Cartflows_Helper::get_plugins_groupby_page_builders(),
-				'required_plugins_data'            => $this->get_required_plugins_data(),
-				'is_any_required_plugins_missing'  => $this->get_any_required_plugins_status(),
-				'admin_base_slug'                  => $this->menu_slug,
-				'admin_base_url'                   => admin_url(),
-				'title_length'                     => apply_filters(
-					'cartflows_flows_steps_title_length',
-					array(
-						'max'            => 50,
-						'display_length' => 40,
-					)
-				),
-				'plugin_dir'                       => CARTFLOWS_URL,
-				'admin_url'                        => admin_url( 'admin.php' ),
-				'ajax_url'                         => admin_url( 'admin-ajax.php' ),
-				'is_rtl'                           => is_rtl(),
-				'home_slug'                        => $this->menu_slug,
-				'is_pro'                           => _is_cartflows_pro(),
-				'page_builder'                     => $page_builder,
-				'page_builder_name'                => $page_builder_name,
-				'global_checkout'                  => \Cartflows_Helper::get_common_setting( 'global_checkout' ),
-				'flows_count'                      => 1, // Removing the flow count condition.
-				'currentFlowSteps'                 => $current_flow_steps,
-				// Delete this code after 3 major update. Added in 1.10.4.
-				'license_status'                   => \get_option( 'wc_am_client_cartflows_activated', '' ),
-				'cf_domain_url'                    => CARTFLOWS_DOMAIN_URL,
-				'logo_url'                         => esc_url_raw( CARTFLOWS_URL . 'assets/images/cartflows-logo.svg' ),
-				'create_product_src'               => $product_src,
-				'cf_font_family'                   => AdminHelper::get_font_family(),
-				'flows_and_steps'                  => ! empty( $flows_and_steps ) ? $flows_and_steps : '',
-				'store_checkout_flows_and_steps'   => \Cartflows_Helper::get_instance()->get_flows_and_steps( '', 'store-checkout' ),
-				'woo_currency'                     => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '',
-				'template_library_url'             => wcf()->get_site_url(),
-				'image_placeholder'                => esc_url_raw( CARTFLOWS_URL . 'admin-core/assets/images/image-placeholder.png' ),
-				'google_fonts'                     => \CartFlows_Font_Families::get_google_fonts(),
-				'system_fonts'                     => \CartFlows_Font_Families::get_system_fonts(),
-				'font_weights'                     => array(
+				'current_user'                    => ! empty( wp_get_current_user()->user_firstname ) ? wp_get_current_user()->user_firstname : wp_get_current_user()->display_name,
+				'cf_pro_status'                   => $this->get_plugin_status( 'cartflows-pro/cartflows-pro.php' ),
+				'woocommerce_status'              => $this->get_plugin_status( 'woocommerce/woocommerce.php' ),
+				'default_page_builder'            => $page_builder,
+				'required_plugins'                => \Cartflows_Helper::get_plugins_groupby_page_builders(),
+				'required_plugins_data'           => $this->get_required_plugins_data(),
+				'is_any_required_plugins_missing' => $this->get_any_required_plugins_status(),
+				'admin_base_slug'                 => $this->menu_slug,
+				'admin_base_url'                  => admin_url(),
+				'plugin_dir'                      => CARTFLOWS_URL,
+				'admin_url'                       => admin_url( 'admin.php' ),
+				'ajax_url'                        => admin_url( 'admin-ajax.php' ),
+				'home_slug'                       => $this->menu_slug,
+				'is_pro'                          => _is_cartflows_pro(),
+				'page_builder'                    => $page_builder,
+				'page_builder_name'               => $page_builder_name,
+				'global_checkout'                 => \Cartflows_Helper::get_common_setting( 'global_checkout' ),
+				'flows_count'                     => \wp_count_posts( CARTFLOWS_FLOW_POST_TYPE, 'readable' ),
+				'currentFlowSteps'                => $current_flow_steps,
+				'license_status'                  => \get_option( 'wc_am_client_cartflows_activated', '' ),
+				'cf_domain_url'                   => CARTFLOWS_DOMAIN_URL,
+				'logo_url'                        => esc_url_raw( CARTFLOWS_URL . 'assets/images/cartflows-logo.svg' ),
+				'create_product_src'              => $product_src,
+				'cf_font_family'                  => AdminHelper::get_font_family(),
+				'flows_and_steps'                 => \Cartflows_Helper::get_instance()->get_flows_and_steps(),
+				'woo_currency'                    => function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '',
+				'template_library_url'            => wcf()->get_site_url(),
+				'image_placeholder'               => esc_url_raw( CARTFLOWS_URL . 'admin-core/assets/images/image-placeholder.png' ),
+				'google_fonts'                    => \CartFlows_Font_Families::get_google_fonts(),
+				'system_fonts'                    => \CartFlows_Font_Families::get_system_fonts(),
+				'font_weights'                    => array(
 					'100' => __( 'Thin 100', 'cartflows' ),
 					'200' => __( 'Extra-Light 200', 'cartflows' ),
 					'300' => __( 'Light 300', 'cartflows' ),
@@ -509,21 +402,12 @@ class AdminMenu {
 					'800' => __( 'Extra-Bold 800', 'cartflows' ),
 					'900' => __( 'Ultra-Bold 900', 'cartflows' ),
 				),
-				'global_checkout_id'               => $global_checkout_id ? absint( $global_checkout_id ) : '',
-				'flow_action'                      => $flow_action,
-				'step_action'                      => $step_action,
-				'old_global_checkout'              => get_option( '_cartflows_old_global_checkout', false ),
-				'cpsw_status'                      => $this->get_plugin_status( 'checkout-plugins-stripe-woo/checkout-plugins-stripe-woo.php' ),
-				'ca_status'                        => $this->get_plugin_status( 'woo-cart-abandonment-recovery/woo-cart-abandonment-recovery.php' ),
-				'cpsw_connection_status'           => 'success' === get_option( 'cpsw_test_con_status', false ) || 'success' === get_option( 'cpsw_con_status', false ),
-				'current_user_can_manage_catflows' => current_user_can( 'cartflows_manage_settings' ),
-				'is_set_report_email_ids'          => get_option( 'cartflows_stats_report_email_ids', false ),
 			)
 		);
 
 		if ( $this->is_current_page( $this->menu_slug ) ) {
 			$this->settings_app_scripts( $localize );
-		} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-edit-flow', 'wcf-edit-step', 'wcf-store-checkout', 'wcf-edit-store-step' ) ) ) {
+		} elseif ( $this->is_current_page( 'cartflows', array( 'wcf-edit-flow', 'wcf-edit-step' ) ) ) {
 			wp_enqueue_media();
 			$this->editor_app_scripts( $localize );
 		}
@@ -591,25 +475,6 @@ class AdminMenu {
 	}
 
 	/**
-	 * Get CartFlows plugin status
-	 *
-	 * @since x.x.x
-	 *
-	 * @return string
-	 */
-	public function get_cartflows_pro_plugin_status() {
-
-		$status = $this->get_plugin_status( 'cartflows-pro/cartflows-pro.php' );
-
-		if ( 'active' === $status && ! _is_cartflows_pro() ) {
-
-			$status = 'inactive';
-		}
-
-		return $status;
-	}
-
-	/**
 	 * Get plugin status
 	 *
 	 * @since 1.1.4
@@ -671,9 +536,9 @@ class AdminMenu {
 		wp_enqueue_style( $handle );
 		wp_style_add_data( $handle, 'rtl', 'replace' );
 
-		$localize['is_flows_limit'] = false; // Removed the flow count condition.
+		$localize['is_flows_limit'] = ( ! _is_cartflows_pro() && 3 <= AdminHelper::get_flows_count() ) ? true : false;
 
-		wp_localize_script( $handle, 'cartflows_admin', $localize );
+		wp_localize_script( $handle, 'cartflows_react', $localize );
 
 	}
 
@@ -726,7 +591,7 @@ class AdminMenu {
 			$localize['options'] = $meta_options['options'];
 		}
 
-		wp_localize_script( $handle, 'cartflows_admin', $localize );
+		wp_localize_script( $handle, 'cartflows_react', $localize );
 	}
 
 	/**

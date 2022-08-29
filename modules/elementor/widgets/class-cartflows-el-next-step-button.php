@@ -133,7 +133,7 @@ class CartFlows_Next_Step_Button extends Widget_Base {
 	 * @since 1.6.15
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 
 		// Content Tab.
 		$this->register_button_content_controls();

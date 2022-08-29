@@ -49,15 +49,13 @@ class CommonSettings extends AjaxBase {
 	 */
 	public function register_ajax_events() {
 
-		if ( current_user_can( 'cartflows_manage_settings' ) ) {
+		$ajax_events = array(
+			'save_global_settings',
+			'switch_to_old_ui',
+			'regenerate_css_for_steps',
+		);
 
-			$ajax_events = array(
-				'save_global_settings',
-				'switch_to_old_ui',
-				'regenerate_css_for_steps',
-			);
-			$this->init_ajax_events( $ajax_events );
-		}
+		$this->init_ajax_events( $ajax_events );
 	}
 
 	/**
@@ -67,7 +65,7 @@ class CommonSettings extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_settings' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -99,7 +97,7 @@ class CommonSettings extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_settings' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -144,7 +142,7 @@ class CommonSettings extends AjaxBase {
 
 		$response_data = array( 'messsage' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_settings' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -183,16 +181,8 @@ class CommonSettings extends AjaxBase {
 					$this->save_google_analytics_settings();
 					break;
 
-				case 'google_address_autocomplete':
-					$this->save_address_autocomplete_setting();
-					break;
-
 				case 'other_settings':
 					$this->save_other_settings();
-					break;
-
-				case 'user_role_manager':
-					$this->save_user_roles_management_settings();
 					break;
 
 				default:
@@ -227,30 +217,6 @@ class CommonSettings extends AjaxBase {
 			$this->update_admin_settings_option( 'cartflows_pro_delete_plugin_data', $new_settings, false );
 		}
 
-		if ( isset( $_POST['cartflows_stats_report_emails'] ) ) { //phpcs:ignore
-			$enable_report_emails = sanitize_text_field( $_POST['cartflows_stats_report_emails'] ); //phpcs:ignore
-			$this->update_admin_settings_option( 'cartflows_stats_report_emails', $enable_report_emails, false );
-		}
-
-		if ( isset( $_POST['cartflows_stats_report_email_ids'] ) ) { //phpcs:ignore
-
-			if ( ! empty( $_POST['cartflows_stats_report_email_ids'] ) ) { //phpcs:ignore
-				$emails           = preg_split( "/[\f\r\n]+/", $_POST['cartflows_stats_report_email_ids'] ); //phpcs:ignore
-				$validated_emails = array();
-
-				foreach ( $emails as $email_id ) {
-
-					if ( is_email( $email_id ) ) {
-						array_push( $validated_emails, sanitize_email( $email_id ) );
-					}
-				}
-				$validated_emails = implode( "\n", $validated_emails );
-				$this->update_admin_settings_option( 'cartflows_stats_report_email_ids', $validated_emails, false );
-			} else {
-				$this->update_admin_settings_option( 'cartflows_stats_report_email_ids', '', false );
-			}
-		}
-
 	}
 
 	/**
@@ -271,82 +237,6 @@ class CommonSettings extends AjaxBase {
 		$new_settings    = wp_parse_args( $new_settings, $common_settings );
 
 		$this->update_admin_settings_option( '_cartflows_common', $new_settings, false );
-
-	}
-
-	/**
-	 * Remove cf caps.
-	 *
-	 * @param object $user_role_obj user role object.
-	 *
-	 * @return void
-	 */
-	public function remove_all_cf_cap( $user_role_obj ) {
-
-		$cf_cap = array(
-			'cartflows_manage_settings',
-			'cartflows_manage_flows_steps',
-		);
-
-		foreach ( $cf_cap as $cap ) {
-			$user_role_obj->remove_cap( $cap );
-		}
-
-	}
-
-	/**
-	 * Add cf caps.
-	 *
-	 * @param object $user_role_obj user role object.
-	 * @param string $access_key access key.
-	 *
-	 * @return void
-	 */
-	public function add_selected_cf_cap( $user_role_obj, $access_key ) {
-
-		switch ( $access_key ) {
-
-			case 'access_to_cartflows':
-				$user_role_obj->add_cap( 'cartflows_manage_settings' );
-				$user_role_obj->add_cap( 'cartflows_manage_flows_steps' );
-				break;
-
-			case 'access_to_flows_and_step':
-				$user_role_obj->add_cap( 'cartflows_manage_flows_steps' );
-				break;
-
-			default:
-				$user_role_obj->add_cap( '' );
-				break;
-
-		}
-	}
-
-	/**
-	 * Add / Remove custom capability to the user role.
-	 *
-	 * @param array $new_settings Array of user role capability settings.
-	 * @param array $old_settings Array of old user role capability settings.
-	 *
-	 * @return void
-	 */
-	public function user_role_management( $new_settings, $old_settings ) {
-
-		foreach ( $new_settings as $user_role => $access_key ) {
-
-			if ( $old_settings[ $user_role ] !== $access_key ) {
-
-				$user_role_obj = get_role( $user_role );
-
-				if ( $user_role_obj ) {
-
-					$this->remove_all_cf_cap( $user_role_obj );
-
-					$this->add_selected_cf_cap( $user_role_obj, $access_key );
-
-				}
-			}
-		}
 	}
 
 	/**
@@ -359,34 +249,11 @@ class CommonSettings extends AjaxBase {
 		$new_settings = array();
 
 		if ( isset( $_POST['_cartflows_facebook'] ) ) { //phpcs:ignore
-			$new_settings = $this->sanitize_form_inputs( wp_unslash( $_POST['_cartflows_facebook'] ) ); //phpcs:ignore
+			$new_settings = $this->sanitize_form_inputs( wp_unslash( $_POST['_cartflows_facebook'] ) ); //phpcs:ignore	
 		}
 
 		$this->update_admin_settings_option( '_cartflows_facebook', $new_settings, false );
 
-	}
-
-	/**
-	 * Save settings.
-	 *
-	 * @return void
-	 */
-	public function save_user_roles_management_settings() {
-
-		$new_settings = array();
-
-		if ( isset( $_POST['_cartflows_roles'] ) ) { //phpcs:ignore
-			$new_settings = $this->sanitize_form_inputs( wp_unslash( $_POST['_cartflows_roles'] ) ); //phpcs:ignore
-		}
-
-		$old_settings = AdminHelper::get_admin_settings_option( '_cartflows_roles' );
-
-		$new_settings = wp_parse_args( $new_settings, $old_settings );
-
-		$this->update_admin_settings_option( '_cartflows_roles', $new_settings, false );
-
-		// Add/Remove capability.
-		$this->user_role_management( $new_settings, $old_settings );
 	}
 
 	/**
@@ -406,21 +273,6 @@ class CommonSettings extends AjaxBase {
 	}
 
 	/**
-	 * Save Auto Fields settings.
-	 *
-	 * @return void
-	 */
-	public function save_address_autocomplete_setting() {
-		$new_settings = array();
-
-		if ( isset( $_POST['_cartflows_google_auto_address'] ) ) { //phpcs:ignore
-			$new_settings = $this->sanitize_form_inputs( wp_unslash( $_POST['_cartflows_google_auto_address'] ) ); //phpcs:ignore
-		}
-
-		$this->update_admin_settings_option( '_cartflows_google_auto_address', $new_settings, true );
-	}
-
-	/**
 	 * Save settings.
 	 *
 	 * @return void
@@ -429,8 +281,8 @@ class CommonSettings extends AjaxBase {
 
 		if ( isset( $_POST['reset'] ) ) { //phpcs:ignore
 			$_POST['_cartflows_permalink'] = array(
-				'permalink'           => CARTFLOWS_STEP_PERMALINK_SLUG,
-				'permalink_flow_base' => CARTFLOWS_FLOW_PERMALINK_SLUG,
+				'permalink'           => CARTFLOWS_STEP_POST_TYPE,
+				'permalink_flow_base' => CARTFLOWS_FLOW_POST_TYPE,
 				'permalink_structure' => '',
 			);
 
@@ -440,13 +292,13 @@ class CommonSettings extends AjaxBase {
 			$cartflows_permalink_settings = $this->sanitize_form_inputs( wp_unslash( $_POST['_cartflows_permalink'] ) ); //phpcs:ignore
 
 			if ( empty( $cartflows_permalink_settings['permalink'] ) ) {
-				$new_settings['permalink'] = CARTFLOWS_STEP_PERMALINK_SLUG;
+				$new_settings['permalink'] = CARTFLOWS_STEP_POST_TYPE;
 			} else {
 				$new_settings['permalink'] = $cartflows_permalink_settings['permalink'];
 			}
 
 			if ( empty( $cartflows_permalink_settings['permalink_flow_base'] ) ) {
-				$new_settings['permalink_flow_base'] = CARTFLOWS_FLOW_PERMALINK_SLUG;
+				$new_settings['permalink_flow_base'] = CARTFLOWS_FLOW_POST_TYPE;
 			} else {
 				$new_settings['permalink_flow_base'] = $cartflows_permalink_settings['permalink_flow_base'];
 			}

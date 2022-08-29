@@ -45,6 +45,12 @@ class FlowMeta {
 				'title'    => __( 'General ', 'cartflows' ),
 				'slug'     => 'general',
 				'fields'   => array(
+					'flow_title'    => array(
+						'type'  => 'text',
+						'name'  => 'post_title',
+						'label' => __( 'Flow Title', 'cartflows' ),
+						'value' => get_the_title( $flow_id ),
+					),
 					'flow_slug'     => array(
 						'type'  => 'text',
 						'name'  => 'post_name',

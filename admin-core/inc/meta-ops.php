@@ -143,96 +143,11 @@ class MetaOps {
 
 					break;
 
-				case 'FILTER_CARTFLOWS_CHECKOUT_FIELDS':
-					$count                   = 10;
-					$ordered_fields          = array();
-					$billing_shipping_fields = array();
-
-					if ( isset( $_POST[ $key ] ) && is_array( $_POST[ $key ] ) ) { //phpcs:ignore
-						$post_data = $_POST[ $key ]; //phpcs:ignore
-
-						if ( 'wcf_field_order_billing' == $key || 'wcf_field_order_shipping' == $key ) {
-
-							$type_of_fields          = ltrim( $key, 'wcf_field_order_' );
-							$billing_shipping_fields = \Cartflows_Helper::get_checkout_fields( $type_of_fields, $post_id );
-
-							foreach ( $post_data as $field_key_name => $value ) {
-								if ( isset( $billing_shipping_fields[ $field_key_name ] ) ) {
-									$ordered_fields[ $field_key_name ] = $billing_shipping_fields[ $field_key_name ];
-
-									$ordered_fields[ $field_key_name ]['priority'] = $count;
-									$count                                        += 10;
-
-									$ordered_fields[ $field_key_name ]['width']       = filter_var( $value['width'], FILTER_SANITIZE_NUMBER_INT );
-									$ordered_fields[ $field_key_name ]['label']       = wp_kses_post( trim( stripslashes( $value['label'] ) ) );
-									$ordered_fields[ $field_key_name ]['placeholder'] = wc_clean( stripslashes( $value['placeholder'] ) );
-									$ordered_fields[ $field_key_name ]['default']     = wp_kses_post( trim( stripslashes( $value['default'] ) ) );
-									$ordered_fields[ $field_key_name ]['required']    = 'yes' === $value['required'] ? true : false;
-									$ordered_fields[ $field_key_name ]['optimized']   = 'yes' === $value['optimized'] ? true : false;
-									$ordered_fields[ $field_key_name ]['enabled']     = 'yes' === $value['enabled'] ? true : false;
-									$ordered_fields[ $field_key_name ]['options']     = '';
-
-									if ( isset( $value['options'] ) && $value['options'] ) {
-										$options                                      = explode( ',', $value['options'] );
-										$ordered_fields[ $field_key_name ]['options'] = array_combine( $options, $options );
-
-									}
-								}
-							}
-
-							$meta_value = $ordered_fields;
-						}
-					}
-
-					break;
-
-				case 'FILTER_CARTFLOWS_OPTIN_FIELDS':
-					$count                   = 10;
-					$ordered_fields          = array();
-					$billing_shipping_fields = array();
-
-					if ( isset( $_POST[ $key ] ) && is_array( $_POST[ $key ] ) ) { //phpcs:ignore
-						$post_data = $_POST[ $key ]; //phpcs:ignore
-
-						if ( 'wcf-optin-fields-billing' === $key ) {
-
-							$type_of_fields          = 'billing';
-							$billing_shipping_fields = \Cartflows_Helper::get_optin_fields( $type_of_fields, $post_id );
-
-							foreach ( $post_data as $field_key_name => $value ) {
-								if ( isset( $billing_shipping_fields[ $field_key_name ] ) ) {
-									$ordered_fields[ $field_key_name ] = $billing_shipping_fields[ $field_key_name ];
-
-									$ordered_fields[ $field_key_name ]['priority'] = $count;
-									$count                                        += 10;
-
-									$ordered_fields[ $field_key_name ]['width']       = filter_var( $value['width'], FILTER_SANITIZE_NUMBER_INT );
-									$ordered_fields[ $field_key_name ]['label']       = wp_kses_post( trim( stripslashes( $value['label'] ) ) );
-									$ordered_fields[ $field_key_name ]['placeholder'] = wc_clean( stripslashes( $value['placeholder'] ) );
-									$ordered_fields[ $field_key_name ]['default']     = wp_kses_post( trim( stripslashes( $value['default'] ) ) );
-									$ordered_fields[ $field_key_name ]['required']    = 'yes' === $value['required'] ? true : false;
-									$ordered_fields[ $field_key_name ]['enabled']     = 'yes' === $value['enabled'] ? true : false;
-									$ordered_fields[ $field_key_name ]['options']     = '';
-
-									if ( isset( $value['options'] ) && $value['options'] ) {
-
-										$options                                      = explode( ',', $value['options'] );
-										$ordered_fields[ $field_key_name ]['options'] = array_combine( $options, $options );
-
-									}
-								}
-							}
-
-							$meta_value = $ordered_fields;
-						}
-					}
-					break;
-
 				default:
 					if ( 'FILTER_DEFAULT' === $sanitize_filter ) {
 						$meta_value = filter_input( INPUT_POST, $key, FILTER_DEFAULT );
 					} else {
-						$meta_value = apply_filters( 'cartflows_admin_save_meta_field_values', $meta_value, $post_id, $key, $sanitize_filter );
+						$meta_value = apply_filters( 'cartflows_save_meta_field_values', $meta_value, $post_id, $key, $sanitize_filter );
 					}
 
 					break;

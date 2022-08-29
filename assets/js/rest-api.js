@@ -2,7 +2,6 @@
 	var CartFlowsAPILocalCache = {
 		/**
 		 * timeout for cache in millis
-		 *
 		 * @type {number}
 		 */
 		timeout: 300000,
@@ -18,7 +17,7 @@
 		 * @param  {[type]} url [description]
 		 * @return {[type]}     [description]
 		 */
-		remove( url ) {
+		remove: function ( url ) {
 			delete CartFlowsAPILocalCache.data[ url ];
 		},
 
@@ -28,7 +27,7 @@
 		 * @param  {[type]} url [description]
 		 * @return {[type]}     [description]
 		 */
-		exist( url ) {
+		exist: function ( url ) {
 			return (
 				!! CartFlowsAPILocalCache.data[ url ] &&
 				new Date().getTime() - CartFlowsAPILocalCache.data[ url ]._ <
@@ -42,7 +41,7 @@
 		 * @param  {[type]} url [description]
 		 * @return {[type]}     [description]
 		 */
-		get( url ) {
+		get: function ( url ) {
 			return CartFlowsAPILocalCache.data[ url ].data;
 		},
 
@@ -53,7 +52,7 @@
 		 * @param {[type]}   cachedData [description]
 		 * @param {Function} callback   [description]
 		 */
-		set( url, cachedData, callback ) {
+		set: function ( url, cachedData, callback ) {
 			CartFlowsAPILocalCache.remove( url );
 
 			CartFlowsAPILocalCache.data[ url ] = {
@@ -61,7 +60,7 @@
 				data: cachedData,
 			};
 
-			if ( callback && typeof callback === 'function' ) {
+			if ( callback && typeof callback == 'function' ) {
 				callback( cachedData );
 			}
 		},
@@ -72,12 +71,12 @@
 			return;
 		}
 
-		const complete = originalOptions.complete || $.noop,
+		var complete = originalOptions.complete || $.noop,
 			url = originalOptions.url;
 
 		options.beforeSend = function () {
 			if ( CartFlowsAPILocalCache.exist( url ) ) {
-				const data = CartFlowsAPILocalCache.get( url );
+				var data = CartFlowsAPILocalCache.get( url );
 
 				// Load from cache.
 				CartFlowsAPI._api_cached_request( data );
@@ -86,15 +85,15 @@
 			return true;
 		};
 		options.complete = function ( XHR, status ) {
-			const data = {
+			var data = {
 				args: options.args,
 				items: XHR.responseText ? JSON.parse( XHR.responseText ) : '',
 				items_count: XHR.getResponseHeader( 'x-wp-total' ) || 0,
 				callback: options.callback,
 
 				// AJAX response.
-				status,
-				XHR,
+				status: status,
+				XHR: XHR,
 			};
 
 			CartFlowsAPILocalCache.set( url, data, complete );
@@ -105,18 +104,17 @@
 		/**
 		 * Debugging.
 		 *
-		 * @param {mixed} data Mixed data.
-		 * @param format
+		 * @param  {mixed} data Mixed data.
 		 */
-		_log( data, format ) {
+		_log: function ( data, format ) {
 			if ( CartFlowsImportVars.debug ) {
 				if ( 'table' === format ) {
 					console.table( data );
 				} else {
-					const date = new Date();
-					const time = date.toLocaleTimeString();
+					var date = new Date();
+					var time = date.toLocaleTimeString();
 
-					if ( typeof data === 'object' ) {
+					if ( typeof data == 'object' ) {
 						console.log(
 							'%c ' + JSON.stringify( data ) + ' ' + time,
 							'background: #ededed; color: #444'
@@ -133,7 +131,7 @@
 
 		_api_url: CartFlowsImportVars.server_rest_url,
 
-		_api_cached_request( data ) {
+		_api_cached_request: function ( data ) {
 			CartFlowsAPI._log( CartFlowsAPILocalCache.data, 'table' );
 			CartFlowsAPI._log( 'Current time ' + new Date().getTime() );
 			CartFlowsAPI._log(
@@ -146,17 +144,17 @@
 				$( document ).trigger( data.args.trigger, [ data ] );
 			}
 
-			if ( data.callback && typeof data.callback === 'function' ) {
+			if ( data.callback && typeof data.callback == 'function' ) {
 				data.callback( data );
 			}
 		},
 
-		_api_request( args, callback ) {
+		_api_request: function ( args, callback ) {
 			// Set API Request Data.
-			const data = {
+			var data = {
 				url: CartFlowsAPI._api_url + args.slug,
-				args,
-				callback,
+				args: args,
+				callback: callback,
 				headers: CartFlowsImportVars.headers,
 				author: 'cartflows',
 			};
@@ -168,15 +166,15 @@
 						XHR.getResponseHeader( 'x-wp-total' )
 					) {
 						var data = {
-							args,
-							items,
+							args: args,
+							items: items,
 							items_count:
 								XHR.getResponseHeader( 'x-wp-total' ) || 0,
-							callback,
+							callback: callback,
 
 							// AJAX response.
-							status,
-							XHR,
+							status: status,
+							XHR: XHR,
 						};
 
 						if (
@@ -189,7 +187,7 @@
 						$( document ).trigger( 'cartflows-api-request-error' );
 					}
 
-					if ( callback && typeof callback === 'function' ) {
+					if ( callback && typeof callback == 'function' ) {
 						callback( data );
 					}
 				} )

@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="inner">
 						<div id="wcf-scratch-steps-categories">
 							<select class="step-type-filter-links filter-links">
-								<option value="" class="current"><?php echo esc_html__( 'Select Step Type', 'cartflows' ); ?></option>
+								<option value="" class="current"> Select Step Type </option>
 
 								<?php foreach ( $steps as $key => $value ) { ?>
 									<option class="<?php echo $key; ?>" data-slug="<?php echo $key; ?>" data-title="<?php echo $key; ?>"><?php echo $value; ?></option>

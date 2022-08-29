@@ -91,12 +91,6 @@ class Flows extends ApiBase {
 			'orderby'     => 'ID',
 		);
 
-		// checking if store checkout is available and removing it from the list of flows.
-		$store_checkout_id = intval( \Cartflows_Helper::get_global_setting( '_cartflows_store_checkout' ) );
-		if ( 0 !== $store_checkout_id ) {
-			$args['post__not_in'] = array( $store_checkout_id );
-		}
-
 		if ( isset( $_REQUEST['paged'] ) ) { //phpcs:ignore
 			$args['paged'] = absint( $_REQUEST['paged'] ); //phpcs:ignore
 		}
@@ -204,11 +198,6 @@ class Flows extends ApiBase {
 			'max_pages'   => $result->max_num_pages,
 		);
 
-		// Reducing count of active_flows_count if store checkout is set.
-		if ( 0 !== $store_checkout_id ) {
-			$data['active_flows_count']--;
-		}
-
 		wp_reset_postdata();
 
 		$data['status'] = true;
@@ -234,7 +223,7 @@ class Flows extends ApiBase {
 	 */
 	public function get_items_permissions_check( $request ) {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return new \WP_Error( 'cartflows_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'cartflows' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 

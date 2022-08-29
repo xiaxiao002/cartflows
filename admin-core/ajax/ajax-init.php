@@ -74,7 +74,6 @@ class AjaxInit {
 			// 'CartflowsAdmin\AdminCore\Ajax\HomePage',
 			'CartflowsAdmin\AdminCore\Ajax\FlowsStats',
 			'CartflowsAdmin\AdminCore\Ajax\AbSteps',
-			'CartflowsAdmin\AdminCore\Ajax\SetupPage',
 		);
 
 		foreach ( $controllers as $controller ) {

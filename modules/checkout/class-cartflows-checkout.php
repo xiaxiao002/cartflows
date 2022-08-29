@@ -45,7 +45,6 @@ class Cartflows_Checkout {
 		require_once CARTFLOWS_CHECKOUT_DIR . 'classes/class-cartflows-global-checkout.php';
 		require_once CARTFLOWS_CHECKOUT_DIR . 'classes/class-cartflows-checkout-markup.php';
 		require_once CARTFLOWS_CHECKOUT_DIR . 'classes/class-cartflows-checkout-meta-data.php';
-		require_once CARTFLOWS_CHECKOUT_DIR . 'classes/class-cartflows-checkout-fields.php';
 	}
 }
 /**

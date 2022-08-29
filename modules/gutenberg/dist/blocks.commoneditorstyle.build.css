@@ -3361,7 +3361,7 @@ label.wp-block-cf-blockquote__via-label svg {
 
 .cf-size-type-field-tabs.cf-size-type-field__common-tabs .components-base-control.components-range-control.cf-margin-control .components-base-control__field{
     display:flex;
-}
+} 
 
 .cf-size-type-field-tabs.cf-inline-margin .components-range-control .components-base-control__field{
     display:unset;
@@ -3381,7 +3381,4 @@ label.wp-block-cf-blockquote__via-label svg {
 
 .components-base-control.components-range-control.cf-margin-control .components-base-control__field {
     display: flex;
-}
-.cf-setting-label .component-color-indicator{
-	display: none;
 }

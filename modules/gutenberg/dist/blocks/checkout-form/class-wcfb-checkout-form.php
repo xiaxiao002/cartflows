@@ -163,7 +163,7 @@ if ( ! class_exists( 'WCFB_Checkout_Form' ) ) {
 				),
 				'buttonBorderRadius'      => array(
 					'type'    => 'number',
-					'default' => 3,
+					'default' => 0,
 				),
 				'buttonBorderColor'       => array(
 					'type'    => 'string',
@@ -526,30 +526,9 @@ if ( ! class_exists( 'WCFB_Checkout_Form' ) ) {
 					'type'    => 'string',
 					'default' => '',
 				),
-				'orderReviewColumnColor'         => array(
-					'type'    => 'string',
-					'default' => '#ffffff',
-				),
-				'orderReviewColumnTextColor'         => array(
-					'type'    => 'string',
-					'default' => '#555555',
-				),
 				'errorFieldBorderColor'   => array(
 					'type'    => 'string',
 					'default' => '',
-				),
-
-				'inputSkins'                      => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'layout'                          => array(
-					'type'    => 'string',
-					'default' => 'modern-checkout',
-				),
-				'deviceType'       => array(
-					'type'    => 'string',
-					'default' => 'Desktop',
 				),
 			);
 
@@ -580,41 +559,6 @@ if ( ! class_exists( 'WCFB_Checkout_Form' ) ) {
 
 			if ( isset( $attributes['className'] ) ) {
 				$main_classes[] = $attributes['className'];
-			}
-
-			$checkout_fields = array(
-				// Input Fields.
-				array(
-					'filter_slug'  => 'wcf-fields-skins',
-					'setting_name' => 'inputSkins',
-				),
-				array(
-					'filter_slug'  => 'wcf-checkout-layout',
-					'setting_name' => 'layout',
-				),
-			);
-
-			if ( isset( $checkout_fields ) && is_array( $checkout_fields ) ) {
-
-				foreach ( $checkout_fields as $key => $field ) {
-
-					$setting_name = $field['setting_name'];
-
-					if ( '' !== $attributes[ $setting_name ] ) {
-
-						add_filter(
-							'cartflows_checkout_meta_' . $field['filter_slug'],
-							function ( $value ) use ( $setting_name, $attributes ) {
-
-								$value = $attributes[ $setting_name ];
-
-								return $value;
-							},
-							10,
-							1
-						);
-					}
-				}
 			}
 
 			do_action( 'cartflows_gutenberg_checkout_options_filters', $attributes );

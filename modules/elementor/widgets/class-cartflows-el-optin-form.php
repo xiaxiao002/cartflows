@@ -123,7 +123,7 @@ class CartFlows_Optin_Form extends Widget_Base {
 	 * @since 1.6.15
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function _register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
 
 		// Style Tab.
 		$this->register_general_style_controls();
@@ -139,10 +139,19 @@ class CartFlows_Optin_Form extends Widget_Base {
 	 */
 	protected function get_skin_types() {
 
-		$skin_options = array(
-			'default'         => __( 'Default', 'cartflows' ),
-			'floating-labels' => __( 'Floating Labels', 'cartflows' ),
-		);
+		$skin_options = array();
+
+		if ( ! _is_cartflows_pro() ) {
+			$skin_options = array(
+				'default'         => __( 'Default', 'cartflows' ),
+				'floating-labels' => __( 'Floating Labels ( PRO )', 'cartflows' ),
+			);
+		} else {
+			$skin_options = array(
+				'default'         => __( 'Default', 'cartflows' ),
+				'floating-labels' => __( 'Floating Labels', 'cartflows' ),
+			);
+		}
 
 		return $skin_options;
 	}
@@ -201,111 +210,127 @@ class CartFlows_Optin_Form extends Widget_Base {
 			)
 		);
 
-		$this->add_control(
-			'input_skins',
-			array(
-				'label'   => __( 'Style', 'cartflows' ),
-				'type'    => Controls_Manager::SELECT,
-				'default' => 'default',
-				'options' => $this->get_skin_types(),
-			)
-		);
+			$this->add_control(
+				'input_skins',
+				array(
+					'label'   => __( 'Style', 'cartflows' ),
+					'type'    => Controls_Manager::SELECT,
+					'default' => 'default',
+					'options' => $this->get_skin_types(),
+				)
+			);
 
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			array(
-				'name'     => 'input_text_typography',
-				'label'    => 'Typography',
-				'selector' => '{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout label, {{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input',
-			)
-		);
+		if ( ! _is_cartflows_pro() ) {
 
-		$this->add_control(
-			'label_color',
-			array(
-				'label'     => __( 'Label Color', 'cartflows' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout label' => 'color: {{VALUE}};',
-				),
-			)
-		);
+			$this->add_control(
+				'floating_labels_upgrade_pro',
+				array(
+					'type'            => Controls_Manager::RAW_HTML,
+					/* translators: %s admin link */
+					'raw'             => sprintf( __( 'This feature is available in the CartFlows Pro. <a href="%s" target="_blank" rel="noopener">Upgrade Now!</a>.', 'cartflows' ), CARTFLOWS_DOMAIN_URL ),
+					'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+					'condition'       => array(
+						'input_skins' => 'floating-labels',
+					),
+				)
+			);
+		}
 
-		$this->add_control(
-			'input_bgcolor',
-			array(
-				'label'     => __( 'Field Background Color', 'cartflows' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'background-color: {{VALUE}};',
-				),
-			)
-		);
+			$this->add_group_control(
+				Group_Control_Typography::get_type(),
+				array(
+					'name'     => 'input_text_typography',
+					'label'    => 'Typography',
+					'selector' => '{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout label, {{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input',
+				)
+			);
 
-		$this->add_control(
-			'input_color',
-			array(
-				'label'     => __( 'Input Text / Placeholder Color', 'cartflows' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'color: {{VALUE}} !important;',
-				),
-			)
-		);
+			$this->add_control(
+				'label_color',
+				array(
+					'label'     => __( 'Label Color', 'cartflows' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout label' => 'color: {{VALUE}};',
+					),
+				)
+			);
 
-		$this->add_control(
-			'input_border_style',
-			array(
-				'label'       => __( 'Border Style', 'cartflows' ),
-				'type'        => Controls_Manager::SELECT,
-				'label_block' => false,
-				'default'     => '',
-				'options'     => array(
-					''       => __( 'Inherit', 'cartflows' ),
-					'solid'  => __( 'Solid', 'cartflows' ),
-					'double' => __( 'Double', 'cartflows' ),
-					'dotted' => __( 'Dotted', 'cartflows' ),
-					'dashed' => __( 'Dashed', 'cartflows' ),
-				),
-				'selectors'   => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-style: {{VALUE}};',
-				),
-			)
-		);
-		$this->add_control(
-			'input_border_size',
-			array(
-				'label'      => __( 'Border Width', 'cartflows' ),
-				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px' ),
-				'selectors'  => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
-		);
+			$this->add_control(
+				'input_bgcolor',
+				array(
+					'label'     => __( 'Field Background Color', 'cartflows' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'background-color: {{VALUE}};',
+					),
+				)
+			);
 
-		$this->add_control(
-			'input_border_color',
-			array(
-				'label'     => __( 'Border Color', 'cartflows' ),
-				'type'      => Controls_Manager::COLOR,
-				'selectors' => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-color: {{VALUE}};',
-				),
-			)
-		);
+			$this->add_control(
+				'input_color',
+				array(
+					'label'     => __( 'Input Text / Placeholder Color', 'cartflows' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'color: {{VALUE}} !important;',
+					),
+				)
+			);
 
-		$this->add_responsive_control(
-			'input_radius',
-			array(
-				'label'      => __( 'Rounded Corners', 'cartflows' ),
-				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => array( 'px', 'em', '%' ),
-				'selectors'  => array(
-					'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-				),
-			)
-		);
+			$this->add_control(
+				'input_border_style',
+				array(
+					'label'       => __( 'Border Style', 'cartflows' ),
+					'type'        => Controls_Manager::SELECT,
+					'label_block' => false,
+					'default'     => '',
+					'options'     => array(
+						''       => __( 'Inherit', 'cartflows' ),
+						'solid'  => __( 'Solid', 'cartflows' ),
+						'double' => __( 'Double', 'cartflows' ),
+						'dotted' => __( 'Dotted', 'cartflows' ),
+						'dashed' => __( 'Dashed', 'cartflows' ),
+					),
+					'selectors'   => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-style: {{VALUE}};',
+					),
+				)
+			);
+			$this->add_control(
+				'input_border_size',
+				array(
+					'label'      => __( 'Border Width', 'cartflows' ),
+					'type'       => Controls_Manager::DIMENSIONS,
+					'size_units' => array( 'px' ),
+					'selectors'  => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					),
+				)
+			);
+
+			$this->add_control(
+				'input_border_color',
+				array(
+					'label'     => __( 'Border Color', 'cartflows' ),
+					'type'      => Controls_Manager::COLOR,
+					'selectors' => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-color: {{VALUE}};',
+					),
+				)
+			);
+
+			$this->add_responsive_control(
+				'input_radius',
+				array(
+					'label'      => __( 'Rounded Corners', 'cartflows' ),
+					'type'       => Controls_Manager::DIMENSIONS,
+					'size_units' => array( 'px', 'em', '%' ),
+					'selectors'  => array(
+						'{{WRAPPER}} .wcf-el-optin-form.cartflows-elementor__optin-form .wcf-optin-form .checkout.woocommerce-checkout input' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					),
+				)
+			);
 
 		$this->end_controls_section();
 	}
@@ -487,35 +512,6 @@ class CartFlows_Optin_Form extends Widget_Base {
 	 * @since 1.6.15
 	 */
 	public function dynamic_option_filters() {
-
-		$optin_fields = array(
-
-			// Input Fields.
-			array(
-				'filter_slug'  => 'wcf-input-fields-skins',
-				'setting_name' => 'input_skins',
-			),
-		);
-
-		if ( isset( $optin_fields ) && is_array( $optin_fields ) ) {
-
-			foreach ( $optin_fields as $key => $field ) {
-
-				$setting_name = $field['setting_name'];
-
-				add_filter(
-					'cartflows_optin_meta_' . $field['filter_slug'],
-					function ( $value ) use ( $setting_name ) {
-
-						$value = self::$settings[ $setting_name ];
-
-						return $value;
-					},
-					10,
-					1
-				);
-			}
-		}
 
 		do_action( 'cartflows_elementor_optin_options_filters', self::$settings );
 	}

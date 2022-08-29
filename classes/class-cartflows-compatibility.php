@@ -145,7 +145,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 *  Check if divi builder enabled.
+		 *  Check if divi builder enabled for post id.
 		 */
 		public function is_divi_builder_preview() {
 
@@ -188,7 +188,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if pro theme enabled.
+		 * Check if pro theme enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -207,7 +207,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if kallyas theme enabled.
+		 * Check if kallyas theme enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -226,7 +226,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if divi builder enabled.
+		 * Check if divi builder enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -259,7 +259,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if Flatsome enabled.
+		 * Check if Flatsome enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -278,7 +278,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if The7 enabled.
+		 * Check if The7 enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -297,7 +297,7 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 		}
 
 		/**
-		 * Check if OceanWp enabled.
+		 * Check if OceanWp enabled for post id.
 		 *
 		 * @param object $theme theme data.
 		 * @return boolean
@@ -314,26 +314,6 @@ if ( ! class_exists( 'Cartflows_Compatibility' ) ) {
 
 			return false;
 		}
-
-		/**
-		 * Check if Astra enabled.
-		 *
-		 * @param object $theme theme data.
-		 * @return boolean
-		 */
-		public function is_astra_enabled( $theme = false ) {
-
-			if ( ! $theme ) {
-				$theme = wp_get_theme();
-			}
-
-			if ( 'Astra' == $theme->name || 'Astra' == $theme->parent_theme ) {
-				return true;
-			}
-
-			return false;
-		}
-
 
 		/**
 		 *  Check for thrive architect edit page.

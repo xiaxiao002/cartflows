@@ -409,7 +409,6 @@ class Cartflows_Frontend {
 		$next_step_link = '';
 		$compatibility  = Cartflows_Compatibility::get_instance();
 		$is_checkout    = _is_wcf_checkout_type();
-		$is_optin       = _is_wcf_optin_type();
 
 		if ( _is_wcf_landing_type() ) {
 
@@ -419,8 +418,8 @@ class Cartflows_Frontend {
 
 		$page_template = get_post_meta( $current_step, '_wp_page_template', true );
 
-		$fb_tracking_settings = Cartflows_Helper::get_facebook_settings();
-		$ga_tracking_settings = Cartflows_Helper::get_google_analytics_settings();
+		$fb_active = Cartflows_Helper::get_facebook_settings();
+		$ga_active = Cartflows_Helper::get_google_analytics_settings();
 
 		$localize = array(
 			'ajax_url'               => admin_url( 'admin-ajax.php', 'relative' ),
@@ -432,10 +431,13 @@ class Cartflows_Frontend {
 			'next_step'              => $next_step_link,
 			'page_template'          => $page_template,
 			'is_checkout_page'       => $is_checkout,
-			'fb_setting'             => $fb_tracking_settings,
-			'ga_setting'             => $ga_tracking_settings,
+			/* Remove it after two updates. 1.7.0 added for backward compatibility */
+			'fb_active'              => $fb_active,
+			'wcf_ga_active'          => $ga_active,
+			/* Remove it after two updates */
+			'fb_setting'             => $fb_active,
+			'ga_setting'             => $ga_active,
 			'active_checkout_cookie' => CARTFLOWS_ACTIVE_CHECKOUT,
-			'is_optin'               => $is_optin,
 		);
 
 		if ( $is_checkout ) {
@@ -579,48 +581,15 @@ class Cartflows_Frontend {
 
 		$script = get_post_meta( $post->ID, 'wcf-custom-script', true );
 
-		$script = $this->maybe_replace_vars( $script );
-
 		return $script;
 	}
 
-	/**
-	 * Replace the dynamic vars in the custom script.
-	 *
-	 * @param string $script custom script.
-	 * @return string $script modified custom script.
-	 *
-	 * @since 1.10.0
-	 */
-	public function maybe_replace_vars( $script ) {
 
-		if ( isset( $_GET['wcf-order'] ) && isset( $_GET['wcf-key'] ) ) { //phpcs:ignore
-
-			$order_id = intval( wp_unslash( $_GET['wcf-order'] ) ); //phpcs:ignore
-			$order_key = wc_clean( wp_unslash( $_GET['wcf-key'] ) ); //phpcs:ignore
-
-			$order = wc_get_order( $order_id );
-
-			if ( $order || $order_key === $order->get_order_key() ) {
-
-				// These variables will be available to use on Upsell, Downsell, Thank you pages of CartFlows only.
-				$script = str_replace( '{{order_id}}', $order_id, $script );
-				$script = str_replace( '{{txn_id}}', $order->get_transaction_id(), $script );
-				$script = str_replace( '{{order_total}}', $order->get_total(), $script );
-
-				$script = apply_filters( 'cartflows_dynamic_js_vars', $script );
-			}
-		}
-
-		return $script;
-
-	}
-
-	/**
-	 *  Get custom script data.
-	 *
-	 * @since 1.0.0
-	 */
+		/**
+		 *  Get custom script data.
+		 *
+		 * @since 1.0.0
+		 */
 	public function get_flow_custom_script() {
 
 		global $post;
@@ -630,8 +599,6 @@ class Cartflows_Frontend {
 		$flow_id = wcf()->utils->get_flow_id_from_step_id( $step_id );
 
 		$script = get_post_meta( $flow_id, 'wcf-flow-custom-script', true );
-
-		$script = $this->maybe_replace_vars( $script );
 
 		return $script;
 	}

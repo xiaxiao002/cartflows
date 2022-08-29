@@ -85,38 +85,6 @@ if ( ! class_exists( 'Cartflows_Update' ) ) :
 				update_option( 'cartflows-legacy-meta-show-design-options', true );
 			}
 
-			/* Updating meta for global checkout migration & Permalinks */
-			if ( version_compare( $saved_version, '1.10.0', '<' ) ) { //phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-
-				$global_checkout = \Cartflows_Helper::get_common_setting( 'global_checkout' );
-
-				if ( $global_checkout ) {
-					$flow_id = wcf()->utils->get_flow_id_from_step_id( $global_checkout );
-					if ( $flow_id ) {
-						update_option( '_cartflows_store_checkout', $flow_id );
-						update_option( '_cartflows_old_global_checkout', $global_checkout );
-						delete_post_meta( $global_checkout, 'wcf-checkout-products' );
-					}
-				}
-
-				update_option( 'cartflows_show_weekly_report_email_notice', 'yes' );
-
-				$permalink_settings = Cartflows_Helper::get_admin_settings_option( '_cartflows_permalink', false, false );
-
-				if ( ! $permalink_settings ) {
-
-					$default_settings = array(
-						'permalink'           => CARTFLOWS_STEP_POST_TYPE,
-						'permalink_flow_base' => CARTFLOWS_FLOW_POST_TYPE,
-						'permalink_structure' => '',
-
-					);
-
-					Cartflows_Helper::update_admin_settings_option( '_cartflows_permalink', $default_settings );
-
-				}
-			}
-
 			// Update auto saved version number.
 			update_option( 'cartflows-version', CARTFLOWS_VER );
 

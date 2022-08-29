@@ -75,7 +75,7 @@ class LogStatus {
 
         if ( ! empty( $_REQUEST['handle'] ) ) { //phpcs:ignore
 
-			if ( ! current_user_can( 'cartflows_manage_settings' ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
 
 				wp_die( esc_html__( 'You don\'t have permission to view this page.', 'cartflows' ) );
 			}

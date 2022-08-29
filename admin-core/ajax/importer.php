@@ -71,7 +71,6 @@ class Importer extends AjaxBase {
 
 			'import_json_flow',
 			'export_all_flows',
-			'update_step',
 		);
 
 		$this->init_ajax_events( $ajax_events );
@@ -89,7 +88,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -100,7 +99,7 @@ class Importer extends AjaxBase {
 
 		$export = \CartFlows_Importer::get_instance();
 		$flows  = $export->get_all_flow_export_data();
-		$flows  = apply_filters( 'cartflows_admin_export_data', $flows );
+		$flows  = apply_filters( 'cartflows_export_data', $flows );
 
 		if ( ! empty( $flows ) && is_array( $flows ) && count( $flows ) > 0 ) {
 
@@ -132,7 +131,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -180,7 +179,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -199,7 +198,7 @@ class Importer extends AjaxBase {
 		}
 
 		$flows[] = \CartFlows_Importer::get_instance()->get_flow_export_data( $flow_id );
-		$flows   = apply_filters( 'cartflows_admin_export_data', $flows );
+		$flows   = apply_filters( 'cartflows_export_data', $flows );
 
 		$response_data = array(
 			'message'   => __( 'Flow exported successfully', 'cartflows' ),
@@ -215,7 +214,7 @@ class Importer extends AjaxBase {
 	 */
 	public function update_library_complete() {
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -227,9 +226,7 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $response_data );
 		}
 
-		$templates = ! empty( $_POST['template'] ) ? sanitize_text_field( wp_unslash( $_POST['template'] ) ) : '';
-
-		\CartFlows_Batch_Process::get_instance()->update_latest_checksums( $templates );
+		\CartFlows_Batch_Process::get_instance()->update_latest_checksums();
 
 		update_site_option( 'cartflows-batch-is-complete', 'no', 'no' );
 		update_site_option( 'cartflows-manual-sync-complete', 'yes', 'no' );
@@ -243,7 +240,7 @@ class Importer extends AjaxBase {
 	 */
 	public function import_sites() {
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -255,10 +252,9 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $response_data );
 		}
 
-		$page_no  = isset( $_POST['page_no'] ) ? absint( $_POST['page_no'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$template = isset( $_POST['template'] ) ? sanitize_text_field( wp_unslash( $_POST['template'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$page_no = isset( $_POST['page_no'] ) ? absint( $_POST['page_no'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( $page_no ) {
-			$sites_and_pages = \Cartflows_Batch_Processing_Sync_Library::get_instance()->import_sites( $page_no, $template );
+			$sites_and_pages = \Cartflows_Batch_Processing_Sync_Library::get_instance()->import_sites( $page_no );
 			wp_send_json_success(
 				array(
 					'message'         => 'SUCCESS: cartflows_import_sites',
@@ -279,7 +275,7 @@ class Importer extends AjaxBase {
 	 */
 	public function sync_library() {
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -291,12 +287,10 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $response_data );
 		}
 
-		$templates = ! empty( $_POST['template'] ) ? sanitize_text_field( wp_unslash( $_POST['template'] ) ) : '';
-
 		/**
 		 * LOGIC
 		 */
-		if ( 'no' === \CartFlows_Batch_Process::get_instance()->get_last_export_checksums( $templates ) ) {
+		if ( 'no' === \CartFlows_Batch_Process::get_instance()->get_last_export_checksums() ) {
 			wp_send_json_success( 'updated' );
 		}
 
@@ -306,7 +300,7 @@ class Importer extends AjaxBase {
 		} else {
 			$import_with = 'batch';
 			// Process import.
-			\CartFlows_Batch_Process::get_instance()->process_batch( $templates );
+			\CartFlows_Batch_Process::get_instance()->process_batch();
 		}
 
 		$response_data = array(
@@ -322,7 +316,7 @@ class Importer extends AjaxBase {
 	 */
 	public function request_count() {
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -334,9 +328,7 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $response_data );
 		}
 
-		$templates = ! empty( $_POST['template'] ) ? sanitize_text_field( wp_unslash( $_POST['template'] ) ) : '';
-
-		$total_requests = \CartFlows_Batch_Process::get_instance()->get_total_requests( '', $templates );
+		$total_requests = \CartFlows_Batch_Process::get_instance()->get_total_requests();
 		if ( $total_requests ) {
 			wp_send_json_success(
 				array(
@@ -361,7 +353,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -375,9 +367,9 @@ class Importer extends AjaxBase {
 
 		wcf()->logger->import_log( 'STARTED! Importing Step' );
 
-		$flow_id    = ( isset( $_POST['flow_id'] ) ) ? absint(  $_POST['flow_id'] ) : ''; // phpcs:ignore
-		$step_type  = ( isset( $_POST['step_type'] ) ) ? sanitize_text_field( $_POST['step_type'] ) : ''; // phpcs:ignore
-		$step_title = ( isset( $_POST['step_title'] ) ) ? sanitize_text_field( $_POST['step_title'] ) : ''; // phpcs:ignore
+		$flow_id    = ( isset( $_POST['flow_id'] ) ) ? esc_attr( $_POST['flow_id'] ) : ''; // phpcs:ignore
+		$step_type  = ( isset( $_POST['step_type'] ) ) ? esc_attr( $_POST['step_type'] ) : ''; // phpcs:ignore
+		$step_title = ( isset( $_POST['step_title'] ) ) ? esc_attr( $_POST['step_title'] ) : ''; // phpcs:ignore
 		$step_title = isset( $_POST['step_name'] ) && ! empty( $_POST['step_name'] ) ? sanitize_text_field( wp_unslash( $_POST['step_name'] ) ) : $step_title;
 
 		// Create new step.
@@ -405,7 +397,7 @@ class Importer extends AjaxBase {
 	public function activate_plugin() {
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -419,19 +411,9 @@ class Importer extends AjaxBase {
 
 		\wp_clean_plugins_cache();
 
-		$plugin_init = ( isset( $_POST['init'] ) ) ? esc_attr( $_POST['init'] ) : ''; // phpcs:ignore+
+		$plugin_init = ( isset( $_POST['init'] ) ) ? esc_attr( $_POST['init'] ) : ''; // phpcs:ignore
 
-		$do_sliently = true;
-
-		$exclude_do_silently = array(
-			'woo-cart-abandonment-recovery/woo-cart-abandonment-recovery.php',
-		);
-
-		if ( in_array( $plugin_init, $exclude_do_silently, true ) ) {
-			$do_sliently = false;
-		}
-
-		$activate = \activate_plugin( $plugin_init, '', false, $do_sliently );
+		$activate = \activate_plugin( $plugin_init, '', false, true );
 
 		if ( is_wp_error( $activate ) ) {
 			wp_send_json_error(
@@ -444,7 +426,6 @@ class Importer extends AjaxBase {
 
 		wp_send_json_success(
 			array(
-				'success' => true,
 				'message' => 'Plugin activated successfully.',
 			)
 		);
@@ -457,7 +438,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -484,50 +465,23 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $flow_id->get_error_message() );
 		}
 
-		$store_checkout = isset( $_POST['store_checkout'] ) ? sanitize_text_field( wp_unslash( $_POST['store_checkout'] ) ) : '';
-
-		// If is store checkout update store_checkout options.
-		if ( 'true' === $store_checkout ) {
-			update_option( '_cartflows_store_checkout', $flow_id );
-
-			// reset global checkout on store checkout creation.
-			$common_settings                             = \Cartflows_Helper::get_common_settings();
-			$common_settings['global_checkout']          = '';
-			$common_settings['override_global_checkout'] = 'disable';
-
-			update_option( '_cartflows_common', $common_settings );
-		}
-
 		$flow_steps = array();
 
 		if ( wcf()->is_woo_active ) {
-			if ( 'true' === $store_checkout ) {
-				$steps_data = array(
-					'order-form'         => array(
-						'title' => __( 'Checkout', 'cartflows' ),
-						'type'  => 'checkout',
-					),
-					'order-confirmation' => array(
-						'title' => __( 'Thank You', 'cartflows' ),
-						'type'  => 'thankyou',
-					),
-				);
-			} else {
-				$steps_data = array(
-					'sales'              => array(
-						'title' => __( 'Sales Landing', 'cartflows' ),
-						'type'  => 'landing',
-					),
-					'order-form'         => array(
-						'title' => __( 'Checkout (Woo)', 'cartflows' ),
-						'type'  => 'checkout',
-					),
-					'order-confirmation' => array(
-						'title' => __( 'Thank You (Woo)', 'cartflows' ),
-						'type'  => 'thankyou',
-					),
-				);
-			}
+			$steps_data = array(
+				'sales'              => array(
+					'title' => __( 'Sales Landing', 'cartflows' ),
+					'type'  => 'landing',
+				),
+				'order-form'         => array(
+					'title' => __( 'Checkout (Woo)', 'cartflows' ),
+					'type'  => 'checkout',
+				),
+				'order-confirmation' => array(
+					'title' => __( 'Thank You (Woo)', 'cartflows' ),
+					'type'  => 'thankyou',
+				),
+			);
 		} else {
 			$steps_data = array(
 				'landing'  => array(
@@ -603,7 +557,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -620,15 +574,14 @@ class Importer extends AjaxBase {
 		// Get single step Rest API response.
 		$response = \CartFlows_API::get_instance()->get_flow( $flow['ID'] );
 
-		$is_error = AdminHelper::has_api_error( $response['data'] );
+		if ( is_wp_error( $response['data'] ) ) {
 
-		if ( $is_error['error'] ) {
+			$btn = __( 'Request timeout error. Please check if the firewall or any security plugin is blocking the outgoing HTTP/HTTPS requests to templates.cartflows.com or not. <br><br>To resolve this issue, please check this <a target="_blank" href="https://cartflows.com/docs/request-timeout-error-while-importing-the-flow-step-templates/">article</a>.', 'cartflows' );
 
 			wp_send_json_error(
 				array(
-					'error_code'     => $is_error['error_code'],
-					'call_to_action' => $is_error['call_to_action'],
-					'message'        => $is_error['error_message'],
+					'message'        => $response['data']->get_error_message(),
+					'call_to_action' => $btn,
 					'data'           => $response,
 				)
 			);
@@ -691,20 +644,6 @@ class Importer extends AjaxBase {
 			wp_send_json_error( $new_flow_id->get_error_message() );
 		}
 
-		$store_checkout = isset( $_POST['store_checkout'] ) ? sanitize_text_field( wp_unslash( $_POST['store_checkout'] ) ) : '';
-
-		// If is global checkout update store_checkout options.
-		if ( 'true' === $store_checkout ) {
-			update_option( '_cartflows_store_checkout', $new_flow_id );
-
-			// reset global checkout on store checkout creation.
-			$common_settings                             = \Cartflows_Helper::get_common_settings();
-			$common_settings['global_checkout']          = '';
-			$common_settings['override_global_checkout'] = 'disable';
-
-			update_option( '_cartflows_common', $common_settings );
-		}
-
 		wcf()->logger->import_log( '✓ Flow Created! Flow ID: ' . $new_flow_id . ' - Remote Flow ID - ' . $flow['ID'] );
 
 		/**
@@ -713,22 +652,16 @@ class Importer extends AjaxBase {
 		$steps = isset( $flow['steps'] ) ? $flow['steps'] : array();
 
 		foreach ( $steps as $key => $step ) {
-
-			if ( in_array( $step['type'], array( 'upsell', 'downsell' ), true ) && ( ! _is_cartflows_pro() || $this->is_wcf_starter_plan() ) ) {
-				continue;
-			}
-
 			$this->import_single_step(
 				array(
-					'step'              => array(
+					'step' => array(
 						'id'    => $step['ID'],
 						'title' => $step['title'],
 						'type'  => $step['type'],
 					),
-					'flow'              => array(
+					'flow' => array(
 						'id' => $new_flow_id,
 					),
-					'is_store_checkout' => isset( $_POST['store_checkout'] ) ? sanitize_text_field( wp_unslash( $_POST['store_checkout'] ) ) : '',
 				)
 			);
 		}
@@ -749,15 +682,6 @@ class Importer extends AjaxBase {
 	}
 
 	/**
-	 * Is starter plan.
-	 *
-	 * @return boolean
-	 */
-	public function is_wcf_starter_plan() {
-		return defined( 'CARTFLOWS_PRO_PLUGIN_TYPE' ) && CARTFLOWS_PRO_PLUGIN_TYPE === 'starter';
-	}
-
-	/**
 	 * Import Step
 	 *
 	 * @return void
@@ -768,7 +692,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -786,21 +710,7 @@ class Importer extends AjaxBase {
 		$remote_flow_id = isset( $_POST['remote_flow_id'] ) ? absint( $_POST['remote_flow_id'] ) : 0;
 
 		// Get single step Rest API response.
-		$response = \CartFlows_API::get_instance()->get_flow( $remote_flow_id );
-
-		if ( is_wp_error( $response['data'] ) ) {
-			/* translators: %1$s: html tag, %2$s: link html start %3$s: link html end */
-			$btn = sprintf( __( 'Request timeout error. Please check if the firewall or any security plugin is blocking the outgoing HTTP/HTTPS requests to templates.cartflows.com or not. %1$1sTo resolve this issue, please check this %2$2sarticle%3$3s.', 'cartflows' ), '<br><br>', '<a target="_blank" href="https://cartflows.com/docs/request-timeout-error-while-importing-the-flow-step-templates/">', '</a>' );
-
-			wp_send_json_error(
-				array(
-					'message'        => $response['data']->get_error_message(),
-					'call_to_action' => $btn,
-					'data'           => $response,
-				)
-			);
-		}
-
+		$response       = \CartFlows_API::get_instance()->get_flow( $remote_flow_id );
 		$license_status = isset( $response['data']['licence_status'] ) ? $response['data']['licence_status'] : '';
 
 		// If license is invalid then.
@@ -810,14 +720,11 @@ class Importer extends AjaxBase {
 
 			$cta = '';
 			if ( 'not-installed' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( 'Upgrade to %1$sCartFlows Pro.%2$s', 'cartflows' ), '<a target="_blanks" href="https://cartflows.com/">', '</a>' );
+				$cta = '<a target="_blanks" href="https://cartflows.com/">Upgrade to Cartflows Pro</a>';
 			} elseif ( 'inactive' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( '%1$sActivate CartFlows Pro%2$s', 'cartflows' ), '<a target="_blank" href="' . admin_url( 'plugins.php?plugin_status=search&paged=1&s=CartFlows+Pro' ) . '">', '</a>' );
+				$cta = '<a target="_blank" href="' . admin_url( 'plugins.php?plugin_status=search&paged=1&s=CartFlows+Pro' ) . '">Activate Cartflows Pro</a>';
 			} elseif ( 'active' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( 'CartFlows Pro license is not active. Activate %1$sCartFlows Pro License %2$s', 'cartflows' ), '<a target="_blank" href="' . admin_url( 'plugins.php?cartflows-license-popup' ) . '">', '</a>' );
+				$cta = '<a target="_blank" href="' . admin_url( 'plugins.php?cartflows-license-popup' ) . '">Activate Cartflows Pro</a>.';
 			}
 
 			wp_send_json_error(
@@ -868,185 +775,6 @@ class Importer extends AjaxBase {
 	}
 
 	/**
-	 * Updates post content of chosen template.
-	 * working only for Store Checkout.
-	 *
-	 * @return void
-	 * @since X.X.X
-	 */
-	public function update_step() {
-
-		wcf()->logger->import_log( 'STARTED! Updating Step' );
-
-		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
-
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
-			wp_send_json_error( $response_data );
-		}
-
-		/**
-		 * Nonce verification
-		 */
-		if ( ! check_ajax_referer( 'cartflows_update_step', 'security', false ) ) {
-			$response_data = array( 'message' => $this->get_error_msg( 'nonce' ) );
-			wp_send_json_error( $response_data );
-		}
-
-		$step    = isset( $_POST['step'] ) ? json_decode( stripslashes( $_POST['step'] ), true ) : array(); // phpcs:ignore
-		$flow_id = isset( $_POST['flow_id'] ) ? absint( $_POST['flow_id'] ) : 0;
-		$step_id = isset( $_POST['step_id'] ) ? absint( $_POST['step_id'] ) : 0;
-
-		$remote_flow_id = isset( $_POST['remote_flow_id'] ) ? absint( $_POST['remote_flow_id'] ) : 0;
-
-		// Get single step Rest API response.
-		$response = \CartFlows_API::get_instance()->get_flow( $remote_flow_id );
-		if ( is_wp_error( $response['data'] ) ) {
-			/* translators: %1$s: html tag, %2$s: link html start %3$s: link html end */
-			$btn = sprintf( __( 'Request timeout error. Please check if the firewall or any security plugin is blocking the outgoing HTTP/HTTPS requests to templates.cartflows.com or not. %1$1sTo resolve this issue, please check this %2$2sarticle%3$3s.', 'cartflows' ), '<br><br>', '<a target="_blank" href="https://cartflows.com/docs/request-timeout-error-while-importing-the-flow-step-templates/">', '</a>' );
-
-			wp_send_json_error(
-				array(
-					'message'        => $response['data']->get_error_message(),
-					'call_to_action' => $btn,
-					'data'           => $response,
-				)
-			);
-		}
-
-		$license_status = isset( $response['data']['licence_status'] ) ? $response['data']['licence_status'] : '';
-
-		// If license is invalid then.
-		if ( 'valid' !== $license_status ) {
-
-			$cf_pro_status = AdminMenu::get_instance()->get_plugin_status( 'cartflows-pro/cartflows-pro.php' );
-
-			$cta = '';
-			if ( 'not-installed' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( 'Upgrade to %1$sCartFlows Pro.%2$s', 'cartflows' ), '<a target="_blanks" href="https://cartflows.com/">', '</a>' );
-			} elseif ( 'inactive' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( '%1$sActivate CartFlows Pro%2$s', 'cartflows' ), '<a target="_blank" href="' . admin_url( 'plugins.php?plugin_status=search&paged=1&s=CartFlows+Pro' ) . '">', '</a>' );
-			} elseif ( 'active' === $cf_pro_status ) {
-				/* translators: %1$s: link html start, %2$s: link html end*/
-				$cta = sprintf( __( 'CartFlows Pro license is not active. Activate %1$sCartFlows Pro License %2$s', 'cartflows' ), '<a target="_blank" href="' . admin_url( 'plugins.php?cartflows-license-popup' ) . '">', '</a>' );
-			}
-
-			wp_send_json_error(
-				array(
-					'message' => \ucfirst( $license_status ) . ' license key! ' . $cta,
-					'data'    => $response,
-				)
-			);
-		}
-
-		if ( empty( $remote_flow_id ) ) {
-			$response_data = array( 'message' => __( 'Flows data not found.', 'cartflows' ) );
-			wp_send_json_error( $response_data );
-		}
-		$step['title'] = isset( $_POST['step_name'] ) && ! empty( $_POST['step_name'] ) ? sanitize_text_field( wp_unslash( $_POST['step_name'] ) ) : $step['title'];
-		// Create steps.
-		$this->update_single_step(
-			array(
-				'step'         => array(
-					'id'    => $step['ID'],
-					'title' => $step['title'],
-					'type'  => $step['type'],
-				),
-				'flow'         => array(
-					'id' => $flow_id,
-				),
-				'current_step' => array(
-					'id' => $step_id,
-				),
-			)
-		);
-
-		wcf()->logger->import_log( 'COMPLETE! Importing Step' );
-
-		if ( empty( $step ) ) {
-			$response_data = array( 'message' => __( 'Step data not found.', 'cartflows' ) );
-			wp_send_json_error( $response_data );
-		}
-
-		/**
-		 * Redirect to the new step edit screen
-		 */
-		$response_data = array(
-			'message' => __( 'Successfully imported the Step!', 'cartflows' ),
-		);
-
-		wcf()->logger->import_log( 'COMPLETE! Importing Step' );
-
-		wp_send_json_success( $response_data );
-
-	}
-
-	/**
-	 * Update Sinple Step
-	 *
-	 * @param array $args Rest API Arguments.
-	 * @return void
-	 */
-	public function update_single_step( $args = array() ) {
-
-		wcf()->logger->import_log( 'STARTED! Updating Step' );
-
-		$step_id     = isset( $args['step']['id'] ) ? absint( $args['step']['id'] ) : 0;
-		$new_step_id = isset( $args['current_step']['id'] ) ? absint( $args['current_step']['id'] ) : '';
-
-		if ( empty( $step_id ) || empty( $new_step_id ) ) {
-			/* translators: %s: step ID */
-			wp_send_json_error( sprintf( __( 'Invalid step id %1$s or post id %2$s.', 'cartflows' ), $step_id, $new_step_id ) );
-		}
-
-		wcf()->logger->import_log( 'Remote Step ' . $step_id . ' for local flow "' . get_the_title( $new_step_id ) . '" [' . $new_step_id . ']' );
-
-		// Get single step Rest API response.
-		$response = \CartFlows_API::get_instance()->get_template( $step_id );
-		wcf()->logger->import_log( wp_json_encode( $response ) );
-
-		if ( 'divi' === \Cartflows_Helper::get_common_setting( 'default_page_builder' ) ) {
-			if ( isset( $response['data']['divi_content'] ) && ! empty( $response['data']['divi_content'] ) ) {
-
-				update_post_meta( $new_step_id, 'divi_content', $response['data']['divi_content'] );
-
-				wp_update_post(
-					array(
-						'ID'           => $new_step_id,
-						'post_content' => $response['data']['divi_content'],
-					)
-				);
-			}
-		}
-
-		if ( 'gutenberg' === \Cartflows_Helper::get_common_setting( 'default_page_builder' ) ) {
-			if ( isset( $response['data']['divi_content'] ) && ! empty( $response['data']['divi_content'] ) ) {
-				wp_update_post(
-					array(
-						'ID'           => $new_step_id,
-						'post_content' => $response['data']['divi_content'],
-					)
-				);
-			}
-		}
-
-		// Import Post Meta.
-		$this->import_post_meta( $new_step_id, $response );
-
-		/* Imported Step */
-		update_post_meta( $new_step_id, 'cartflows_imported_step', 'yes' );
-
-		do_action( 'cartflows_import_complete' );
-
-		// Batch Process.
-		do_action( 'cartflows_after_template_import', $new_step_id, $response );
-
-		wcf()->logger->import_log( 'COMPLETE! Importing Step' );
-
-	}
-
-	/**
 	 * Create Simple Step
 	 *
 	 * @param array $args Rest API Arguments.
@@ -1056,17 +784,10 @@ class Importer extends AjaxBase {
 
 		wcf()->logger->import_log( 'STARTED! Importing Step' );
 
-		$step_id           = isset( $args['step']['id'] ) ? absint( $args['step']['id'] ) : 0;
-		$step_title        = isset( $args['step']['title'] ) ? $args['step']['title'] : '';
-		$step_type         = isset( $args['step']['type'] ) ? $args['step']['type'] : '';
-		$flow_id           = isset( $args['flow']['id'] ) ? absint( $args['flow']['id'] ) : '';
-		$is_store_checkout = isset( $args['is_store_checkout'] ) ? $args['is_store_checkout'] : '';
-
-		// create steps only for checkout and thankyou if store checkout.
-		// This logic will be removed once we have store checkout templates on server.
-		if ( 'true' === $is_store_checkout && ! in_array( $step_type, array( 'checkout', 'thankyou' ), true ) ) {
-			return;
-		}
+		$step_id    = isset( $args['step']['id'] ) ? absint( $args['step']['id'] ) : 0;
+		$step_title = isset( $args['step']['title'] ) ? $args['step']['title'] : '';
+		$step_type  = isset( $args['step']['type'] ) ? $args['step']['type'] : '';
+		$flow_id    = isset( $args['flow']['id'] ) ? absint( $args['flow']['id'] ) : '';
 
 		// Create new step.
 		$new_step_id = \CartFlows_Importer::get_instance()->create_step( $flow_id, $step_type, $step_title );
@@ -1080,7 +801,6 @@ class Importer extends AjaxBase {
 
 		// Get single step Rest API response.
 		$response = \CartFlows_API::get_instance()->get_template( $step_id );
-
 		wcf()->logger->import_log( wp_json_encode( $response ) );
 
 		if ( 'divi' === \Cartflows_Helper::get_common_setting( 'default_page_builder' ) ) {
@@ -1108,15 +828,11 @@ class Importer extends AjaxBase {
 			}
 		}
 
-		// Import Post Meta.
-		$this->import_post_meta( $new_step_id, $response );
-
-		if ( 'checkout' === $step_type ) {
-			$this->update_store_checkout_template_data( $new_step_id, $response );
-		}
-
 		/* Imported Step */
 		update_post_meta( $new_step_id, 'cartflows_imported_step', 'yes' );
+
+		// Import Post Meta.
+		$this->import_post_meta( $new_step_id, $response );
 
 		do_action( 'cartflows_import_complete' );
 
@@ -1140,7 +856,13 @@ class Importer extends AjaxBase {
 
 		$metadata = (array) $response['post_meta'];
 
-		$exclude_meta_keys = \Cartflows_Helper::get_instance()->get_meta_keys_to_exclude_from_import( $post_id );
+		$exclude_meta_keys = array(
+			'wcf-checkout-products',
+			'wcf-optin-product',
+			'wcf-offer-product',
+			'wcf-order-bump-product',
+			'wcf-pre-checkout-offer-product',
+		);
 
 		foreach ( $metadata as $meta_key => $meta_value ) {
 
@@ -1161,14 +883,12 @@ class Importer extends AjaxBase {
 				}
 
 				if ( '_elementor_data' === $meta_key ) {
-
 					if ( is_array( $raw_data ) ) {
 						$raw_data = wp_slash( wp_json_encode( $raw_data ) );
 					} else {
 						$raw_data = wp_slash( $raw_data );
 					}
 				}
-
 				if ( '_elementor_data' !== $meta_key && '_elementor_draft' !== $meta_key && '_fl_builder_data' !== $meta_key && '_fl_builder_draft' !== $meta_key ) {
 					if ( is_array( $raw_data ) ) {
 						wcf()->logger->import_log( '✓ Added post meta ' . $meta_key /* . ' | ' . wp_json_encode( $raw_data ) */ );
@@ -1184,105 +904,6 @@ class Importer extends AjaxBase {
 		}
 	}
 
-	/**
-	 * Find the Checkout block and set the Primary color and site logo provided by the user.
-	 *
-	 * @since 1.10.0
-	 *
-	 * @param int   $post_id newly created steps ID.
-	 * @param array $response data received from from the imported step.
-	 *
-	 * @return void
-	 */
-	public function update_store_checkout_template_data( $post_id, $response ) {
-
-		$store_checkout_id   = get_option( '_cartflows_store_checkout', false );
-		$current_flow_id     = (int) wcf()->utils->get_flow_id_from_step_id( $post_id );
-		$default_page_bulder = \Cartflows_Helper::get_common_setting( 'default_page_builder' );
-
-		if( empty( $_POST['primary_color'] ) && empty( $_POST['site_logo'] ) ){ // phpcs:ignore
-			return;
-		}
-
-		$posted_data = array(
-			'primary_color' => isset( $_POST['primary_color'] ) ? sanitize_text_field( wp_unslash( $_POST['primary_color'] ) ) : '', // phpcs:ignore
-			'site_logo'     => isset( $_POST['site_logo'] ) ? array_map( 'esc_attr', wp_unslash( $_POST['site_logo'] ) ) : '', // phpcs:ignore
-		);
-
-		if ( $store_checkout_id !== $current_flow_id ) {
-			return;
-		}
-
-		if ( 'elementor' === $default_page_bulder ) {
-
-			$metadata = (array) $response['post_meta'];
-
-			foreach ( $metadata as $meta_key => $meta_value ) {
-
-				$meta_value = isset( $meta_value[0] ) ? $meta_value[0] : '';
-
-				if ( $meta_value ) {
-
-					if ( is_serialized( $meta_value, true ) ) {
-						$raw_data = maybe_unserialize( stripslashes( $meta_value ) );
-					} elseif ( is_array( $meta_value ) ) {
-						$raw_data = json_decode( stripslashes( $meta_value ), true );
-					} else {
-						$raw_data = $meta_value;
-					}
-
-					if ( '_elementor_data' === $meta_key ) {
-
-						$raw_data = json_decode( $raw_data, true );
-
-						// Find the checkout-form and update the primary color.
-						$this->elementor_find_and_replace_template_data( $raw_data, $posted_data );
-
-						if ( is_array( $raw_data ) ) {
-							$raw_data = wp_slash( wp_json_encode( $raw_data ) );
-						} else {
-							$raw_data = wp_slash( $raw_data );
-						}
-
-						update_post_meta( $post_id, $meta_key, $raw_data );
-
-					}
-				}
-			}
-		} elseif ( 'gutenberg' === $default_page_bulder ) {
-
-				$post   = get_post( $post_id );
-				$blocks = parse_blocks( $post->post_content );
-
-			if ( is_array( $blocks ) && ! empty( $blocks ) ) {
-
-				$this->gutenberg_find_and_replace_template_data( $blocks, $posted_data );
-
-				if ( ! empty( $blocks ) ) {
-					$serialized_blocks = serialize_blocks( $blocks );
-
-					wp_update_post(
-						array(
-							'ID'           => $post_id,
-							'post_content' => $serialized_blocks,
-						)
-					);
-				}
-			}
-		} elseif ( 'beaver-builder' === $default_page_bulder ) {
-			$data = \FLBuilderModel::get_layout_data( 'published', $post_id );
-
-			if ( ! empty( $data ) ) {
-
-				$this->beaver_builder_find_and_replace_template_data( $data, $posted_data );
-
-				// Update page builder data.
-				update_post_meta( $post_id, '_fl_builder_data', $data );
-				update_post_meta( $post_id, '_fl_builder_draft', $data );
-			}
-		}
-	}
-
 
 	/**
 	 * Get flows list for preview
@@ -1293,7 +914,7 @@ class Importer extends AjaxBase {
 
 		$response_data = array( 'message' => $this->get_error_msg( 'permission' ) );
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_send_json_error( $response_data );
 		}
 
@@ -1316,91 +937,5 @@ class Importer extends AjaxBase {
 		);
 
 		wp_send_json_success( $response_data );
-	}
-
-	/**
-	 * Get the elementor widget data.
-	 *
-	 * @param array $elements elements data.
-	 * @param array $posted_data posted data.
-	 */
-	public function elementor_find_and_replace_template_data( &$elements, $posted_data ) {
-
-		foreach ( $elements as &$element ) {
-
-			if ( 'widget' === $element['elType'] && 'checkout-form' === $element['widgetType'] ) {
-				$element['settings']['global_primary_color'] = ! empty( $posted_data['primary_color'] ) ? $posted_data['primary_color'] : $element['settings']['global_primary_color'];
-			}
-
-			if ( 'widget' === $element['elType'] && 'image' === $element['widgetType'] && isset( $element['settings']['_css_classes'] ) ) {
-
-				if ( str_contains( $element['settings']['_css_classes'], 'cartflows-store-checkout-logo-field' ) ) {
-					$element['settings']['image']['url'] = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['url'] : $element['settings']['image']['url'];
-					$element['settings']['image']['id']  = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['id'] : $element['settings']['image']['id'];
-				}
-			}
-
-			if ( ! empty( $element['elements'] ) ) {
-				$this->elementor_find_and_replace_template_data( $element['elements'], $posted_data );
-			}
-		}
-
-	}
-
-	/**
-	 * Get the block data.
-	 *
-	 * @param array $elements elements data.
-	 * @param array $posted_data posted data.
-	 */
-	public function gutenberg_find_and_replace_template_data( &$elements, $posted_data ) {
-
-		foreach ( $elements as &$element ) {
-			if ( 'wcfb/checkout-form' === $element['blockName'] ) {
-				// Update the element with the data.
-				$element['attrs']['globalbgColor'] = ! empty( $posted_data['primary_color'] ) ? $posted_data['primary_color'] : $element['attrs']['globalbgColor'];
-			}
-
-			if ( 'uagb/info-box' === $element['blockName'] && isset( $element['attrs']['className'] ) ) {
-
-				if ( str_contains( $element['attrs']['className'], 'cartflows-store-checkout-logo-field' ) ) {
-					$element['attrs']['iconImage']['id']                   = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['id'] : $element['attrs']['iconImage']['id'];
-					$element['attrs']['iconImage']['url']                  = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['url'] : $element['attrs']['iconImage']['url'];
-					$element['attrs']['iconImage']['link']                 = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['url'] : $element['attrs']['iconImage']['link'];
-					$element['attrs']['iconImage']['sizes']['full']['url'] = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['url'] : $element['attrs']['iconImage']['link'];
-				}
-			}
-
-			if ( ! empty( $element['innerBlocks'] ) ) {
-				$this->gutenberg_find_and_replace_template_data( $element['innerBlocks'], $posted_data );
-			}
-		}
-
-	}
-
-	/**
-	 * Replace the logo and color in the BB template while importing.
-	 *
-	 * @param array $elements elements data.
-	 * @param array $posted_data posted data.
-	 */
-	public function beaver_builder_find_and_replace_template_data( &$elements, $posted_data ) {
-
-		foreach ( $elements as $node => &$element ) {
-			if ( ! empty( $element->type ) && 'module' === $element->type ) {
-
-				if ( ! empty( $element->settings->type ) && 'cartflows-bb-checkout-form' === $element->settings->type ) {
-					// Update the logo in the template.
-					$element->settings->global_primary_color = ! empty( $posted_data['primary_color'] ) ? $posted_data['primary_color'] : $element->settings->global_primary_color;
-				}
-
-				if ( ! empty( $element->settings->type ) && 'photo' === $element->settings->type && ! empty( $element->settings->class ) && 'cartflows-store-checkout-logo-field' === $element->settings->class ) {
-					$module_setting = $element->settings;
-					// Update the logo in the template.
-					$element->settings->photo_src = ! empty( $posted_data['site_logo'] ) ? $posted_data['site_logo']['url'] : $element->settings->photo_src;
-
-				}
-			}
-		}
 	}
 }

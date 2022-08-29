@@ -114,11 +114,11 @@ class Cartflows_Init_Blocks {
 			$checkout_id = intval( $_POST['id'] ); //phpcs:ignore
 		}
 
-		$store_checkout = intval( \Cartflows_Helper::get_global_setting( '_cartflows_store_checkout' ) );
+		$global_checkout = intval( Cartflows_Helper::get_common_setting( 'global_checkout' ) );
 
 		$flow_id = wcf()->utils->get_flow_id_from_step_id( $checkout_id );
 
-		if ( ! wcf()->flow->is_flow_testmode( $flow_id ) && ( $store_checkout !== $flow_id ) ) {
+		if ( ! wcf()->flow->is_flow_testmode( $flow_id ) && ( $global_checkout !== $checkout_id ) ) {
 
 			$products = wcf()->utils->get_selected_checkout_products( $checkout_id );
 
@@ -158,41 +158,6 @@ class Cartflows_Init_Blocks {
 		$attributes['stepTwoSubTitleText']     = isset( $_POST['stepTwoSubTitleText'] ) ? sanitize_text_field( wp_unslash( $_POST['stepTwoSubTitleText'] ) ) : '';
 		$attributes['offerButtonTitleText']    = isset( $_POST['offerButtonTitleText'] ) ? sanitize_text_field( wp_unslash( $_POST['offerButtonTitleText'] ) ) : '';
 		$attributes['offerButtonSubTitleText'] = isset( $_POST['offerButtonSubTitleText'] ) ? sanitize_text_field( wp_unslash( $_POST['offerButtonSubTitleText'] ) ) : '';
-
-		$checkout_fields = array(
-			// Input Fields.
-			array(
-				'filter_slug'  => 'wcf-fields-skins',
-				'setting_name' => 'inputSkins',
-			),
-			array(
-				'filter_slug'  => 'wcf-checkout-layout',
-				'setting_name' => 'layout',
-			),
-		);
-
-		if ( isset( $checkout_fields ) && is_array( $checkout_fields ) ) {
-
-			foreach ( $checkout_fields as $key => $field ) {
-
-				$setting_name = $field['setting_name'];
-
-				if ( '' !== $attributes[ $setting_name ] ) {
-
-					add_filter(
-						'cartflows_checkout_meta_' . $field['filter_slug'],
-						function ( $value ) use ( $setting_name, $attributes ) {
-
-							$value = $attributes[ $setting_name ];
-
-							return $value;
-						},
-						10,
-						1
-					);
-				}
-			}
-		}
 
 		do_action( 'cartflows_gutenberg_checkout_options_filters', $attributes );
 
@@ -275,10 +240,10 @@ class Cartflows_Init_Blocks {
 			$show_checkout_pro_opt = apply_filters( 'cartflows_show_checkout_pro_opt', false );
 
 			if ( 'optin' === $step_type ) {
-				wp_enqueue_style( 'wcf-optin-template', wcf()->utils->get_css_url( 'optin-template' ), array( 'wp-edit-blocks' ), CARTFLOWS_VER );
+				wp_enqueue_style( 'wcf-optin-template', wcf()->utils->get_css_url( 'optin-template' ), '', CARTFLOWS_VER );
 			}
 			if ( 'checkout' === $step_type ) {
-				wp_enqueue_style( 'wcf-checkout-template', wcf()->utils->get_css_url( 'checkout-template' ), array( 'wp-edit-blocks' ), CARTFLOWS_VER );
+				wp_enqueue_style( 'wcf-checkout-template', wcf()->utils->get_css_url( 'checkout-template' ), '', CARTFLOWS_VER );
 			}
 
 			// Register block editor script for backend.
@@ -309,7 +274,7 @@ class Cartflows_Init_Blocks {
 			);
 
 			// Enqueue frontend CSS in editor.
-			wp_enqueue_style( 'CF_block-cartflows-frotend-style', CARTFLOWS_URL . 'assets/css/frontend.css', array( 'wp-edit-blocks' ), CARTFLOWS_VER );
+			wp_enqueue_style( 'CF_block-cartflows-frotend-style', CARTFLOWS_URL . 'assets/css/frontend.css', array(), CARTFLOWS_VER );
 
 			// WP Localized globals. Use dynamic PHP stuff in JavaScript via `cartflowsGlobal` object.
 			wp_localize_script(

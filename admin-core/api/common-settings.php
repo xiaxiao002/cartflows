@@ -55,7 +55,7 @@ class CommonSettings extends ApiBase {
 		 */
 	public function __construct() {
 
-		add_filter( 'cartflows_admin_global_data_options', array( $this, 'add_other_option_data' ), 10, 1 );
+		add_filter( 'cartflows_global_data_options', array( $this, 'add_delete_option_data' ), 10, 1 );
 	}
 
 	/**
@@ -64,11 +64,9 @@ class CommonSettings extends ApiBase {
 	 * @param array $options options.
 	 * @return array.
 	 */
-	public function add_other_option_data( $options ) {
+	public function add_delete_option_data( $options ) {
 
-		$options['cartflows_delete_plugin_data']     = get_option( 'cartflows_delete_plugin_data' );
-		$options['cartflows_stats_report_emails']    = get_option( 'cartflows_stats_report_emails', 'enable' );
-		$options['cartflows_stats_report_email_ids'] = get_option( 'cartflows_stats_report_email_ids', get_option( 'admin_email' ) );
+		$options['cartflows_delete_plugin_data'] = get_option( 'cartflows_delete_plugin_data' );
 
 		return $options;
 	}
@@ -126,7 +124,7 @@ class CommonSettings extends ApiBase {
 	 */
 	public function get_items_permissions_check( $request ) {
 
-		if ( ! current_user_can( 'cartflows_manage_flows_steps' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return new \WP_Error( 'cartflows_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'cartflows' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 

@@ -53,7 +53,7 @@ class Cartflows_BB_Checkout_Form extends FLBuilderModule {
 
 		if ( '' !== $icon && file_exists( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-checkout-form/icon/' . $icon ) ) {
 
-			return file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-checkout-form/icon/' . $icon ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			return fl_builder_filesystem()->file_get_contents( CARTFLOWS_DIR . 'modules/beaver-builder/cartflows-bb-checkout-form/icon/' . $icon );
 		}
 
 		return '';
@@ -71,7 +71,7 @@ class Cartflows_BB_Checkout_Form extends FLBuilderModule {
 				'cartflows_checkout_meta_wcf-checkout-layout',
 				function ( $value ) {
 
-					$value = 'modern-checkout';
+					$value = 'two-column';
 
 					return $value;
 				},
@@ -80,45 +80,7 @@ class Cartflows_BB_Checkout_Form extends FLBuilderModule {
 			);
 		}
 
-		$settings = $this->settings;
-
-		$checkout_fields = array(
-			// Input Fields.
-			array(
-				'filter_slug'  => 'wcf-fields-skins',
-				'setting_name' => 'input_skins',
-			),
-			array(
-				'filter_slug'  => 'wcf-checkout-layout',
-				'setting_name' => 'checkout_layout',
-			),
-		);
-
-		if ( isset( $checkout_fields ) && is_array( $checkout_fields ) ) {
-
-			foreach ( $checkout_fields as $key => $field ) {
-
-				$setting_name  = $field['setting_name'];
-				$setting_value = $settings->$setting_name;
-
-				if ( '' !== $setting_value ) {
-
-					add_filter(
-						'cartflows_checkout_meta_' . $field['filter_slug'],
-						function ( $value ) use ( $setting_value ) {
-
-							$value = $setting_value;
-
-							return $value;
-						},
-						10,
-						1
-					);
-				}
-			}
-		}
-
-		do_action( 'cartflows_bb_checkout_options_filters', $settings );
+		do_action( 'cartflows_bb_checkout_options_filters', $this->settings );
 
 	}
 
@@ -134,19 +96,15 @@ class Cartflows_BB_Checkout_Form extends FLBuilderModule {
 
 		if ( ! _is_cartflows_pro() ) {
 			$layout_options = array(
-				'modern-checkout'   => __( 'Modern Checkout', 'cartflows' ),
-				'modern-one-column' => __( 'Modern One Column', 'cartflows' ),
-				'one-column'        => __( 'One Column', 'cartflows' ),
-				'two-column'        => __( 'Two Column', 'cartflows' ),
-				'two-step'          => __( 'Two Step ( PRO )', 'cartflows' ),
+				'one-column' => __( 'One Column ( PRO )', 'cartflows' ),
+				'two-column' => __( 'Two Column', 'cartflows' ),
+				'two-step'   => __( 'Two Step ( PRO )', 'cartflows' ),
 			);
 		} else {
 			$layout_options = array(
-				'modern-checkout'   => __( 'Modern Checkout', 'cartflows' ),
-				'modern-one-column' => __( 'Modern One Column', 'cartflows' ),
-				'one-column'        => __( 'One Column', 'cartflows' ),
-				'two-column'        => __( 'Two Column', 'cartflows' ),
-				'two-step'          => __( 'Two Step', 'cartflows' ),
+				'one-column' => __( 'One Column', 'cartflows' ),
+				'two-column' => __( 'Two Column', 'cartflows' ),
+				'two-step'   => __( 'Two Step', 'cartflows' ),
 			);
 		}
 
@@ -161,11 +119,19 @@ class Cartflows_BB_Checkout_Form extends FLBuilderModule {
 	 */
 	public static function get_skin_types() {
 
-		$skin_options = array(
-			'default'      => __( 'Default', 'cartflows' ),
-			'modern-label' => __( 'Modern Labels', 'cartflows' ),
-		);
+		$skin_options = array();
 
+		if ( ! _is_cartflows_pro() ) {
+			$skin_options = array(
+				'default'   => __( 'Default', 'cartflows' ),
+				'style-one' => __( 'Floating Labels ( PRO )', 'cartflows' ),
+			);
+		} else {
+			$skin_options = array(
+				'default'   => __( 'Default', 'cartflows' ),
+				'style-one' => __( 'Floating Labels', 'cartflows' ),
+			);
+		}
 		return $skin_options;
 	}
 
@@ -188,10 +154,10 @@ FLBuilder::register_module(
 							'label'       => __( 'Select Layout', 'cartflows' ),
 							/* translators: %s: link */
 							'description' => ! _is_cartflows_pro() ? sprintf( __( 'The PRO layout options are available in the CartFlows Pro. %1$s  Upgrade Now! %2$s', 'cartflows' ), '<a href="https://cartflows.com/" target="blank" class="cartflows-bb-link">', '</a>' ) : '',
-							'default'     => 'modern-checkout',
+							'default'     => 'two-column',
 							'options'     => Cartflows_BB_Checkout_Form::get_layout_types(),
 							'preview'     => array(
-								'type' => 'refresh',
+								'type' => ( ! _is_cartflows_pro() ) ? 'none' : 'refresh',
 							),
 						),
 					),
@@ -249,7 +215,7 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.wcf-embed-checkout-form .woocommerce h3, .wcf-embed-checkout-form .woocommerce h3 span, .wcf-embed-checkout-form .woocommerce-checkout #order_review_heading, .wcf-embed-checkout-form-two-step .wcf-embed-checkout-form-steps .step-name, .wcf-embed-checkout-form .woocommerce .col2-set .col-1 h3,
+								'selector' => '.wcf-embed-checkout-form .woocommerce h3, .wcf-embed-checkout-form .woocommerce h3 span, .wcf-embed-checkout-form .woocommerce-checkout #order_review_heading, .wcf-embed-checkout-form-two-step .wcf-embed-checkout-form-steps .step-name, .wcf-embed-checkout-form .woocommerce .col2-set .col-1 h3, 
 								.wcf-embed-checkout-form .woocommerce .col2-set .col-2 h3',
 								'property' => 'color',
 								'unit'     => 'px',
@@ -261,7 +227,7 @@ FLBuilder::register_module(
 							'responsive' => true,
 							'preview'    => array(
 								'type'     => 'css',
-								'selector' => '.wcf-embed-checkout-form .woocommerce h3, .wcf-embed-checkout-form .woocommerce h3 span, .wcf-embed-checkout-form .woocommerce-checkout #order_review_heading, .wcf-embed-checkout-form-two-step .wcf-embed-checkout-form-steps .step-name, .wcf-embed-checkout-form .woocommerce .col2-set .col-1 h3,
+								'selector' => '.wcf-embed-checkout-form .woocommerce h3, .wcf-embed-checkout-form .woocommerce h3 span, .wcf-embed-checkout-form .woocommerce-checkout #order_review_heading, .wcf-embed-checkout-form-two-step .wcf-embed-checkout-form-steps .step-name, .wcf-embed-checkout-form .woocommerce .col2-set .col-1 h3, 
 								.wcf-embed-checkout-form .woocommerce .col2-set .col-2 h3',
 							),
 						),
@@ -271,13 +237,14 @@ FLBuilder::register_module(
 					'title'  => __( 'Input Fields', 'cartflows' ),
 					'fields' => array(
 						'input_skins'           => array(
-							'type'    => 'select',
-							'label'   => __( 'Style', 'cartflows' ),
-
-							'default' => 'modern-label',
-							'options' => Cartflows_BB_Checkout_Form::get_skin_types(),
-							'preview' => array(
-								'type' => 'refresh',
+							'type'        => 'select',
+							'label'       => __( 'Style', 'cartflows' ),
+							/* translators: %s: link */
+							'description' => ! _is_cartflows_pro() ? sprintf( __( 'The PRO style options are available in CartFlows Pro. %1$s  Upgrade Now! %2$s', 'cartflows' ), '<a href="https://cartflows.com/" target="blank" class="cartflows-bb-link">', '</a>' ) : '',
+							'default'     => 'default',
+							'options'     => Cartflows_BB_Checkout_Form::get_skin_types(),
+							'preview'     => array(
+								'type' => ( ! _is_cartflows_pro() ) ? 'none' : 'refresh',
 							),
 						),
 						'label_color'           => array(
@@ -443,9 +410,9 @@ FLBuilder::register_module(
 							'preview'    => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-								.woocommerce form.woocommerce-form-login .form-row button,
+								.woocommerce form.woocommerce-form-login .form-row button, 
 								.woocommerce #order_review button.wcf-btn-small,
-								.woocommerce-checkout form.woocommerce-form-login .button,
+								.woocommerce-checkout form.woocommerce-form-login .button, 
 								.woocommerce-checkout form.checkout_coupon .button,
 								form.checkout_coupon .button,
 								.wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -466,7 +433,7 @@ FLBuilder::register_module(
 							'show_alpha' => true,
 							'preview'    => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce-checkout form.login .button:hover,
+								'selector' => '.woocommerce-checkout form.login .button:hover, 
 								.woocommerce-checkout form.checkout_coupon .button:hover,
 								.woocommerce #payment #place_order:hover,
 								.woocommerce #order_review button.wcf-btn-small:hover,
@@ -487,9 +454,9 @@ FLBuilder::register_module(
 							'preview'    => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-								.woocommerce form.woocommerce-form-login .form-row button,
+								.woocommerce form.woocommerce-form-login .form-row button, 
 								.woocommerce #order_review button.wcf-btn-small,
-								.woocommerce-checkout form.woocommerce-form-login .button,
+								.woocommerce-checkout form.woocommerce-form-login .button, 
 								.woocommerce-checkout form.checkout_coupon .button,
 								form.checkout_coupon .button,
 								.woocommerce .wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -510,7 +477,7 @@ FLBuilder::register_module(
 							'show_alpha' => true,
 							'preview'    => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce-checkout form.login .button:hover,
+								'selector' => '.woocommerce-checkout form.login .button:hover, 
 								.woocommerce-checkout form.checkout_coupon .button:hover,
 								.woocommerce #payment #place_order:hover,
 								.woocommerce #order_review button.wcf-btn-small:hover,
@@ -564,9 +531,9 @@ FLBuilder::register_module(
 							'preview' => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-								.woocommerce form.woocommerce-form-login .form-row button,
+								.woocommerce form.woocommerce-form-login .form-row button, 
 								.woocommerce #order_review button.wcf-btn-small,
-								.woocommerce-checkout form.woocommerce-form-login .button,
+								.woocommerce-checkout form.woocommerce-form-login .button, 
 								.woocommerce-checkout form.checkout_coupon .button,
 								form.checkout_coupon .button,
 								.woocommerce .wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -586,9 +553,9 @@ FLBuilder::register_module(
 							'preview'     => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-									.woocommerce form.woocommerce-form-login .form-row button,
+									.woocommerce form.woocommerce-form-login .form-row button, 
 									.woocommerce #order_review button.wcf-btn-small,
-									.woocommerce-checkout form.woocommerce-form-login .button,
+									.woocommerce-checkout form.woocommerce-form-login .button, 
 									.woocommerce-checkout form.checkout_coupon .button,
 									form.checkout_coupon .button,
 									.woocommerce .wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -607,9 +574,9 @@ FLBuilder::register_module(
 							'preview'    => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-									.woocommerce form.woocommerce-form-login .form-row button,
+									.woocommerce form.woocommerce-form-login .form-row button, 
 									.woocommerce #order_review button.wcf-btn-small,
-									.woocommerce-checkout form.woocommerce-form-login .button,
+									.woocommerce-checkout form.woocommerce-form-login .button, 
 									.woocommerce-checkout form.checkout_coupon .button,
 									form.checkout_coupon .button,
 									.woocommerce .wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -627,7 +594,7 @@ FLBuilder::register_module(
 							'show_alpha' => true,
 							'preview'    => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce-checkout form.login .button:hover,
+								'selector' => '.woocommerce-checkout form.login .button:hover, 
 									.woocommerce-checkout form.checkout_coupon .button:hover,
 									.woocommerce #payment #place_order:hover,
 									.woocommerce #order_review button.wcf-btn-small:hover,
@@ -650,9 +617,9 @@ FLBuilder::register_module(
 							'preview'     => array(
 								'type'     => 'css',
 								'selector' => '.woocommerce #order_review button,
-									.woocommerce form.woocommerce-form-login .form-row button,
+									.woocommerce form.woocommerce-form-login .form-row button, 
 									.woocommerce #order_review button.wcf-btn-small,
-									.woocommerce-checkout form.woocommerce-form-login .button,
+									.woocommerce-checkout form.woocommerce-form-login .button, 
 									.woocommerce-checkout form.checkout_coupon .button,
 									form.checkout_coupon .button,
 									.woocommerce .wcf-embed-checkout-form-nav-btns .wcf-next-button,
@@ -774,7 +741,7 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce-checkout .woocommerce-invalid label,
+								'selector' => '.woocommerce-checkout .woocommerce-invalid label, 
 								.wcf-embed-checkout-form .woocommerce form p.form-row.woocommerce-invalid label,
 								.woocommerce form .form-row.woocommerce-invalid label',
 								'property' => 'color',
@@ -790,12 +757,12 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.select2-container--default.field-required .select2-selection--single,
-								.woocommerce form .form-row input.input-text.field-required,
-								.woocommerce form .form-row textarea.input-text.field-required,
+								'selector' => '.select2-container--default.field-required .select2-selection--single, 
+								.woocommerce form .form-row input.input-text.field-required, 
+								.woocommerce form .form-row textarea.input-text.field-required, 
 								.woocommerce #order_review .input-text.field-required
-								.woocommerce form .form-row.woocommerce-invalid .select2-container,
-								.woocommerce form .form-row.woocommerce-invalid input.input-text,
+								.woocommerce form .form-row.woocommerce-invalid .select2-container, 
+								.woocommerce form .form-row.woocommerce-invalid input.input-text, 
 								.woocommerce form .form-row.woocommerce-invalid select',
 								'property' => 'border-color',
 								'unit'     => 'px',
@@ -810,8 +777,8 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce .woocommerce-error,
-								.woocommerce .woocommerce-NoticeGroup .woocommerce-error,
+								'selector' => '.woocommerce .woocommerce-error, 
+								.woocommerce .woocommerce-NoticeGroup .woocommerce-error, 
 								.woocommerce .woocommerce-notices-wrapper .woocommerce-error',
 								'property' => 'color',
 								'unit'     => 'px',
@@ -826,8 +793,8 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce .woocommerce-error,
-								.woocommerce .woocommerce-NoticeGroup .woocommerce-error,
+								'selector' => '.woocommerce .woocommerce-error, 
+								.woocommerce .woocommerce-NoticeGroup .woocommerce-error, 
 								.woocommerce .woocommerce-notices-wrapper .woocommerce-error',
 								'property' => 'background-color',
 								'unit'     => 'px',
@@ -842,42 +809,10 @@ FLBuilder::register_module(
 							'show_alpha'  => true,
 							'preview'     => array(
 								'type'     => 'css',
-								'selector' => '.woocommerce .woocommerce-error,
-								.woocommerce .woocommerce-NoticeGroup .woocommerce-error,
+								'selector' => '.woocommerce .woocommerce-error, 
+								.woocommerce .woocommerce-NoticeGroup .woocommerce-error, 
 								.woocommerce .woocommerce-notices-wrapper .woocommerce-error',
 								'property' => 'border-color',
-								'unit'     => 'px',
-							),
-						),
-					),
-				),
-				'column_style'  => array(
-					'title'  => __( 'Order Review', 'cartflows' ),
-					'fields' => array(
-						'column_text_color' => array(
-							'type'        => 'color',
-							'label'       => __( 'Text Color', 'cartflows' ),
-							'default'     => '',
-							'show_reset'  => true,
-							'connections' => array( 'color' ),
-							'show_alpha'  => true,
-							'preview'     => array(
-								'type'     => 'css',
-								'selector' => '.wcf-embed-checkout-form.wcf-embed-checkout-form-modern-checkout table.shop_table th, .wcf-embed-checkout-form.wcf-embed-checkout-form-modern-checkout table.shop_table td',
-								'property' => 'color',
-							),
-						),
-						'column_color'      => array(
-							'type'        => 'color',
-							'label'       => __( 'Background Color', 'cartflows' ),
-							'default'     => '',
-							'show_reset'  => true,
-							'connections' => array( 'color' ),
-							'show_alpha'  => true,
-							'preview'     => array(
-								'type'     => 'css',
-								'selector' => '.wcf-embed-checkout-form.wcf-embed-checkout-form-modern-checkout table.shop_table',
-								'property' => 'background-color',
 								'unit'     => 'px',
 							),
 						),

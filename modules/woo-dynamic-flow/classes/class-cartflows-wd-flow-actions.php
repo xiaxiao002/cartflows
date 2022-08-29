@@ -39,6 +39,29 @@ class Cartflows_Wd_Flow_Actions {
 		add_action( 'woocommerce_after_add_to_cart_button', array( $this, 'add_cf_hidden_fields' ) );
 		add_filter( 'woocommerce_add_to_cart_redirect', array( $this, 'redirect_to_next_flow_step' ), 10, 2 );
 
+		/**
+		 *Preconfigured cart data
+		 *add_action( 'wp', array( $this, 'empty_cart_first_step' ), 1 );
+		 */
+	}
+
+	/**
+	 * Configure Cart Data.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return void
+	 */
+	public function empty_cart_first_step() {
+
+		$step_id = 0;
+
+		if ( apply_filters( 'cartflows_skip_configure_cart', false, $step_id ) ) {
+			return;
+		}
+
+		/* Empty the current cart */
+		WC()->cart->empty_cart();
 	}
 
 	/**

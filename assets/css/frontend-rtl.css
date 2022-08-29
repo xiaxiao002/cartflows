@@ -2,19 +2,24 @@
      ========================================================================== */
 
 @font-face {
-	font-family: cartflows-icon;
-	src: url( "../fonts/cartflows-icon.eot?rwcwgb" );
-	src: url( "../fonts/cartflows-icon.eot?rwcwgb#iefix" ) format( "embedded-opentype" ), url( "../fonts/cartflows-icon.ttf?rwcwgb" ) format( "truetype" ), url( "../fonts/cartflows-icon.woff?rwcwgb" ) format( "woff" ), url( "../fonts/cartflows-icon.svg?rwcwgb#cartflows-icon" ) format( "svg" );
-	font-weight: 400;
+	font-family: 'cartflows-icon';
+	src: url( '../fonts/cartflows-icon.eot?81m15v' );
+	src: url( '../fonts/cartflows-icon.eot?81m15v#iefix' )
+			format( 'embedded-opentype' ),
+		url( '../fonts/cartflows-icon.ttf?81m15v' ) format( 'truetype' ),
+		url( '../fonts/cartflows-icon.woff?81m15v' ) format( 'woff' ),
+		url( '../fonts/cartflows-icon.svg?81m15v#cartflows-icon' )
+			format( 'svg' );
+	font-weight: normal;
 	font-style: normal;
 }
 
 .cartflows-icon {
 	/* use !important to prevent issues with browser extensions that change fonts */
-	font-family: cartflows-icon !important;
+	font-family: 'cartflows-icon' !important;
 	speak: none;
 	font-style: normal;
-	font-weight: 400;
+	font-weight: normal;
 	font-variant: normal;
 	text-transform: none;
 	line-height: 1;
@@ -24,24 +29,18 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.cartflows-circle-cross::before {
-	content: "\e903";
+.cartflows-icon-close:before {
+	content: '\e602';
+	font-family: 'cartflows-icon';
 }
-.cartflows-icon-close::before {
-	content: "\e602";
-	font-family: cartflows-icon;
+.cartflows-icon-cross:before {
+	content: '\e601';
 }
-.cartflows-icon-cross::before {
-	content: "\e601";
+.cartflows-icon-check:before {
+	content: '\e600';
 }
-.cartflows-icon-check::before {
-	content: "\e600";
-}
-.cartflows-icon-arrow-thin-right::before {
-	content: "\e901";
-}
-.cartflows-lock-closed::before {
-	content: "\e902";
+.cartflows-icon-arrow-thin-right:before {
+	content: '\e901';
 }
 
 /*--------------------------------------------------------------
@@ -69,14 +68,14 @@
 /*--------------------------------------------------------------
 # Clearings
 --------------------------------------------------------------*/
-.clear::before,
-.clear::after {
-	content: "";
+.clear:before,
+.clear:after {
+	content: '';
 	display: table;
 	table-layout: fixed;
 }
 
-.clear::after {
+.clear:after {
 	clear: both;
 }
 
@@ -94,7 +93,7 @@
 }
 
 /*--------------------------------------------------------------
-# Template CSS
+# Template CSS 
 ---------------------------------------------------------------*/
 body.cartflows-default {
 	background-color: #f5f5f5;
@@ -109,7 +108,7 @@ body.cartflows-default {
 .cartflows-default .cartflows-primary {
 	background-color: #fff;
 	padding: 70px;
-	/* overflow: hidden; */
+	overflow: hidden;
 	max-width: 100%;
 }
 
@@ -149,7 +148,6 @@ body.cartflows-default {
 .wcf-preview-mode a {
 	color: #fff;
 }
-
 @media only screen and ( max-width: 768px ) {
 	.wcf-preview-mode {
 		font-size: 13px;
@@ -161,7 +159,7 @@ body.cartflows-default {
 
 /**
 * *****************
-* Cartflows Footer
+* Cartflows Footer 
 * *****************
 */
 
@@ -172,7 +170,7 @@ body.cartflows-default {
 
 /**
 * ****************
-* Thank You page
+* Thank You page 
 * ****************
 */
 
@@ -189,7 +187,7 @@ body.cartflows-default {
 .woocommerce-order ul.order_details::after,
 .woocommerce-order-details.mollie-instructions::before,
 .woocommerce-order-details.mollie-instructions::after {
-	content: " ";
+	content: ' ';
 	display: table;
 }
 .woocommerce-order ul.order_details::after {
@@ -204,7 +202,7 @@ body.cartflows-default {
 
 .woocommerce-order ul.order_details li {
 	display: inline-block;
-	border-left: 1px dashed #ccc;
+	border-left: 1px dashed #cccccc;
 	padding: 0.5em 0 0.5em 1em;
 	margin: 0.5em 0 0.5em 0.5em;
 	list-style-type: none;
@@ -215,7 +213,7 @@ body.cartflows-default {
 }
 
 .woocommerce-order ul.order_details li:last-child {
-	border-left: 0;
+	border-left: 0px;
 	padding-left: 0;
 }
 
@@ -238,7 +236,7 @@ body.cartflows-default {
 }
 
 .woocommerce-order .woocommerce-bacs-bank-details ul.bacs_details {
-	padding: 0;
+	padding: 0px;
 }
 
 /* Section Background & Padding */
@@ -279,7 +277,7 @@ body.cartflows-default {
 	font-family: inherit;
 	font-weight: inherit;
 	font-size: 0.95em;
-	margin: 0 0 0 0 !important;
+	margin: 0 0 0px 0 !important;
 	border-collapse: collapse;
 	text-align: right;
 }
@@ -292,10 +290,14 @@ body.cartflows-default {
 .woocommerce-order-downloads table.shop_table th {
 	border: none;
 	font-weight: 600;
-	padding: 9px 0;
+	padding: 9px 0px;
 	line-height: 1.2em;
 }
-.woocommerce-order-details table.shop_table tfoot tr:last-child .woocommerce-Price-amount {
+.woocommerce-order-details
+	table.shop_table
+	tfoot
+	tr:last-child
+	.woocommerce-Price-amount {
 	font-size: 1em;
 }
 .woocommerce-order-details table.shop_table td,
@@ -308,21 +310,29 @@ body.cartflows-default {
 .woocommerce-order-details table.shop_table tbody th,
 .woocommerce-order-details table.shop_table tfoot td,
 .woocommerce-order-details table.shop_table tfoot th {
-	font-weight: 400;
+	font-weight: normal;
 	border: none;
 }
 .woocommerce-order-details table.shop_table tbody {
-	border-top: 1px dashed #ccc;
-	border-bottom: 1px dashed #ccc;
+	border-top: 1px dashed #cccccc;
+	border-bottom: 1px dashed #cccccc;
 }
 .woocommerce-order-details table.shop_table th.product-name,
 .woocommerce-order-details table.shop_table th.product-total {
 	font-weight: 600;
 }
-.woocommerce-order-details table.shop_table tfoot tr.order-total:not( .recurring-total ) th,
-.woocommerce-order-details table.shop_table tfoot tr.order-total:not( .recurring-total ) td {
+.woocommerce-order-details
+	table.shop_table
+	tfoot
+	tr.order-total:not( .recurring-total )
+	th,
+.woocommerce-order-details
+	table.shop_table
+	tfoot
+	tr.order-total:not( .recurring-total )
+	td {
 	font-weight: 600;
-	border-top: 1px dashed #ccc;
+	border-top: 1px dashed #cccccc;
 }
 .woocommerce-order-details table.shop_table tfoot tr.recurring-totals th {
 	padding-top: 1.8em;
@@ -333,6 +343,8 @@ body.cartflows-default {
 .woocommerce-order-details table.shop_table tfoot tr.recurring-total td {
 	vertical-align: top;
 }
+
+/**/
 
 .woocommerce-order .wcf-col2-set {
 	-js-display: flex;
@@ -361,7 +373,7 @@ body.cartflows-default {
 }
 
 .woocommerce-order-details.mollie-instructions p {
-	margin: 0.5em 0;
+	margin: 0.5em 0em;
 }
 
 @media only screen and ( max-width: 768px ) {
@@ -396,7 +408,7 @@ body.cartflows-default {
 		width: 100%;
 		border-left: none;
 		padding: 0.5em 0 1em 1em;
-		border-bottom: 1px dashed #ccc;
+		border-bottom: 1px dashed #cccccc;
 	}
 
 	.woocommerce-order ul.order_details li:last-child {

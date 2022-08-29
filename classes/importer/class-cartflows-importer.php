@@ -189,7 +189,14 @@ if ( ! class_exists( 'CartFlows_Importer' ) ) :
 
 			if ( $flow['steps'] ) {
 
-				$exclude_meta_keys = Cartflows_Helper::get_instance()->get_meta_keys_to_exclude_from_import();
+				// Array of keys which needs to be execluded while importing the step.
+				$exclude_meta_keys = array(
+					'wcf-checkout-products',
+					'wcf-optin-product',
+					'wcf-offer-product',
+					'wcf-order-bump-product',
+					'wcf-pre-checkout-offer-product',
+				);
 
 				foreach ( $flow['steps'] as $key => $step ) {
 
@@ -202,10 +209,7 @@ if ( ! class_exists( 'CartFlows_Importer' ) ) :
 								continue;
 							}
 
-							$meta_value = maybe_unserialize( $mvalue[0] );
-
-							$new_all_meta[ $meta_key ] = $meta_value;
-
+							$new_all_meta[ $meta_key ] = maybe_unserialize( $mvalue[0] );
 						}
 					}
 					$new_step_args = apply_filters(
@@ -239,19 +243,13 @@ if ( ! class_exists( 'CartFlows_Importer' ) ) :
 					$step_taxonomy = CARTFLOWS_TAXONOMY_STEP_TYPE;
 					$current_term  = term_exists( $step['type'], $step_taxonomy );
 
-					$step_slug = $step['type'];
-
-					if ( isset( $current_term['term_id'] ) ) {
-						// Set type object.
-						$data      = get_term( $current_term['term_id'], $step_taxonomy );
-						$step_slug = $data->slug;
-					}
-
-					// Set term step type.
-					wp_set_object_terms( $new_step_id, $step_slug, $step_taxonomy );
+					// // Set type object.
+					$data      = get_term( $current_term['term_id'], $step_taxonomy );
+					$step_slug = $data->slug;
+					wp_set_object_terms( $new_step_id, $data->slug, $step_taxonomy );
 
 					// Set type.
-					update_post_meta( $new_step_id, 'wcf-step-type', $step_slug );
+					update_post_meta( $new_step_id, 'wcf-step-type', $data->slug );
 
 					// Set flow.
 					wp_set_object_terms( $new_step_id, 'flow-' . $flow_id, CARTFLOWS_TAXONOMY_STEP_FLOW );
@@ -443,8 +441,6 @@ if ( ! class_exists( 'CartFlows_Importer' ) ) :
 					'title' => $step_title,
 					'type'  => $step_type,
 				);
-
-				$flow_steps = apply_filters( 'cartflows_admin_updated_flow_steps', $flow_steps, $flow_id );
 
 				// insert post meta.
 				update_post_meta( $new_step_id, 'wcf-flow-id', $flow_id );

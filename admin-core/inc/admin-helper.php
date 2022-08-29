@@ -7,8 +7,6 @@
 
 namespace CartflowsAdmin\AdminCore\Inc;
 
-use CartflowsAdmin\AdminCore\Inc\GlobalCheckout;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -106,9 +104,9 @@ class AdminHelper {
 
 			$prepared_options = self::get_prepared_meta_options( $default_meta, $stored_meta );
 
-			$prepared_options = apply_filters( 'cartflows_admin_' . $step_type . '_step_meta_fields', $prepared_options, $step_id );
+			$prepared_options = apply_filters( 'cartflows_' . $step_type . '_step_meta_fields', $prepared_options, $step_id );
 
-			$step_tabs = apply_filters( 'cartflows_admin_' . $step_type . '_step_tabs', $step_tabs );
+			$step_tabs = apply_filters( 'cartflows_' . $step_type . '_step_tabs', $step_tabs );
 
 			/**
 			 * Get options
@@ -204,8 +202,8 @@ class AdminHelper {
 		$permalink_default = apply_filters(
 			'cartflows_permalink_settings_default',
 			array(
-				'permalink'           => CARTFLOWS_STEP_PERMALINK_SLUG,
-				'permalink_flow_base' => CARTFLOWS_FLOW_PERMALINK_SLUG,
+				'permalink'           => CARTFLOWS_STEP_POST_TYPE,
+				'permalink_flow_base' => CARTFLOWS_FLOW_POST_TYPE,
 				'permalink_structure' => '',
 
 			)
@@ -234,11 +232,9 @@ class AdminHelper {
 		$facebook_default = array(
 			'facebook_pixel_id'                => '',
 			'facebook_pixel_add_to_cart'       => 'enable',
-			'facebook_pixel_view_content'      => 'enable',
 			'facebook_pixel_initiate_checkout' => 'enable',
 			'facebook_pixel_add_payment_info'  => 'enable',
 			'facebook_pixel_purchase_complete' => 'enable',
-			'facebook_pixel_optin_lead'        => 'enable',
 			'facebook_pixel_tracking'          => 'disable',
 			'facebook_pixel_tracking_for_site' => 'disable',
 		);
@@ -284,64 +280,6 @@ class AdminHelper {
 
 		foreach ( $google_analytics_settings_data as $key => $data ) {
 			$options[ '_cartflows_google_analytics[' . $key . ']' ] = $data;
-		}
-
-		return $options;
-	}
-
-	/**
-	 * Get User role settings.
-	 *
-	 * @return array.
-	 */
-	public static function get_user_role_management_settings() {
-		global $wp_roles;
-
-		$options = array();
-
-		// Get all user roles.
-		$roles_names_array            = array_keys( $wp_roles->get_names() );
-		$roles_names_array            = array_diff( $roles_names_array, array( 'administrator' ) );
-		$user_role_management_default = array();
-
-		foreach ( $roles_names_array as $role_name ) {
-			$user_role_management_default[ $role_name ] = 'no_access';
-		}
-
-		$user_role_management = self::get_admin_settings_option( '_cartflows_roles', false, false );
-
-		$user_role_management = wp_parse_args( $user_role_management, $user_role_management_default );
-
-		$user_role_management = apply_filters( 'cartflows_user_role_default_settings', $user_role_management );
-
-		foreach ( $user_role_management as $key => $data ) {
-			$options[ '_cartflows_roles[' . $key . ']' ] = $data;
-		}
-
-		return $options;
-	}
-
-	/**
-	 * Get Google Auto-Address Fields settings.
-	 *
-	 * @return array.
-	 */
-	public static function get_google_auto_fields_settings() {
-		$options = array();
-
-		$google_auto_fields_setting_default = apply_filters(
-			'cartflows_google_auto_fields_setting_default',
-			array(
-				'google_map_api_key' => '',
-			)
-		);
-
-		$google_auto_fields_settings_data = self::get_admin_settings_option( '_cartflows_google_auto_address', false, true );
-
-		$google_auto_fields_settings_data = wp_parse_args( $google_auto_fields_settings_data, $google_auto_fields_setting_default );
-
-		foreach ( $google_auto_fields_settings_data as $key => $data ) {
-			$options[ '_cartflows_google_auto_address[' . $key . ']' ] = $data;
 		}
 
 		return $options;
@@ -508,7 +446,7 @@ class AdminHelper {
 			default:
 				break;
 		}
-		$step_default_fields = apply_filters( 'cartflows_admin_' . $step_type . '_step_default_meta_fields', $step_default_fields, $step_id );
+		$step_default_fields = apply_filters( 'cartflows_' . $step_type . '_step_default_meta_fields', $step_default_fields, $step_id );
 		return $step_default_fields;
 	}
 
@@ -521,10 +459,10 @@ class AdminHelper {
 		$permalink_settings = self::get_permalink_settings();
 		$fb_settings        = self::get_facebook_settings();
 		$ga_settings        = self::get_google_analytics_settings();
-		$urm_settings       = self::get_user_role_management_settings();
-		$auto_fields        = self::get_google_auto_fields_settings();
-		$options            = array_merge( $general_settings, $permalink_settings, $fb_settings, $ga_settings, $urm_settings, $auto_fields );
-		$options            = apply_filters( 'cartflows_admin_global_data_options', $options );
+
+		$options = array_merge( $general_settings, $permalink_settings, $fb_settings, $ga_settings );
+
+		$options = apply_filters( 'cartflows_global_data_options', $options );
 
 		return $options;
 	}
@@ -692,9 +630,6 @@ class AdminHelper {
 					'link'       => admin_url( 'admin.php?page=cartflows&action=wcf-edit-step&step_id=' . $step_id . '&flow_id=' . $flow_id ),
 				),
 			);
-
-			// This should be used by filter, curretly filter is not worker hence using function directly.
-			$actions = StoreCheckout::store_checkout_get_step_actions( $actions, $flow_id, $step_id );
 		}
 		return $actions;
 	}
@@ -747,8 +682,8 @@ class AdminHelper {
 			);
 
 		} else {
-			$action_slug = apply_filters( 'cartflows_admin_action_slug', 'wcf-edit-step', $flow_id );
-			$actions     = array(
+
+			$actions = array(
 				'view' => array(
 					'slug'       => 'view',
 					'class'      => 'wcf-step-view',
@@ -762,7 +697,7 @@ class AdminHelper {
 					'class'      => 'wcf-step-edit',
 					'icon_class' => 'dashicons dashicons-edit',
 					'text'       => __( 'Edit', 'cartflows' ),
-					'link'       => admin_url( 'admin.php?page=cartflows&action=' . $action_slug . '&step_id=' . $step_id . '&flow_id=' . $flow_id ),
+					'link'       => admin_url( 'admin.php?page=cartflows&action=wcf-edit-step&step_id=' . $step_id . '&flow_id=' . $flow_id ),
 				),
 			);
 		}
@@ -823,189 +758,6 @@ class AdminHelper {
 		}
 
 		return $actions;
-	}
-
-		/**
-		 * Calculate earning.
-		 *
-		 * @param string $start_date start date.
-		 * @param string $end_date end date.
-		 *
-		 * @return array
-		 */
-	public static function get_earnings( $start_date, $end_date ) {
-
-		$currency_symbol = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '';
-
-		$start_date = $start_date ? $start_date : date( 'Y-m-d' ); //phpcs:ignore
-		$end_date   = $end_date ? $end_date : date( 'Y-m-d' ); //phpcs:ignore
-
-		$start_date = date( 'Y-m-d H:i:s', strtotime( $start_date . '00:00:00' ) ); //phpcs:ignore
-		$end_date   = date( 'Y-m-d H:i:s', strtotime( $end_date . '23:59:59' ) ); //phpcs:ignore
-
-		if ( _is_cartflows_pro() && defined( CARTFLOWS_PRO_PLUGIN_TYPE ) && 'pro' === CARTFLOWS_PRO_PLUGIN_TYPE ) {
-			// Return All Stats.
-			return apply_filters(
-				'cartflows_home_page_analytics',
-				array(
-					'order_currency'       => $currency_symbol,
-					'total_orders'         => '0',
-					'total_revenue'        => '0',
-					'total_bump_revenue'   => '0',
-					'total_offers_revenue' => '0',
-					'total_visits'         => '0',
-				),
-				$start_date,
-				$end_date
-			);
-		}
-
-		$orders      = self::get_orders_by_flow( $start_date, $end_date );
-		$gross_sale  = 0;
-		$order_count = 0;
-
-		if ( ! empty( $orders ) ) {
-
-			foreach ( $orders as $order ) {
-
-				$order_id = $order->ID;
-				$order    = wc_get_order( $order_id );
-				$user_id  = $order->get_user_id();
-
-				// skip the orders which are placed by the user whose user role is Administrator.
-				if ( $user_id && user_can( $user_id, 'cartflows_manage_flows_steps' ) ) {
-					continue;
-				}
-
-				$order_total = $order ? $order->get_total() : 0;
-				$order_count++;
-
-				if ( $order && ! $order->has_status( 'cancelled' ) ) {
-					$gross_sale += (float) $order_total;
-				}
-			}
-		}
-
-		// Return All Stats.
-		return array(
-			'order_currency'       => $currency_symbol,
-			'total_orders'         => $order_count,
-			'total_revenue'        => number_format( (float) $gross_sale, 2, '.', '' ),
-			'total_bump_revenue'   => '0',
-			'total_offers_revenue' => '0',
-			'total_visits'         => '0',
-		);
-
-	}
-
-
-
-	/**
-	 * Get orders data for flow.
-	 *
-	 * @since 1.6.15
-	 *
-	 * @param string $start_date start date.
-	 * @param string $end_date end date.
-	 * @return int
-	 */
-	public static function get_orders_by_flow( $start_date, $end_date ) {
-
-		global $wpdb;
-
-		$conditions = array(
-			'tb1.post_type' => 'shop_order',
-		);
-
-		$where = self::get_items_query_where( $conditions );
-
-		$where .= " AND ( tb1.post_date BETWEEN IF (tb2.meta_key='wcf-analytics-reset-date'>'" . $start_date . "', tb2.meta_key, '" . $start_date . "')  AND '" . $end_date . "' )";
-		$where .= " AND ( ( tb2.meta_key = '_wcf_flow_id' ) OR ( tb2.meta_key = '_cartflows_parent_flow_id' ) )";
-		$where .= " AND tb1.post_status IN ( 'wc-completed', 'wc-processing', 'wc-cancelled' )";
-
-		$query = 'SELECT tb1.ID, DATE( tb1.post_date ) date, tb2.meta_value FROM ' . $wpdb->prefix . 'posts tb1
-		INNER JOIN ' . $wpdb->prefix . 'postmeta tb2
-		ON tb1.ID = tb2.post_id '
-		. $where;
-
-		return $wpdb->get_results( $query ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-	}
-
-
-	/**
-	 * Prepare where items for query.
-	 *
-	 * @param array $conditions conditions to prepare WHERE query.
-	 * @return string
-	 */
-	public static function get_items_query_where( $conditions ) {
-
-		global $wpdb;
-
-		$where_conditions = array();
-
-		foreach ( $conditions as $key => $condition ) {
-
-			if ( false !== stripos( $key, 'IN' ) ) {
-				$where_conditions[] = $key . $wpdb->prepare( '( %s )', $condition );
-			} else {
-				$where_conditions[] = $key . $wpdb->prepare( '= %s', $condition );
-			}
-		}
-
-		if ( ! empty( $where_conditions ) ) {
-			return 'WHERE 1 = 1 AND ' . implode( ' AND ', $where_conditions );
-		} else {
-			return '';
-		}
-	}
-
-	/**
-	 * Check is error in the received response.
-	 *
-	 * @param object $response Received API Response.
-	 * @return array $result Error result.
-	 * @since x.x.x
-	 */
-	public static function has_api_error( $response ) {
-
-		$result = array(
-			'error'          => false,
-			'error_message'  => __( 'Ooops! Something went wrong. Please open a support ticket from the website.', 'cartflows' ),
-			'call_to_action' => __( 'No error found.', 'cartflows' ),
-			'error_code'     => 0,
-		);
-
-		if ( is_wp_error( $response ) ) {
-
-			$msg        = $response->get_error_message();
-			$error_code = $response->get_error_code();
-
-			if ( 'http_request_failed' === $error_code ) {
-				/* translators: %1$s: HTML, %2$s: HTML */
-				$msg = $msg . '<br>' . sprintf( __( 'Request timeout error. Please check if the firewall or any security plugin is blocking the outgoing HTTP/HTTPS requests to templates.cartflows.com or not. %1$1sTo resolve this issue, please check this %2$2sarticle%3$3s.', 'cartflows' ), '<br><br>', '<a target="_blank" href="https://cartflows.com/docs/request-timeout-error-while-importing-the-flow-step-templates/">', '</a>' );
-			}
-
-			$result['error']          = true;
-			$result['call_to_action'] = $msg;
-			$result['error_code']     = $error_code;
-
-		} elseif ( ! empty( wp_remote_retrieve_response_code( $response ) ) && ! in_array( wp_remote_retrieve_response_code( $response ), array( 200, 201, 204 ), true ) ) {
-
-			$error_message = ! empty( wp_remote_retrieve_response_message( $response ) ) ? wp_remote_retrieve_response_message( $response ) : '';
-			$error_body    = ! empty( wp_remote_retrieve_body( $response ) ) ? strip_tags( wp_remote_retrieve_body( $response ), '<p>' ) : '';
-
-			/* translators: %1$s: HTML, %2$s: HTML, %3$s: HTML */
-			$blocked_message = strpos( $error_body, 'MalCare' ) ? sprintf( __( 'Sorry for the inconvenience, but your website seems to be having trouble connecting to our server. %1$s Please open a technical %2$ssupport ticket%3$s and share the server\'s outgoing IP address.', 'cartflows' ), '<br><br>', '<a href="https://cartflows.com/support" target="_blank">', '</a>' ) : '';
-
-			$result['error']          = true;
-			$result['call_to_action'] = $error_message . '<br>' . $blocked_message;
-			$result['error_code']     = wp_remote_retrieve_response_code( $response );
-		} else {
-			$result['response_code'] = wp_remote_retrieve_response_code( $response );
-		}
-
-		return $result;
 	}
 }
 
